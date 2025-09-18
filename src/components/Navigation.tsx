@@ -24,6 +24,10 @@ const Navigation = () => {
       href: "/blog",
     },
     {
+      label: "Resources",
+      href: "/resources",
+    },
+    {
       label: "Contact",
       href: "/contact",
     },
