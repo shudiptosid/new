@@ -39,76 +39,49 @@ const AboutSnippet = () => {
               size="lg"
               variant="outline"
               className="hover:bg-accent hover:text-accent-foreground transition-colors"
-              onClick={() => setShowStory(true)}
+              onClick={() => setShowStory((v) => !v)}
             >
-              Read Full Story
+              {showStory ? 'Hide Full Story' : 'Read Full Story'}
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
 
             {showStory && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
-                <div
-                  className="bg-white w-full max-w-lg p-8 rounded-lg shadow-lg relative overflow-y-auto max-h-[90vh] mx-2 sm:mx-0"
-                  style={{
-                    maxWidth: "100vw",
-                    height: "auto",
-                    ...(window.innerWidth < 640
-                      ? {
-                          minHeight: "100vh",
-                          borderRadius: 0,
-                          padding: "1.5rem",
-                        }
-                      : {}),
-                  }}
-                >
-                  <button
-                    className="absolute top-4 right-4 text-gray-500 hover:text-accent touch-manipulation"
-                    onClick={() => setShowStory(false)}
-                    aria-label="Close"
-                    style={
-                      window.innerWidth < 640 ? { top: 16, right: 16 } : {}
-                    }
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-                  <h2 className="text-2xl font-bold mb-4 text-accent">
-                    My Full Story
-                  </h2>
-                  <div className="text-base text-muted-foreground space-y-4">
-                    <p>
-                      Three years ago, I set out with a passion for building
-                      smart solutions — and since then, I’ve completed 50+ IoT
-                      projects, turning ideas into functional innovations for
-                      students, startups, and businesses.
-                    </p>
-                    <p>
-                      I specialize in prototyping, consulting, and firmware
-                      development, with expertise across a wide range of
-                      microcontrollers, sensors, and communication modules.
-                    </p>
-                    <p>
-                      From brainstorming the concept to designing, coding, and
-                      testing, I handle every step of the process — ensuring you
-                      get a reliable, future-ready solution.
-                    </p>
-                    <p>
-                      I don’t just deliver projects — I explain the “why” and
-                      “how” behind them, so you gain valuable knowledge along
-                      the way.
-                    </p>
-                    <p>
-                      Many of my clients see me as more than a developer — I’m
-                      their problem solver, mentor, and partner in innovation.
-                    </p>
-                    <p>
-                      My goal is simple: to empower you with technology that
-                      works, scales, and makes a real impact.
-                    </p>
-                    <p>
-                      If you have an idea, let’s bring it to life — and create a
-                      smarter, more connected future together.
-                    </p>
-                  </div>
+              <div className="mt-8 bg-white/80 rounded-lg shadow p-6 border border-border">
+                <h2 className="text-2xl font-bold mb-4 text-accent">My Full Story</h2>
+                <div className="text-base text-muted-foreground space-y-4">
+                  <p>
+                    Three years ago, I set out with a passion for building
+                    smart solutions — and since then, I’ve completed 50+ IoT
+                    projects, turning ideas into functional innovations for
+                    students, startups, and businesses.
+                  </p>
+                  <p>
+                    I specialize in prototyping, consulting, and firmware
+                    development, with expertise across a wide range of
+                    microcontrollers, sensors, and communication modules.
+                  </p>
+                  <p>
+                    From brainstorming the concept to designing, coding, and
+                    testing, I handle every step of the process — ensuring you
+                    get a reliable, future-ready solution.
+                  </p>
+                  <p>
+                    I don’t just deliver projects — I explain the “why” and
+                    “how” behind them, so you gain valuable knowledge along
+                    the way.
+                  </p>
+                  <p>
+                    Many of my clients see me as more than a developer — I’m
+                    their problem solver, mentor, and partner in innovation.
+                  </p>
+                  <p>
+                    My goal is simple: to empower you with technology that
+                    works, scales, and makes a real impact.
+                  </p>
+                  <p>
+                    If you have an idea, let’s bring it to life — and create a
+                    smarter, more connected future together.
+                  </p>
                 </div>
               </div>
             )}
