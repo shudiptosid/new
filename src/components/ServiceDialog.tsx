@@ -328,6 +328,101 @@ const PrototypingContent = () => (
   </div>
 );
 
+const FirmwareDevelopmentContent = () => (
+  <div className="space-y-6">
+    <h2 className="text-xl font-bold bg-accent/10 text-accent p-4 rounded-lg">
+      Firmware: The Intelligence Inside Your Hardware
+    </h2>
+
+    <p className="text-foreground/80 leading-relaxed italic font-bold">
+      "Great hardware is only as good as the software that runs on it. Firmware
+      is the foundational code that breathes life into your device, controlling
+      its every action from the moment it powers on. Our firmware development
+      service focuses on creating clean, highly efficient, and incredibly
+      reliable code that unlocks the full potential of your hardware. We go
+      beyond just making things work; we write firmware that is optimized for
+      speed, stability, and minimal power consumption, ensuring your product
+      delivers an exceptional user experience."
+    </p>
+
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-accent">
+          1. Low-Level Programming
+        </h3>
+        <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+          <li>
+            <span className="font-medium">Our Expertise:</span> We architect
+            code that is both memory-efficient and fast, tailored specifically
+            to the hardware it's running on.
+          </li>
+          <li>
+            <span className="font-medium">What you get:</span> A lean, powerful,
+            and highly optimized firmware base that ensures your device is as
+            responsive and capable as possible.
+          </li>
+        </ul>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-accent">
+          2. RTOS Implementation
+        </h3>
+        <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+          <li>
+            <span className="font-medium">Our Approach:</span> We are
+            experienced in implementing and configuring RTOS environments like
+            FreeRTOS and Zephyr to handle complex, concurrent tasks reliably.
+          </li>
+          <li>
+            <span className="font-medium">What you get:</span> A stable and
+            scalable firmware architecture that ensures critical tasks are
+            always executed on time, preventing system crashes and creating a
+            smooth, predictable user experience.
+          </li>
+        </ul>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-accent">
+          3. Custom Driver Development
+        </h3>
+        <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+          <li>
+            <span className="font-medium">Our Process:</span> We write clean,
+            well-documented drivers from the ground up, following datasheet
+            specifications precisely to ensure seamless hardware integration.
+          </li>
+          <li>
+            <span className="font-medium">What you get:</span> Reliable and
+            efficient communication between all components in your system,
+            guaranteeing your hardware performs exactly as intended.
+          </li>
+        </ul>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-accent">
+          4. Advanced Power Optimization
+        </h3>
+        <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+          <li>
+            <span className="font-medium">Our Techniques:</span> We implement
+            strategies like deep-sleep modes, dynamic clock scaling, and
+            intelligent peripheral management to ensure the device consumes the
+            absolute minimum power necessary.
+          </li>
+          <li>
+            <span className="font-medium">What you get:</span> A significant
+            increase in battery life, allowing your product to run for days,
+            weeks, or even years on a single charge.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+);
+
 const ServiceDialog = ({ title, children }: ServiceDialogProps) => {
   const getContent = () => {
     switch (title) {
@@ -337,6 +432,8 @@ const ServiceDialog = ({ title, children }: ServiceDialogProps) => {
         return <ConsultingContent />;
       case "Prototyping":
         return <PrototypingContent />;
+      case "Firmware Development":
+        return <FirmwareDevelopmentContent />;
       default:
         return <div>Content coming soon...</div>;
     }
