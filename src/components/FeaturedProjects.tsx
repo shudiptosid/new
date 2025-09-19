@@ -1,6 +1,121 @@
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, ExternalLink } from "lucide-react";
+// Expandable card for Remote Heart Rate and SPO2 monitor
+const HeartRateCard = () => {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <Card className="p-6 flex flex-col items-center text-center shadow-lg">
+      <img
+        src={industrialImage}
+        alt="Remote Heart Rate and SPO2 monitor"
+        className="h-32 w-full object-cover rounded mb-4"
+      />
+      <h3 className="text-xl font-bold mb-2">
+        Remote Heart Rate and SPO₂ Monitor
+      </h3>
+      <p className="text-muted-foreground mb-2">
+        Portable IoT-Based Heart & SpO₂ Monitor – Real-Time Health at Your
+        Fingertips
+      </p>
+      {!expanded ? (
+        <button
+          className="mt-2 px-4 py-2 bg-accent text-white rounded font-semibold shadow hover:bg-accent/90 transition"
+          onClick={() => setExpanded(true)}
+        >
+          Read More
+        </button>
+      ) : (
+        <div className="w-full text-left mt-4">
+          <h4 className="text-lg font-semibold mb-2">Description</h4>
+          <p className="italic mb-4">
+            This project is a compact, battery-powered health monitoring device
+            that measures heart rate and SpO₂ levels using the MAX30102 sensor.
+            The ESP32 processes the data, displays it on a 0.96" OLED screen,
+            and can transmit it via Wi-Fi for remote health tracking.
+          </p>
+          <h4 className="text-2xl font-bold mb-2">Components Used</h4>
+          <table className="w-full mb-4 border rounded-lg overflow-hidden text-sm">
+            <thead>
+              <tr className="bg-accent text-white">
+                <th className="py-2 px-3 text-left">Component</th>
+                <th className="py-2 px-3 text-left">Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="bg-white even:bg-blue-50 border-b">
+                <td className="font-semibold py-2 px-3">ESP32</td>
+                <td className="py-2 px-3">Microcontroller with Wi-Fi</td>
+              </tr>
+              <tr className="bg-blue-50 even:bg-white border-b">
+                <td className="font-semibold py-2 px-3">MAX30102</td>
+                <td className="py-2 px-3">Heart Rate & SpO₂ Sensor</td>
+              </tr>
+              <tr className="bg-white even:bg-blue-50 border-b">
+                <td className="font-semibold py-2 px-3">
+                  0.96" OLED Display (128x64, I²C)
+                </td>
+                <td className="py-2 px-3">Real-time data display</td>
+              </tr>
+              <tr className="bg-blue-50 even:bg-white border-b">
+                <td className="font-semibold py-2 px-3">
+                  380 mAh Li-Po Battery + TP4056
+                </td>
+                <td className="py-2 px-3">Rechargeable power & charging</td>
+              </tr>
+              <tr className="bg-white even:bg-blue-50 border-b">
+                <td className="font-semibold py-2 px-3">Zero PCB</td>
+                <td className="py-2 px-3">Component mounting</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4 className="text-2xl font-bold mb-2">Working Principle</h4>
+          <ul className="list-disc pl-5 mb-4">
+            <li>
+              Sensor Measurement – MAX30102 uses infrared and red LEDs to detect
+              pulse and blood oxygen level from the fingertip.
+            </li>
+            <li>
+              Signal Processing – ESP32 reads the sensor data via I²C and
+              calculates Heart Rate (BPM) & SpO₂ using algorithms.
+            </li>
+            <li>
+              Display Output – Processed values are shown on the 0.96" OLED
+              screen in real-time.
+            </li>
+            <li>
+              Wireless Data Transmission (Optional) – ESP32 sends the readings
+              over Wi-Fi to a web dashboard or cloud for remote monitoring.
+            </li>
+            <li>
+              Portable Operation – Entire system runs on a rechargeable 380 mAh
+              Li-Po battery, making it wearable and mobile.
+            </li>
+          </ul>
+          <h4 className="text-2xl font-bold mb-2">Use Cases</h4>
+          <ul className="list-disc pl-5 mb-4">
+            <li>
+              Personal Health Monitoring – Daily heart rate & oxygen tracking
+            </li>
+            <li>Remote Patient Monitoring – Doctor can view data online</li>
+            <li>Fitness Applications – Real-time feedback during workouts</li>
+            <li>
+              Emergency Alerts – Abnormal readings can trigger
+              buzzer/notification
+            </li>
+            <li>
+              Research & IoT Projects – Perfect for healthcare IoT experiments
+            </li>
+          </ul>
+          <button
+            className="mt-2 px-4 py-2 bg-accent text-white rounded font-semibold shadow hover:bg-accent/90 transition"
+            onClick={() => setExpanded(false)}
+          >
+            Show Less
+          </button>
+        </div>
+      )}
+    </Card>
+  );
+};
 import iotSensorImage from "@/assets/Project A.jpg";
 import smartHomeImage from "@/assets/Project B.jpg";
 import industrialImage from "@/assets/Project C.jpg";
@@ -270,6 +385,11 @@ const GreenHouseCard = () => {
   );
 };
 
+// Expandable card for Remote Heart Rate and SPO2 monitor
+// ...existing code...
+
+// ...existing code...
+
 const FeaturedProjects = () => {
   // Only show your project description in quotes, no photo
   const myProjectDescription = "Your project description goes here.";
@@ -292,21 +412,7 @@ const FeaturedProjects = () => {
           {/* Row 1 */}
           <CropShadeCard />
           <GreenHouseCard />
-          <Card className="p-6 flex flex-col items-center text-center shadow-lg">
-            <img
-              src={industrialImage}
-              alt="Remote Heart Rate and SPO2 monitor"
-              className="h-32 w-full object-cover rounded mb-4"
-            />
-
-            <h3 className="text-xl font-bold mb-2">
-              Remote Heart Rate and SPO2 monitor
-            </h3>
-            <p className="text-muted-foreground mb-2">
-              Rugged gateway for connecting legacy equipment to modern IoT
-              platforms.
-            </p>
-          </Card>
+          <HeartRateCard />
         </div>
 
         {/* Space for a video */}
