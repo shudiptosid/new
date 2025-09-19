@@ -41,19 +41,21 @@ const AboutSnippet = () => {
               className="hover:bg-accent hover:text-accent-foreground transition-colors"
               onClick={() => setShowStory((v) => !v)}
             >
-              {showStory ? 'Hide Full Story' : 'Read Full Story'}
+              {showStory ? "Hide Full Story" : "Read Full Story"}
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
 
             {showStory && (
               <div className="mt-8 bg-white/80 rounded-lg shadow p-6 border border-border">
-                <h2 className="text-2xl font-bold mb-4 text-accent">My Full Story</h2>
+                <h2 className="text-2xl font-bold mb-4 text-accent">
+                  My Full Story
+                </h2>
                 <div className="text-base text-muted-foreground space-y-4">
                   <p>
-                    Three years ago, I set out with a passion for building
-                    smart solutions — and since then, I’ve completed 50+ IoT
-                    projects, turning ideas into functional innovations for
-                    students, startups, and businesses.
+                    Three years ago, I set out with a passion for building smart
+                    solutions — and since then, I’ve completed 50+ IoT projects,
+                    turning ideas into functional innovations for students,
+                    startups, and businesses.
                   </p>
                   <p>
                     I specialize in prototyping, consulting, and firmware
@@ -67,8 +69,8 @@ const AboutSnippet = () => {
                   </p>
                   <p>
                     I don’t just deliver projects — I explain the “why” and
-                    “how” behind them, so you gain valuable knowledge along
-                    the way.
+                    “how” behind them, so you gain valuable knowledge along the
+                    way.
                   </p>
                   <p>
                     Many of my clients see me as more than a developer — I’m
