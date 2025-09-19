@@ -41,7 +41,7 @@ const AboutSnippet = () => {
               className="hover:bg-accent hover:text-accent-foreground transition-colors"
               onClick={() => setShowStory((v) => !v)}
             >
-              {showStory ? "Hide Full Story" : "Read Full Story"}
+              {showStory ? 'Hide Full Story' : 'Read Full Story'}
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
 
