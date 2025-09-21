@@ -89,38 +89,44 @@ const AboutSnippet = () => {
             )}
           </div>
 
-          <Card className="p-8 pt-40 shadow-medium relative">
+          <Card className="p-8 pt-36 shadow-medium relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-accent/0 before:via-accent/30 before:to-accent/0 before:animate-glow before:bg-[length:200%_100%]">
             {/* Profile Photo Circle */}
-            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-accent shadow-lg overflow-hidden border-6 border-white">
-              {/* Add your profile photo here */}
-              <img
-                src="/src/assets/own.png"
-                alt="Profile"
-                className="w-full h-full object-cover"
-                style={{
-                  objectPosition: "50% 30%", // Optimized for portrait orientation
-                }}
-              />
+            <div className="absolute -top-[16rem] left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-accent shadow-lg overflow-hidden border-6 border-white relative">
+              {/* Glowing ring */}
+              <div className="absolute -inset-1 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 rounded-full animate-glow bg-[length:200%_100%] z-0"></div>
+              {/* Inner container for photo */}
+              <div className="relative z-10 w-full h-full">
+                <img
+                  src="/src/assets/own.png"
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                  style={{
+                    objectPosition: "50% 30%", // Optimized for portrait orientation
+                  }}
+                />
+              </div>
             </div>
-            <h3 className="text-2xl font-semibold text-foreground mb-6 text-center">
-              Why Choose Me
-            </h3>
-            <div className="space-y-6">
-              {highlights.map((highlight, index) => (
-                <div key={index} className="flex items-center gap-4">
-                  <div className="text-accent">{highlight.icon}</div>
-                  <span className="text-lg text-foreground font-medium">
-                    {highlight.text}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <div className="-mt-48 relative z-10">
+              <h3 className="text-2xl font-semibold text-foreground mb-6 text-center">
+                Why Choose Me
+              </h3>
+              <div className="space-y-6">
+                {highlights.map((highlight, index) => (
+                  <div key={index} className="flex items-center gap-4">
+                    <div className="text-accent">{highlight.icon}</div>
+                    <span className="text-lg text-foreground font-medium">
+                      {highlight.text}
+                    </span>
+                  </div>
+                ))}
+              </div>
 
-            <div className="mt-8 pt-6 border-t border-border">
-              <p className="text-muted-foreground italic">
-                "Quality, reliability, and innovation drive every project I
-                undertake. Let's build something amazing together."
-              </p>
+              <div className="mt-8 pt-6 border-t border-border">
+                <p className="text-muted-foreground italic">
+                  "Quality, reliability, and innovation drive every project I
+                  undertake. Let's build something amazing together."
+                </p>
+              </div>
             </div>
           </Card>
         </div>
