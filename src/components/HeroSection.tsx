@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Zap } from "lucide-react";
+import { ArrowRight, Zap, Cpu } from "lucide-react";
 import timeLapseBg from "@/assets/time-lapse-bg.mp4";
 
 const HeroSection = () => {
@@ -33,7 +33,7 @@ const HeroSection = () => {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-5xl md:text-7xl font-bold text-surface-elevated mb-6 leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-surface-elevated mb-6 leading-tight">
             Expert Firmware &amp;
             <br />
             <span className="bg-gradient-accent bg-clip-text text-transparent">
@@ -42,7 +42,7 @@ const HeroSection = () => {
           </h1>
 
           {/* Subheading */}
-          <p className="text-xl md:text-2xl text-surface-elevated/80 mb-8 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-surface-elevated/80 mb-8 max-w-2xl mx-auto leading-relaxed">
             We turn complex ideas into working devices. From concept to
             production, get robust embedded solutions built right.
           </p>
@@ -52,34 +52,37 @@ const HeroSection = () => {
             <Link to="/completed-projects">
               <Button
                 size="lg"
-                className="bg-accent hover:bg-accent/90 text-accent-foreground px-8 py-4 text-lg font-semibold group"
+                className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 sm:px-8 py-4 text-base sm:text-lg font-semibold group"
               >
                 View My Work
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Button
-              variant="outline"
-              size="lg"
-              className="border-surface-elevated/30 text-surface-elevated bg-surface-elevated/5 hover:bg-surface-elevated/15 hover:border-surface-elevated/40 px-8 py-4 text-lg backdrop-blur-sm transition-all duration-200"
-            >
-              My Services
-            </Button>
+            <Link to="/services">
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-surface-elevated/30 text-surface-elevated bg-surface-elevated/5 hover:bg-surface-elevated/15 hover:border-surface-elevated/40 px-6 sm:px-8 py-4 text-base sm:text-lg backdrop-blur-sm transition-all duration-200"
+              >
+                <Cpu className="mr-2 w-5 h-5" />
+                My Services
+              </Button>
+            </Link>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 mt-16 pt-8 border-t border-surface-elevated/20">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 mt-12 sm:mt-16 pt-8 border-t border-surface-elevated/20">
             <div className="text-center">
-              <div className="text-3xl font-bold text-accent mb-2">3+</div>
-              <div className="text-surface-elevated/70">Years Experience</div>
+              <div className="text-2xl sm:text-3xl font-bold text-accent mb-2">3+</div>
+              <div className="text-surface-elevated/70 text-sm sm:text-base">Years Experience</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-accent mb-2">50+</div>
-              <div className="text-surface-elevated/70">Projects Delivered</div>
+              <div className="text-2xl sm:text-3xl font-bold text-accent mb-2">50+</div>
+              <div className="text-surface-elevated/70 text-sm sm:text-base">Projects Delivered</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-accent mb-2">24h</div>
-              <div className="text-surface-elevated/70">Response Time</div>
+              <div className="text-2xl sm:text-3xl font-bold text-accent mb-2">24h</div>
+              <div className="text-surface-elevated/70 text-sm sm:text-base">Response Time</div>
             </div>
           </div>
         </div>

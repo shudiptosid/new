@@ -1,4 +1,5 @@
 import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Calendar, Clock, Search } from 'lucide-react';
@@ -61,7 +62,7 @@ const Blog = () => {
   const regularPosts = posts.filter(post => !post.featured);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Navigation />
       
       {/* Hero Section */}
@@ -109,7 +110,7 @@ const Blog = () => {
       </section>
 
       {/* Featured Posts */}
-      <section className="py-20">
+      <section className="py-20 flex-grow">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-foreground mb-8">Featured Articles</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
@@ -203,6 +204,8 @@ const Blog = () => {
           </div>
         </div>
       </section>
+      
+      <Footer />
     </div>
   );
 };

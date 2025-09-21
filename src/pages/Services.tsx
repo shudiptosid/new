@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -68,7 +69,7 @@ const Services = () => {
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Navigation />
 
       {/* Hero Section */}
@@ -89,7 +90,7 @@ const Services = () => {
       </section>
 
       {/* Services Grid */}
-      <section className="py-20">
+      <section className="py-20 flex-grow">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {services.map((service, index) => (
@@ -152,6 +153,8 @@ const Services = () => {
           </Button>
         </div>
       </section>
+      
+      <Footer />
     </div>
   );
 };

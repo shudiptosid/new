@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 import iotSensorImage from "@/assets/project-iot-sensor.jpg";
@@ -64,69 +65,72 @@ const completedProjects = [
 
 const CompletedProjects = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Navigation />
-      <section className="pt-24 pb-20 bg-gradient-hero">
-        <div className="container mx-auto px-4 text-center">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold text-surface-elevated mb-6">
-              Completed <span className="text-accent">Projects</span>
-            </h1>
-            <p className="text-xl text-surface-elevated/80 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Here are some of the projects I have successfully completed.
-            </p>
+      <main className="flex-grow">
+        <section className="pt-24 pb-20 bg-gradient-hero">
+          <div className="container mx-auto px-4 text-center">
+            <div className="max-w-4xl mx-auto">
+              <h1 className="text-5xl md:text-6xl font-bold text-surface-elevated mb-6">
+                Completed <span className="text-accent">Projects</span>
+              </h1>
+              <p className="text-xl text-surface-elevated/80 mb-8 max-w-2xl mx-auto leading-relaxed">
+                Here are some of the projects I have successfully completed.
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {completedProjects.map((project, index) => (
-              <Card
-                key={index}
-                className="overflow-hidden hover:shadow-strong transition-all duration-300 group cursor-pointer"
-              >
-                <div className="relative overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-hero opacity-0 group-hover:opacity-80 transition-opacity duration-300 flex items-center justify-center">
-                    <ExternalLink className="w-8 h-8 text-surface-elevated" />
-                  </div>
-                  <div className="absolute top-4 left-4">
-                    <span className="px-2 py-1 bg-accent text-accent-foreground text-xs font-medium rounded">
-                      {project.category}
-                    </span>
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h2 className="text-xl font-semibold mb-2 text-surface-elevated">
-                    {project.title}
-                  </h2>
-                  <p className="text-surface-elevated/80 mb-4">
-                    {project.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {project.tech.map((tech, i) => (
-                      <span
-                        key={i}
-                        className="px-2 py-1 bg-surface-elevated/10 text-xs rounded"
-                      >
-                        {tech}
+        </section>
+        <section className="py-20">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {completedProjects.map((project, index) => (
+                <Card
+                  key={index}
+                  className="overflow-hidden hover:shadow-strong transition-all duration-300 group cursor-pointer"
+                >
+                  <div className="relative overflow-hidden">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-hero opacity-0 group-hover:opacity-80 transition-opacity duration-300 flex items-center justify-center">
+                      <ExternalLink className="w-8 h-8 text-surface-elevated" />
+                    </div>
+                    <div className="absolute top-4 left-4">
+                      <span className="px-2 py-1 bg-accent text-accent-foreground text-xs font-medium rounded">
+                        {project.category}
                       </span>
-                    ))}
+                    </div>
                   </div>
-                  <div className="text-xs text-surface-elevated/60">
-                    {project.year}
+                  <div className="p-6">
+                    <h2 className="text-xl font-semibold mb-2 text-surface-elevated">
+                      {project.title}
+                    </h2>
+                    <p className="text-surface-elevated/80 mb-4">
+                      {project.description}
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {project.tech.map((tech, i) => (
+                        <span
+                          key={i}
+                          className="px-2 py-1 bg-surface-elevated/10 text-xs rounded"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="text-xs text-surface-elevated/60">
+                      {project.year}
+                    </div>
                   </div>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
+      <Footer />
     </div>
   );
 };

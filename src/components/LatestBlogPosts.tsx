@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Calendar, Clock } from 'lucide-react';
+import { ArrowRight, Calendar, Clock, BookOpen } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const LatestBlogPosts = () => {
   const posts = [
@@ -28,70 +29,72 @@ const LatestBlogPosts = () => {
   ];
 
   return (
-    <section className="py-20">
+    <section className="py-16 md:py-20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-            Latest Insights
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+        <div className="text-center mb-12 md:mb-16">
+          <div className="inline-flex items-center justify-center gap-2 mb-4">
+            <BookOpen className="w-5 h-5 text-accent" />
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+              Latest Insights
+            </h2>
+          </div>
+          <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto mt-4">
             Stay updated with the latest trends, techniques, and best practices 
             in embedded systems and IoT development.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12">
           {posts.map((post, index) => (
-            <Card key={index} className="p-6 hover:shadow-medium transition-all duration-300 group cursor-pointer">
+            <Card key={index} className="p-6 hover:shadow-medium transition-all duration-300 group cursor-pointer h-full flex flex-col">
               <div className="mb-4">
-                <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
+                <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-xs font-medium rounded-full">
                   {post.category}
                 </span>
               </div>
               
-              <h3 className="text-xl font-semibold mb-3 text-foreground group-hover:text-accent transition-colors leading-tight">
+              <h3 className="text-lg md:text-xl font-semibold mb-3 text-foreground group-hover:text-accent transition-colors leading-tight flex-grow">
                 {post.title}
               </h3>
               
-              <p className="text-muted-foreground mb-4 leading-relaxed">
+              <p className="text-muted-foreground mb-4 text-sm leading-relaxed">
                 {post.excerpt}
               </p>
               
-              <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+              <div className="flex items-center justify-between text-xs text-muted-foreground mb-4">
                 <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
+                  <Calendar className="w-3 h-3" />
                   <span>{new Date(post.date).toLocaleDateString('en-US', { 
                     year: 'numeric', 
-                    month: 'long', 
+                    month: 'short', 
                     day: 'numeric' 
                   })}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Clock className="w-4 h-4" />
+                  <Clock className="w-3 h-3" />
                   <span>{post.readTime}</span>
                 </div>
               </div>
               
-              <Button 
-                variant="ghost" 
-                className="p-0 h-auto text-accent hover:text-accent/80 font-medium"
-              >
+              <Link to="/blog" className="text-accent hover:text-accent/80 font-medium text-sm group/link flex items-center gap-1 w-fit">
                 Read Article
-                <ArrowRight className="ml-1 w-4 h-4" />
-              </Button>
+                <ArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" />
+              </Link>
             </Card>
           ))}
         </div>
 
         <div className="text-center">
-          <Button 
-            variant="outline"
-            size="lg"
-            className="px-8 py-4 text-lg hover:bg-accent hover:text-accent-foreground transition-colors"
-          >
-            View All Articles
-            <ArrowRight className="ml-2 w-5 h-5" />
-          </Button>
+          <Link to="/blog">
+            <Button 
+              variant="outline"
+              size="lg"
+              className="px-6 sm:px-8 py-4 text-base sm:text-lg hover:bg-accent hover:text-accent-foreground transition-colors group"
+            >
+              View All Articles
+              <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

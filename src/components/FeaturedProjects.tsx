@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 const HeartRateCard = () => {
   const [expanded, setExpanded] = useState(false);
   return (
-    <Card className="p-6 flex flex-col items-center text-center shadow-lg">
+    <Card className="p-6 flex flex-col items-center text-center shadow-lg h-full">
       <img
         src={industrialImage}
         alt="Remote Heart Rate and SPO2 monitor"
@@ -126,7 +126,7 @@ import React, { useState } from "react";
 const CropShadeCard = () => {
   const [expanded, setExpanded] = useState(false);
   return (
-    <Card className="p-6 flex flex-col items-center text-center shadow-lg">
+    <Card className="p-6 flex flex-col items-center text-center shadow-lg h-full">
       <img
         src={iotSensorImage}
         alt="Smart Crop Shade Automation System"
@@ -237,7 +237,7 @@ const CropShadeCard = () => {
 const GreenHouseCard = () => {
   const [expanded, setExpanded] = useState(false);
   return (
-    <Card className="p-6 flex flex-col items-center text-center shadow-lg">
+    <Card className="p-6 flex flex-col items-center text-center shadow-lg h-full">
       <img
         src={smartHomeImage}
         alt="Automatic Green House Ambience Control"
@@ -395,20 +395,20 @@ const FeaturedProjects = () => {
   const myProjectDescription = "Your project description goes here.";
 
   return (
-    <section className="py-20">
+    <section className="py-16 md:py-20">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 md:mb-6">
             Featured Projects
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
             Discover how I've helped companies bring innovative embedded
             solutions to life, from proof of concept to market-ready products.
           </p>
         </div>
 
         {/* Static 2x3 grid for top projects */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12">
           {/* Row 1 */}
           <CropShadeCard />
           <GreenHouseCard />
@@ -416,17 +416,17 @@ const FeaturedProjects = () => {
         </div>
 
         {/* Space for a video */}
-        <div className="flex justify-center items-center mb-12 min-h-[240px] bg-muted rounded-lg">
+        <div className="flex justify-center items-center mb-8 md:mb-12 min-h-[180px] md:min-h-[240px] bg-muted rounded-lg">
           {/* Replace the div below with your video embed or player */}
-          <span className="text-muted-foreground text-lg">
+          <span className="text-muted-foreground text-base md:text-lg">
             Video coming soon...
           </span>
         </div>
 
         {/* Space for a video */}
-        <div className="flex justify-center items-center mb-12 min-h-[240px] bg-muted rounded-lg">
+        <div className="flex justify-center items-center mb-8 md:mb-12 min-h-[180px] md:min-h-[240px] bg-muted rounded-lg">
           {/* Replace the div below with your video embed or player */}
-          <span className="text-muted-foreground text-lg">
+          <span className="text-muted-foreground text-base md:text-lg">
             Video coming soon...
           </span>
         </div>

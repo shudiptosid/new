@@ -1,11 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import QuoteDialog from "./QuoteDialog";
 import logoImage from "@/assets/circuit-crafters-logo.png";
+
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+  
   const navItems = [
     {
       label: "Home",
@@ -32,8 +35,14 @@ const Navigation = () => {
       href: "/contact",
     },
   ];
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location]);
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-elevated/80 backdrop-blur-md border-b border-border">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-surface-elevated/90 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -41,17 +50,19 @@ const Navigation = () => {
             <img
               src={logoImage}
               alt="Circuit Crafters Logo"
-              className="h-12 w-auto ml-4"
+              className="h-10 w-auto"
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-6 lg:space-x-8">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 to={item.href}
-                className="text-foreground hover:text-accent transition-colors duration-200 text-base px-2 py-1 rounded-md font-bold"
+                className={`text-foreground hover:text-accent transition-colors duration-200 text-base px-2 py-1 rounded-md font-medium ${
+                  location.pathname === item.href ? "text-accent font-semibold" : ""
+                }`}
               >
                 {item.label}
               </Link>
@@ -59,7 +70,7 @@ const Navigation = () => {
             <QuoteDialog>
               <Button
                 variant="default"
-                className="bg-tech-blue hover:bg-tech-blue/90"
+                className="bg-accent hover:bg-accent/90"
               >
                 Get Quote
               </Button>
@@ -69,7 +80,8 @@ const Navigation = () => {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2"
+            className="md:hidden p-2 rounded-md text-foreground hover:text-accent focus:outline-none focus:ring-2 focus:ring-accent"
+            aria-label="Toggle menu"
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -78,28 +90,36 @@ const Navigation = () => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-border">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className="block py-2 text-foreground hover:text-accent transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-            <QuoteDialog>
-              <Button
-                variant="default"
-                className="w-full mt-4 bg-tech-blue hover:bg-tech-blue/90"
-              >
-                Get Quote
-              </Button>
-            </QuoteDialog>
+            <div className="flex flex-col space-y-3">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className={`py-2 px-4 rounded-md transition-colors ${
+                    location.pathname === item.href
+                      ? "bg-accent/10 text-accent font-semibold"
+                      : "text-foreground hover:bg-accent/5"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+              <div className="pt-2">
+                <QuoteDialog>
+                  <Button
+                    variant="default"
+                    className="w-full bg-accent hover:bg-accent/90"
+                  >
+                    Get Quote
+                  </Button>
+                </QuoteDialog>
+              </div>
+            </div>
           </div>
         )}
       </div>
     </nav>
   );
 };
+
 export default Navigation;
