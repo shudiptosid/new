@@ -41,7 +41,7 @@ const AboutSnippet = () => {
               className="hover:bg-accent hover:text-accent-foreground transition-colors"
               onClick={() => setShowStory((v) => !v)}
             >
-              {showStory ? 'Hide Full Story' : 'Read Full Story'}
+              {showStory ? "Hide Full Story" : "Read Full Story"}
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
 
@@ -89,8 +89,20 @@ const AboutSnippet = () => {
             )}
           </div>
 
-          <Card className="p-8 shadow-medium">
-            <h3 className="text-2xl font-semibold text-foreground mb-6">
+          <Card className="p-8 pt-40 shadow-medium relative">
+            {/* Profile Photo Circle */}
+            <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-64 h-64 rounded-full bg-accent shadow-lg overflow-hidden border-6 border-white">
+              {/* Add your profile photo here */}
+              <img
+                src="/src/assets/own.png"
+                alt="Profile"
+                className="w-full h-full object-cover"
+                style={{
+                  objectPosition: "50% 30%", // Optimized for portrait orientation
+                }}
+              />
+            </div>
+            <h3 className="text-2xl font-semibold text-foreground mb-6 text-center">
               Why Choose Me
             </h3>
             <div className="space-y-6">
