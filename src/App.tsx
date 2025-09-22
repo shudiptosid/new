@@ -12,6 +12,7 @@ import NotFound from "./pages/NotFound";
 import CompletedProjects from "./pages/CompletedProjects";
 import Resources from "./pages/Resources";
 import SortQuestionsPage2 from "./pages/SortQuestionsPage2";
+import BlogPost from "./pages/BlogPost";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/services" element={<Services />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/blog/power-consumption" element={<BlogPost />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/completed-projects" element={<CompletedProjects />} />
           <Route path="/resources" element={<Resources />} />

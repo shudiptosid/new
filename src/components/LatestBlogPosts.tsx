@@ -2,8 +2,11 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Calendar, Clock, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import BlogPostDialog from './BlogPostDialog';
 
 const LatestBlogPosts = () => {
+  const [showBlogPost, setShowBlogPost] = useState(false);
   const posts = [
     {
       title: 'Optimizing Power Consumption in IoT Devices',
@@ -76,10 +79,13 @@ const LatestBlogPosts = () => {
                 </div>
               </div>
               
-              <Link to="/blog" className="text-accent hover:text-accent/80 font-medium text-sm group/link flex items-center gap-1 w-fit">
+              <button 
+                onClick={() => index === 0 && setShowBlogPost(true)}
+                className="text-accent hover:text-accent/80 font-medium text-sm group/link flex items-center gap-1 w-fit"
+              >
                 Read Article
                 <ArrowRight className="w-3 h-3 group-hover/link:translate-x-1 transition-transform" />
-              </Link>
+              </button>
             </Card>
           ))}
         </div>
@@ -97,6 +103,11 @@ const LatestBlogPosts = () => {
           </Link>
         </div>
       </div>
+
+      <BlogPostDialog 
+        open={showBlogPost} 
+        onOpenChange={setShowBlogPost} 
+      />
     </section>
   );
 };

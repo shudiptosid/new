@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Calendar, Clock, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Link } from 'react-router-dom';
 
 const Blog = () => {
   const posts = [
@@ -192,13 +193,17 @@ const Blog = () => {
                   </div>
                 </div>
                 
-                <Button 
-                  variant="ghost" 
-                  className="p-0 h-auto text-accent hover:text-accent/80 font-medium"
+                <Link 
+                  to={index === 0 ? "/blog/power-consumption" : "/blog"}
                 >
-                  Read Article
-                  <ArrowRight className="ml-1 w-4 h-4" />
-                </Button>
+                  <Button 
+                    variant="ghost" 
+                    className="p-0 h-auto text-accent hover:text-accent/80 font-medium"
+                  >
+                    Read Article
+                    <ArrowRight className="ml-1 w-4 h-4" />
+                  </Button>
+                </Link>
               </Card>
             ))}
           </div>
