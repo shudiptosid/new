@@ -48,7 +48,7 @@ const AboutSnippet = () => {
 
             {showStory && (
               <div className="mt-6 md:mt-8 bg-white/80 rounded-lg shadow p-4 md:p-6 border border-border relative">
-                <button 
+                <button
                   onClick={() => setShowStory(false)}
                   className="absolute top-3 right-3 p-1 rounded-full hover:bg-muted"
                   aria-label="Close"
@@ -98,12 +98,12 @@ const AboutSnippet = () => {
           </div>
 
           <div className="relative">
-            <Card className="p-6 md:p-8 pt-24 md:pt-32 shadow-medium relative overflow-hidden">
+            <Card className="p-6 md:p-8 pt-28 md:pt-32 shadow-medium relative overflow-hidden">
               {/* Decorative elements */}
               <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0"></div>
-              
+
               {/* Profile Photo Circle */}
-              <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full bg-accent shadow-lg overflow-hidden border-4 border-white relative">
+              <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-56 h-56 rounded-full bg-accent shadow-lg overflow-hidden border-4 border-white relative z-50">
                 {/* Glowing ring */}
                 <div className="absolute -inset-1 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 rounded-full animate-glow bg-[length:200%_100%] z-0"></div>
                 {/* Inner container for photo */}
@@ -124,7 +124,10 @@ const AboutSnippet = () => {
                 </h3>
                 <div className="space-y-4 md:space-y-6">
                   {highlights.map((highlight, index) => (
-                    <div key={index} className="flex items-center gap-3 md:gap-4">
+                    <div
+                      key={index}
+                      className="flex items-center gap-3 md:gap-4"
+                    >
                       <div className="flex-shrink-0 p-2 bg-accent/10 rounded-full text-accent">
                         {highlight.icon}
                       </div>
@@ -139,8 +142,8 @@ const AboutSnippet = () => {
                   <div className="flex items-start gap-3">
                     <Quote className="w-4 h-4 text-accent flex-shrink-0 mt-1" />
                     <p className="text-muted-foreground italic text-sm md:text-base">
-                      "Quality, reliability, and innovation drive every project I
-                      undertake. Let's build something amazing together."
+                      "Quality, reliability, and innovation drive every project
+                      I undertake. Let's build something amazing together."
                     </p>
                   </div>
                 </div>

@@ -414,22 +414,6 @@ const FeaturedProjects = () => {
           <GreenHouseCard />
           <HeartRateCard />
         </div>
-
-        {/* Space for a video */}
-        <div className="flex justify-center items-center mb-8 md:mb-12 min-h-[180px] md:min-h-[240px] bg-muted rounded-lg">
-          {/* Replace the div below with your video embed or player */}
-          <span className="text-muted-foreground text-base md:text-lg">
-            Video coming soon...
-          </span>
-        </div>
-
-        {/* Space for a video */}
-        <div className="flex justify-center items-center mb-8 md:mb-12 min-h-[180px] md:min-h-[240px] bg-muted rounded-lg">
-          {/* Replace the div below with your video embed or player */}
-          <span className="text-muted-foreground text-base md:text-lg">
-            Video coming soon...
-          </span>
-        </div>
       </div>
     </section>
   );

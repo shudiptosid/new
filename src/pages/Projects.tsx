@@ -1,14 +1,14 @@
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ExternalLink, Calendar, ArrowRight } from 'lucide-react';
-import { useState } from 'react';
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ExternalLink, Calendar, ArrowRight } from "lucide-react";
+import { useState } from "react";
 
 // Import project images
-import iotSensorImage from '@/assets/Project A.jpg';
-import smartHomeImage from '@/assets/Project B.jpg';
-import industrialImage from '@/assets/Project C.jpg';
+import iotSensorImage from "@/assets/Project A.jpg";
+import smartHomeImage from "@/assets/Project B.jpg";
+import industrialImage from "@/assets/Project C.jpg";
 
 // Expandable card for Remote Heart Rate and SPO2 monitor
 const HeartRateCard = () => {
@@ -395,7 +395,7 @@ const Projects = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
-      
+
       {/* Hero Section */}
       <section className="pt-24 pb-20 bg-gradient-hero">
         <div className="container mx-auto px-4 text-center">
@@ -405,8 +405,9 @@ const Projects = () => {
               <span className="text-accent"> Portfolio</span>
             </h1>
             <p className="text-xl text-surface-elevated/80 mb-8 max-w-2xl mx-auto leading-relaxed">
-              Explore a collection of innovative embedded systems and IoT solutions 
-              I've developed across various industries and applications.
+              Explore a collection of innovative embedded systems and IoT
+              solutions I've developed across various industries and
+              applications.
             </p>
           </div>
         </div>
@@ -431,22 +432,6 @@ const Projects = () => {
             <GreenHouseCard />
             <HeartRateCard />
           </div>
-
-          {/* Space for a video */}
-          <div className="flex justify-center items-center mb-8 md:mb-12 min-h-[180px] md:min-h-[240px] bg-muted rounded-lg">
-            {/* Replace the div below with your video embed or player */}
-            <span className="text-muted-foreground text-base md:text-lg">
-              Video coming soon...
-            </span>
-          </div>
-
-          {/* Space for a video */}
-          <div className="flex justify-center items-center mb-8 md:mb-12 min-h-[180px] md:min-h-[240px] bg-muted rounded-lg">
-            {/* Replace the div below with your video embed or player */}
-            <span className="text-muted-foreground text-base md:text-lg">
-              Video coming soon...
-            </span>
-          </div>
         </div>
       </section>
 
@@ -457,15 +442,19 @@ const Projects = () => {
             Have a Project in Mind?
           </h2>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Let's discuss how I can help bring your embedded system ideas to life.
+            Let's discuss how I can help bring your embedded system ideas to
+            life.
           </p>
-          <Button size="lg" className="bg-accent hover:bg-accent/90 px-8 py-4 text-lg">
+          <Button
+            size="lg"
+            className="bg-accent hover:bg-accent/90 px-8 py-4 text-lg"
+          >
             Start Your Project
             <ArrowRight className="ml-2 w-5 h-5" />
           </Button>
         </div>
       </section>
-      
+
       <Footer />
     </div>
   );
