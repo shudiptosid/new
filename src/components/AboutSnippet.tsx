@@ -100,7 +100,7 @@ const AboutSnippet = () => {
           <div className="relative">
             {/* Profile Image - floating above the card */}
             <div className="relative z-20 flex justify-center mb-8">
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-gradient-to-br from-accent to-blue-600 transform hover:scale-105 transition-all duration-300 hover:shadow-3xl">
+              <div className="w-40 h-40 md:w-48 md:h-48 rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-gradient-to-br from-accent to-blue-600 transform hover:scale-105 transition-all duration-300 hover:shadow-3xl">
                 <img
                   src={profileImage}
                   alt="Shudipto Gain - Embedded Systems Developer"
