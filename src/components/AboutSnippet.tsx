@@ -98,50 +98,50 @@ const AboutSnippet = () => {
           </div>
 
           <div className="relative">
-            <Card className="p-6 md:p-8 pt-28 md:pt-32 shadow-medium relative overflow-hidden">
-              {/* Decorative elements */}
-              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0"></div>
-
-              {/* Profile Photo Circle */}
-              <div className="absolute -top-16 left-1/2 -translate-x-1/2 w-56 h-56 rounded-full bg-accent shadow-lg overflow-hidden border-4 border-white relative z-50">
-                {/* Glowing ring */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-accent/0 via-accent/50 to-accent/0 rounded-full animate-glow bg-[length:200%_100%] z-0"></div>
-                {/* Inner container for photo */}
-                <div className="relative z-10 w-full h-full">
-                  <img
-                    src={profileImage}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                    style={{
-                      objectPosition: "50% 30%", // Optimized for portrait orientation
-                    }}
-                  />
-                </div>
+            {/* Profile Image - floating above the card */}
+            <div className="relative z-20 flex justify-center mb-8">
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-gradient-to-br from-accent to-blue-600 transform hover:scale-105 transition-all duration-300 hover:shadow-3xl">
+                <img
+                  src={profileImage}
+                  alt="Shudipto Gain - Embedded Systems Developer"
+                  className="w-full h-full object-cover"
+                  style={{
+                    objectPosition: "50% 30%",
+                  }}
+                />
               </div>
-              <div className="mt-16 relative z-10">
-                <h3 className="text-xl md:text-2xl font-semibold text-foreground mb-4 md:mb-6 text-center">
+            </div>
+
+            {/* Card Content */}
+            <Card className="relative -mt-16 pt-20 pb-8 px-6 md:px-8 shadow-xl bg-gradient-to-br from-white to-gray-50/50 border-0">
+              {/* Decorative top border */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-accent to-blue-600 rounded-full"></div>
+
+              <div className="text-center relative z-10">
+                <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
                   Why Choose Me
                 </h3>
-                <div className="space-y-4 md:space-y-6">
+
+                <div className="space-y-5 mb-8">
                   {highlights.map((highlight, index) => (
                     <div
                       key={index}
-                      className="flex items-center gap-3 md:gap-4"
+                      className="flex items-center justify-center gap-4 p-3 rounded-xl bg-white/60 shadow-sm hover:shadow-md transition-all duration-300"
                     >
-                      <div className="flex-shrink-0 p-2 bg-accent/10 rounded-full text-accent">
+                      <div className="flex-shrink-0 p-3 bg-gradient-to-br from-accent to-blue-600 rounded-xl text-white shadow-lg">
                         {highlight.icon}
                       </div>
-                      <span className="text-base md:text-lg text-foreground font-medium">
+                      <span className="text-lg text-foreground font-semibold">
                         {highlight.text}
                       </span>
                     </div>
                   ))}
                 </div>
 
-                <div className="mt-6 md:mt-8 pt-6 border-t border-border">
-                  <div className="flex items-start gap-3">
-                    <Quote className="w-4 h-4 text-accent flex-shrink-0 mt-1" />
-                    <p className="text-muted-foreground italic text-sm md:text-base">
+                <div className="bg-gradient-to-r from-accent/5 to-blue-600/5 rounded-xl p-6 border border-accent/20">
+                  <div className="flex items-start gap-3 justify-center text-center">
+                    <Quote className="w-5 h-5 text-accent flex-shrink-0 mt-1" />
+                    <p className="text-muted-foreground italic text-base font-medium">
                       "Quality, reliability, and innovation drive every project
                       I undertake. Let's build something amazing together."
                     </p>
