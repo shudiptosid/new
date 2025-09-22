@@ -4,11 +4,13 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Calendar, Clock, Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Link } from 'react-router-dom';
 
 const Blog = () => {
   const posts = [
     {
       title: 'Optimizing Power Consumption in IoT Devices',
+      slug: 'optimizing-power-consumption-iot',
       excerpt: 'Learn advanced techniques to extend battery life in your embedded systems through smart power management strategies and low-power design patterns.',
       date: '2024-01-15',
       readTime: '8 min read',
@@ -17,6 +19,7 @@ const Blog = () => {
     },
     {
       title: 'Secure Firmware Updates Over-The-Air',
+      slug: 'secure-firmware-updates-ota',
       excerpt: 'Implementing robust OTA update mechanisms that ensure security and reliability in production IoT devices while maintaining system integrity.',
       date: '2024-01-08',
       readTime: '12 min read',
@@ -25,6 +28,7 @@ const Blog = () => {
     },
     {
       title: 'Building Resilient LoRaWAN Networks',
+      slug: 'building-resilient-lorawan-networks',
       excerpt: 'Best practices for designing and deploying reliable long-range wireless sensor networks in challenging environments and remote locations.',
       date: '2024-01-02',
       readTime: '10 min read',
@@ -33,6 +37,7 @@ const Blog = () => {
     },
     {
       title: 'Real-Time Operating Systems for Embedded Applications',
+      slug: 'rtos-embedded-applications',
       excerpt: 'Choosing and implementing the right RTOS for your project: FreeRTOS, Zephyr, and custom solutions compared.',
       date: '2023-12-20',
       readTime: '15 min read',
@@ -41,6 +46,7 @@ const Blog = () => {
     },
     {
       title: 'Debugging Embedded Systems: Tools and Techniques',
+      slug: 'debugging-embedded-systems',
       excerpt: 'Essential debugging strategies, tools, and methodologies for efficient embedded systems development and troubleshooting.',
       date: '2023-12-15',
       readTime: '11 min read',
@@ -49,6 +55,7 @@ const Blog = () => {
     },
     {
       title: 'Edge AI: Implementing Machine Learning on MCUs',
+      slug: 'edge-ai-machine-learning-mcus',
       excerpt: 'Bringing artificial intelligence to resource-constrained microcontrollers: TensorFlow Lite Micro and optimization techniques.',
       date: '2023-12-10',
       readTime: '14 min read',
@@ -115,46 +122,48 @@ const Blog = () => {
           <h2 className="text-3xl font-bold text-foreground mb-8">Featured Articles</h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
             {featuredPosts.map((post, index) => (
-              <Card key={index} className="overflow-hidden hover:shadow-strong transition-all duration-300 group cursor-pointer">
-                <div className="p-8">
-                  <div className="mb-4">
-                    <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
-                      {post.category}
-                    </span>
-                  </div>
-                  
-                  <h3 className="text-2xl font-semibold mb-4 text-foreground group-hover:text-accent transition-colors leading-tight">
-                    {post.title}
-                  </h3>
-                  
-                  <p className="text-muted-foreground mb-6 leading-relaxed text-lg">
-                    {post.excerpt}
-                  </p>
-                  
-                  <div className="flex items-center justify-between text-sm text-muted-foreground mb-6">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      <span>{new Date(post.date).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}</span>
+              <Link key={index} to={`/blog/${post.slug}`}>
+                <Card className="overflow-hidden hover:shadow-strong transition-all duration-300 group cursor-pointer h-full">
+                  <div className="p-8">
+                    <div className="mb-4">
+                      <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
+                        {post.category}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      <span>{post.readTime}</span>
+
+                    <h3 className="text-2xl font-semibold mb-4 text-foreground group-hover:text-accent transition-colors leading-tight">
+                      {post.title}
+                    </h3>
+
+                    <p className="text-muted-foreground mb-6 leading-relaxed text-lg">
+                      {post.excerpt}
+                    </p>
+
+                    <div className="flex items-center justify-between text-sm text-muted-foreground mb-6">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        <span>{new Date(post.date).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Clock className="w-4 h-4" />
+                        <span>{post.readTime}</span>
+                      </div>
                     </div>
+
+                    <Button
+                      variant="ghost"
+                      className="p-0 h-auto text-accent hover:text-accent/80 font-medium text-lg"
+                    >
+                      Read Article
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
                   </div>
-                  
-                  <Button 
-                    variant="ghost" 
-                    className="p-0 h-auto text-accent hover:text-accent/80 font-medium text-lg"
-                  >
-                    Read Article
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </div>
-              </Card>
+                </Card>
+              </Link>
             ))}
           </div>
 
@@ -162,44 +171,46 @@ const Blog = () => {
           <h2 className="text-3xl font-bold text-foreground mb-8">All Articles</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {regularPosts.map((post, index) => (
-              <Card key={index} className="p-6 hover:shadow-medium transition-all duration-300 group cursor-pointer">
-                <div className="mb-4">
-                  <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
-                    {post.category}
-                  </span>
-                </div>
-                
-                <h3 className="text-xl font-semibold mb-3 text-foreground group-hover:text-accent transition-colors leading-tight">
-                  {post.title}
-                </h3>
-                
-                <p className="text-muted-foreground mb-4 leading-relaxed">
-                  {post.excerpt}
-                </p>
-                
-                <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>{new Date(post.date).toLocaleDateString('en-US', { 
-                      year: 'numeric', 
-                      month: 'long', 
-                      day: 'numeric' 
-                    })}</span>
+              <Link key={index} to={`/blog/${post.slug}`}>
+                <Card className="p-6 hover:shadow-medium transition-all duration-300 group cursor-pointer h-full">
+                  <div className="mb-4">
+                    <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
+                      {post.category}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    <span>{post.readTime}</span>
+
+                  <h3 className="text-xl font-semibold mb-3 text-foreground group-hover:text-accent transition-colors leading-tight">
+                    {post.title}
+                  </h3>
+
+                  <p className="text-muted-foreground mb-4 leading-relaxed">
+                    {post.excerpt}
+                  </p>
+
+                  <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>{new Date(post.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                      })}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Clock className="w-4 h-4" />
+                      <span>{post.readTime}</span>
+                    </div>
                   </div>
-                </div>
-                
-                <Button 
-                  variant="ghost" 
-                  className="p-0 h-auto text-accent hover:text-accent/80 font-medium"
-                >
-                  Read Article
-                  <ArrowRight className="ml-1 w-4 h-4" />
-                </Button>
-              </Card>
+
+                  <Button
+                    variant="ghost"
+                    className="p-0 h-auto text-accent hover:text-accent/80 font-medium"
+                  >
+                    Read Article
+                    <ArrowRight className="ml-1 w-4 h-4" />
+                  </Button>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>
