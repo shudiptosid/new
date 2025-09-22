@@ -30,7 +30,7 @@ const Resources = () => {
     <div className="min-h-screen flex flex-col">
       <Navigation />
       <main className="flex-grow">
-        <section className="relative py-20 min-h-screen bg-gradient-to-br from-blue-50 via-slate-100 to-blue-100 overflow-hidden">
+        <section className="relative py-16 min-h-screen bg-gradient-to-br from-blue-50 via-slate-100 to-blue-100 overflow-hidden">
           {/* Decorative background shapes */}
           <div
             className="absolute top-0 left-0 w-72 h-72 bg-accent/10 rounded-full blur-2xl -z-10 animate-pulse"
@@ -41,7 +41,7 @@ const Resources = () => {
             style={{ filter: "blur(100px)" }}
           />
           <div className="container mx-auto px-4 relative z-10">
-            <div className="mx-auto mb-12 max-w-2xl rounded-2xl bg-white/80 shadow-xl border-2 border-accent/30 p-6 flex flex-col items-center backdrop-blur-md">
+            <div className="mx-auto mb-12 max-w-2xl rounded-2xl bg-white/90 shadow-xl border-2 border-accent/30 p-6 flex flex-col items-center backdrop-blur-md hover:bg-white/95 transition-colors duration-300">
               <h2 className="text-4xl md:text-5xl font-extrabold text-center drop-shadow-lg bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse">
                 Study Materials & Resources
               </h2>
@@ -51,15 +51,15 @@ const Resources = () => {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12 px-4">
             {/* Study Material Section */}
-            <div className="flex flex-col items-center">
-              <h3 className="text-2xl font-bold text-foreground mb-4 mt-0 lg:mt-12 w-full max-w-2xl text-center mx-auto">
+            <div className="flex flex-col items-center h-full">
+              <h3 className="text-2xl font-bold text-foreground mb-4 mt-0 w-full max-w-2xl text-center mx-auto">
                 Study Material
               </h3>
-              <div className="flex-1 flex flex-col justify-stretch w-full max-w-2xl">
+              <div className="flex-1 flex flex-col justify-center w-full max-w-2xl h-full">
                 {studyMaterials.map((res, idx) => (
                   <Card
                     key={idx}
-                    className="p-6 flex flex-col justify-between min-h-[340px] h-full w-full flex-grow shadow-lg border-2 border-accent/20 hover:border-accent/60 transition group bg-white/80 backdrop-blur-md relative overflow-hidden mb-8"
+                    className="p-6 flex flex-col justify-between h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-300 group bg-white/90 backdrop-blur-md relative overflow-hidden"
                   >
                     {/* Decorative accent shape in card */}
                     <div className="absolute -top-8 -right-8 w-24 h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
@@ -68,7 +68,7 @@ const Resources = () => {
                         <img
                           src={booksImg}
                           alt="Book Reference"
-                          className="w-16 h-16 mb-3 object-contain"
+                          className="w-14 h-14 mb-3 object-contain"
                         />
                       )}
                       <h4 className="text-xl font-bold mb-2 group-hover:text-accent transition">
@@ -91,41 +91,67 @@ const Resources = () => {
               </div>
             </div>
             {/* Know Your Board Section */}
-            <div className="flex flex-col">
-              <h3 className="text-2xl font-bold text-foreground mb-4 mt-12 lg:mt-0 w-full max-w-2xl text-center mx-auto">
+            <div className="flex flex-col h-full">
+              <h3 className="text-2xl font-bold text-foreground mb-4 mt-0 w-full max-w-2xl text-center mx-auto">
                 Know Your Board
               </h3>
               <div className="flex-1 flex flex-col justify-stretch w-full max-w-2xl mx-auto">
-                {knowYourBoard.map((res, idx) => (
-                  <Card
-                    key={idx}
-                    className="p-6 flex flex-col justify-between min-h-[340px] w-full mt-8 shadow-lg border-2 border-primary/20 hover:border-primary/60 transition group bg-white/80 backdrop-blur-md relative overflow-hidden"
-                  >
-                    {/* Decorative accent shape in card */}
-                    <div className="absolute -bottom-8 -left-8 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition -z-10" />
-                    <div className="flex flex-col items-center">
-                      <img
-                        src={boardImg}
-                        alt="Board Reference"
-                        className="w-16 h-16 mb-3 object-contain"
-                      />
-                      <h4 className="text-xl font-bold mb-2 group-hover:text-primary transition">
-                        {res.title}
-                      </h4>
-                      <p className="text-muted-foreground mb-4 text-center">
-                        {res.description}
-                      </p>
+                <Card className="p-6 flex flex-col justify-between h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-300 group bg-white/90 backdrop-blur-md relative overflow-hidden">
+                  {/* Decorative accent shape in card */}
+                  <div className="absolute -top-8 -right-8 w-24 h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
+                  <div className="flex flex-col items-center">
+                    <img
+                      src={boardImg}
+                      alt="Board Reference"
+                      className="w-14 h-14 mb-3 object-contain"
+                    />
+                    <h4 className="text-xl font-bold mb-4 group-hover:text-accent transition">
+                      Popular Development Boards
+                    </h4>
+                    <div className="flex justify-between w-full max-w-md mx-auto gap-12">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-accent">•</span>
+                          <span className="font-bold text-primary">
+                            Arduino UNO
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-accent">•</span>
+                          <span className="font-bold text-emerald-600">
+                            ESP32
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-accent">•</span>
+                          <span className="font-bold text-blue-600">
+                            Arduino Nano
+                          </span>
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-accent">•</span>
+                          <span className="font-bold text-purple-600">
+                            ESP8266
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-accent">•</span>
+                          <span className="font-bold text-orange-600">
+                            STM32
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-accent">•</span>
+                          <span className="font-bold text-red-600">
+                            Raspberry Pi
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                    <a
-                      href={res.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block mt-2 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition shadow self-center"
-                    >
-                      View / Download
-                    </a>
-                  </Card>
-                ))}
+                  </div>
+                </Card>
               </div>
             </div>
           </div>
@@ -134,16 +160,18 @@ const Resources = () => {
             <h3 className="text-2xl font-bold text-foreground mb-4 text-center">
               Sort Question
             </h3>
-            <div className="max-w-2xl w-full bg-white/80 rounded-xl shadow-lg border-2 border-accent/20 p-6 flex flex-col items-center">
+            <div className="max-w-2xl w-full bg-white/90 rounded-xl shadow-lg border-2 border-accent/20 p-6 flex flex-col items-center hover:bg-white/95 transition-colors duration-300">
               <p className="text-muted-foreground text-center mb-2">
                 Here you can find a collection of important sort questions for
                 your studies and board preparation.
               </p>
-              <ul className="list-disc pl-6 text-left w-full space-y-2">
-                <li>
-                  <strong>Q1: What is Arduino Uno?</strong>
+              <ul className="list-none pl-6 text-left w-full space-y-4">
+                <li className="border-b border-accent/10 pb-3 hover:bg-accent/5 p-2 rounded-lg transition-colors">
+                  <strong className="text-primary">
+                    Q1: What is Arduino Uno?
+                  </strong>
                   <br />
-                  <span>
+                  <span className="text-muted-foreground">
                     A: Arduino Uno is an open-source microcontroller board based
                     on the ATmega328P chip.
                   </span>
@@ -213,12 +241,25 @@ const Resources = () => {
               </ul>
             </div>
             {/* Next Button for pagination */}
-            <div className="flex justify-center mt-6">
+            <div className="flex justify-center mt-8">
               <button
                 onClick={() => navigate("/resources/questions/2")}
-                className="px-6 py-2 bg-accent text-white rounded font-bold shadow hover:bg-accent/90 transition"
+                className="px-8 py-3 bg-accent text-white rounded-lg font-bold shadow-lg hover:bg-accent/90 hover:transform hover:scale-105 hover:shadow-xl active:scale-95 transition-all duration-200 flex items-center gap-2"
               >
                 Next
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
               </button>
             </div>
           </div>
