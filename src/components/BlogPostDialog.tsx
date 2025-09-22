@@ -18,7 +18,8 @@ const BlogPostDialog = ({ open, onOpenChange }: BlogPostDialogProps) => {
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold mb-4">
-            Optimizing Power Consumption in IoT Devices | Best Strategies for Energy Efficiency
+            Optimizing Power Consumption in IoT Devices | Best Strategies for
+            Energy Efficiency
           </DialogTitle>
           <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6">
             <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-xs font-medium rounded-full">
@@ -36,13 +37,34 @@ const BlogPostDialog = ({ open, onOpenChange }: BlogPostDialogProps) => {
         </DialogHeader>
         <div className="prose prose-slate dark:prose-invert max-w-none">
           <p className="text-muted-foreground mb-6">
-            Optimizing power consumption in IoT devices is a key factor for building reliable and energy-efficient connected systems. IoT devices like smart sensors, wearables, and industrial monitoring units often run on batteries, so extending battery life is crucial to reduce maintenance costs and ensure uninterrupted operation. The main power consumers in an IoT system are the microcontroller, wireless communication module (Wi-Fi, LoRa, BLE, Zigbee), and sensors. Choosing low-power IoT hardware, enabling deep sleep modes, and using duty cycling help keep devices in an ultra-low-power state most of the time.
+            Optimizing power consumption in IoT devices is a key factor for
+            building reliable and energy-efficient connected systems. IoT
+            devices like smart sensors, wearables, and industrial monitoring
+            units often run on batteries, so extending battery life is crucial
+            to reduce maintenance costs and ensure uninterrupted operation. The
+            main power consumers in an IoT system are the microcontroller,
+            wireless communication module (Wi-Fi, LoRa, BLE, Zigbee), and
+            sensors. Choosing low-power IoT hardware, enabling deep sleep modes,
+            and using duty cycling help keep devices in an ultra-low-power state
+            most of the time.
           </p>
           <p className="text-muted-foreground mb-6">
-            Another effective way to save energy is to optimize wireless communication. Reducing transmission frequency, batching data, and using low-power IoT protocols like LoRaWAN or MQTT significantly cut down energy usage. Engineers can also disable unused peripherals, use efficient power regulators, and apply interrupt-driven programming to reduce active time. Smart sensor management—turning sensors on only when needed—further contributes to energy savings.
+            Another effective way to save energy is to optimize wireless
+            communication. Reducing transmission frequency, batching data, and
+            using low-power IoT protocols like LoRaWAN or MQTT significantly cut
+            down energy usage. Engineers can also disable unused peripherals,
+            use efficient power regulators, and apply interrupt-driven
+            programming to reduce active time. Smart sensor management—turning
+            sensors on only when needed—further contributes to energy savings.
           </p>
           <p className="text-muted-foreground">
-            By combining these strategies and monitoring current draw with power profiling tools, IoT devices can operate for months or even years on a single battery charge. This approach is essential for smart agriculture, remote health monitoring, industrial automation, and other IoT applications where maintenance access is limited and energy efficiency directly impacts performance and cost-effectiveness.
+            By combining these strategies and monitoring current draw with power
+            profiling tools, IoT devices can operate for months or even years on
+            a single battery charge. This approach is essential for smart
+            agriculture, remote health monitoring, industrial automation, and
+            other IoT applications where maintenance access is limited and
+            energy efficiency directly impacts performance and
+            cost-effectiveness.
           </p>
         </div>
       </DialogContent>
