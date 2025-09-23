@@ -401,7 +401,7 @@ const FeaturedProjects = () => {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 md:mb-6">
             Featured Projects
           </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-white/90 font-medium max-w-3xl mx-auto">
             Discover how I've helped companies bring innovative embedded
             solutions to life, from proof of concept to market-ready products.
           </p>

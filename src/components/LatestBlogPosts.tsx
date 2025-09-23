@@ -44,7 +44,7 @@ const LatestBlogPosts = () => {
               Latest Insights
             </h2>
           </div>
-          <p className="text-base md:text-lg text-muted-foreground max-w-3xl mx-auto mt-4">
+          <p className="text-base md:text-lg text-white/90 font-medium max-w-3xl mx-auto mt-4">
             Stay updated with the latest trends, techniques, and best practices
             in embedded systems and IoT development.
           </p>
