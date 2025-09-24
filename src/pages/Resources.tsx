@@ -10,6 +10,7 @@ import { ESP32Dialog } from "@/components/ESP32Dialog";
 import { ESP8266Dialog } from "@/components/ESP8266Dialog";
 import { ArduinoNanoDialog } from "@/components/ArduinoNanoDialog";
 import { STM32Dialog } from "@/components/STM32Dialog";
+import { RaspberryPiPicoDialog } from "@/components/RaspberryPiPicoDialog";
 
 const studyMaterials = [
   {
@@ -140,9 +141,7 @@ const Resources = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-accent">•</span>
-                            <span className="font-bold text-red-600">
-                              Raspberry Pi
-                            </span>
+                            <RaspberryPiPicoDialog />
                           </div>
                         </div>
                       </div>
