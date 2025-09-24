@@ -6,6 +6,8 @@ import ContactCTA from "@/components/ContactCTA";
 import booksImg from "@/assets/books.png";
 import boardImg from "@/assets/board.png";
 import { ArduinoUnoDialog } from "@/components/ArduinoUnoDialog";
+import { ESP32Dialog } from "@/components/ESP32Dialog";
+import { ESP8266Dialog } from "@/components/ESP8266Dialog";
 
 const studyMaterials = [
   {
@@ -118,9 +120,7 @@ const Resources = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-accent">•</span>
-                            <span className="font-bold text-emerald-600">
-                              ESP32
-                            </span>
+                            <ESP32Dialog />
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-accent">•</span>
@@ -132,9 +132,7 @@ const Resources = () => {
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <span className="text-accent">•</span>
-                            <span className="font-bold text-purple-600">
-                              ESP8266
-                            </span>
+                            <ESP8266Dialog />
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-accent">•</span>

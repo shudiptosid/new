@@ -5,26 +5,25 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import esp8266Img from "@/assets/KYB/esp8266.png";
+import esp32Img from "@/assets/KYB/esp32.png";
 
-export function ESP8266Dialog() {
+export function ESP32Dialog() {
   return (
     <Dialog>
-      <DialogTrigger className="font-bold text-purple-600 hover:text-purple-500 transition">
-        ESP8266
+      <DialogTrigger className="font-bold text-emerald-600 hover:text-emerald-500 transition">
+        ESP32
       </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold mb-4">
-            Everything You Need to Know About ESP8266 (Pinout + Hardware
-            Overview)
+            Everything You Need to Know About ESP32 (Pinout + Hardware Overview)
           </DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
           <div className="aspect-w-16 aspect-h-9">
             <img
-              src={esp8266Img}
-              alt="ESP8266 Pinout Diagram"
+              src={esp32Img}
+              alt="ESP32 Pinout Diagram"
               className="rounded-lg object-contain w-full"
             />
           </div>
@@ -32,17 +31,17 @@ export function ESP8266Dialog() {
           <section>
             <h3 className="text-xl font-semibold mb-3">Hardware Overview</h3>
             <p className="text-muted-foreground">
-              The ESP8266 is a low-cost Wi-Fi-enabled microcontroller developed
-              by Espressif Systems. It became very popular for IoT projects
-              thanks to its affordability, built-in TCP/IP stack, and ability to
-              run user programs directly (without an external microcontroller).
+              The ESP32 is a highly integrated Wi-Fi + Bluetooth microcontroller
+              SoC (System on Chip) designed by Espressif Systems. It is an
+              advanced successor to the ESP8266, with dual-core processing
+              power, larger memory, low-power modes, and a wide range of
+              peripherals.
             </p>
             <p className="text-muted-foreground mt-2">
-              The ESP8266 is available in several module types (ESP-01, ESP-07,
-              ESP-12E/F, NodeMCU boards) but the NodeMCU ESP8266 DevKit is the
-              most common for hobbyists and prototyping. It comes with
-              USB-to-serial support and preloaded firmware, so you can program
-              it easily with the Arduino IDE or Lua.
+              The ESP32 is widely used in IoT devices, robotics, automation, and
+              edge computing projects. Its built-in wireless capabilities
+              eliminate the need for extra modules, making it a cost-effective
+              and compact solution for connected applications.
             </p>
           </section>
 
@@ -52,31 +51,32 @@ export function ESP8266Dialog() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <h4 className="font-medium">Microcontroller (ESP8266EX)</h4>
+                <h4 className="font-medium">Microcontroller (ESP32 SoC)</h4>
                 <p className="text-sm text-muted-foreground">
-                  32-bit Tensilica L106 processor running at 80/160 MHz; handles
-                  user code and Wi-Fi stack.
+                  Dual-core Xtensa® LX6 processor; runs user code, handles
+                  wireless stacks.
                 </p>
               </div>
               <div className="space-y-2">
                 <h4 className="font-medium">Power Supply Section</h4>
                 <p className="text-sm text-muted-foreground">
-                  Vin (5V), 3V3, GND. Accepts USB 5V input or external supply;
-                  onboard regulator outputs 3.3V.
+                  3.3V pin, GND, EN, Vin (or 5V). Accepts power from USB,
+                  battery, or external supply. Regulates voltage for stable
+                  operation.
                 </p>
               </div>
               <div className="space-y-2">
-                <h4 className="font-medium">GPIO Pins (0–16)</h4>
+                <h4 className="font-medium">GPIO Pins (0–39)</h4>
                 <p className="text-sm text-muted-foreground">
-                  D0–D8 on NodeMCU Board. Used for digital input/output.
-                  Multiplexed for I²C, SPI, UART, PWM.
+                  Configurable as input/output, can be mapped for ADC, PWM, I²C,
+                  SPI, UART.
                 </p>
               </div>
               <div className="space-y-2">
-                <h4 className="font-medium">Analog Input (ADC)</h4>
+                <h4 className="font-medium">Analog Features</h4>
                 <p className="text-sm text-muted-foreground">
-                  A0 pin reads 0–1V analog voltage (NodeMCU boards have a
-                  resistor divider to allow 0–3.3V input).
+                  ADC1 (pins 32–39), ADC2 (pins 0,2,4,12–15,25–27) for analog
+                  readings. DAC on pins 25 & 26 for true analog voltage output.
                 </p>
               </div>
             </div>
@@ -87,13 +87,14 @@ export function ESP8266Dialog() {
               Communication Interfaces
             </h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>UART: Used for programming/debugging</li>
-              <li>I²C & SPI: Software-based, configurable on any GPIO</li>
+              <li>UART: 3 hardware UART ports available</li>
               <li>
-                PWM Output: D0–D8 (Software PWM) for dimming LEDs, controlling
-                motors
+                I²C: Configurable on almost any GPIO (commonly pins 21 = SDA, 22
+                = SCL)
               </li>
-              <li>Wi-Fi: Built-in 2.4 GHz Wi-Fi connectivity (802.11 b/g/n)</li>
+              <li>SPI: HSPI & VSPI available for displays, SD cards, etc.</li>
+              <li>PWM: Available on any GPIO (except input-only pins)</li>
+              <li>Capacitive Touch: T0 – T9 pins for touch sensors</li>
             </ul>
           </section>
 
@@ -104,48 +105,48 @@ export function ESP8266Dialog() {
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <li className="space-y-1">
                 <span className="font-medium">Operating voltage:</span>
-                <span className="block text-muted-foreground">3.3V</span>
+                <span className="block text-muted-foreground">
+                  3.3V (all GPIO work at 3.3V logic)
+                </span>
               </li>
               <li className="space-y-1">
                 <span className="font-medium">Recommended input voltage:</span>
                 <span className="block text-muted-foreground">
-                  4.5–9V (through Vin, regulated to 3.3V)
+                  5V (regulated to 3.3V onboard)
                 </span>
               </li>
               <li className="space-y-1">
                 <span className="font-medium">Clock speed:</span>
                 <span className="block text-muted-foreground">
-                  80 MHz (default), up to 160 MHz
+                  Up to 240 MHz
                 </span>
               </li>
               <li className="space-y-1">
                 <span className="font-medium">Flash memory:</span>
                 <span className="block text-muted-foreground">
-                  512 KB – 4 MB (depends on module version)
+                  4 MB (common for DevKit v1 boards)
                 </span>
               </li>
               <li className="space-y-1">
                 <span className="font-medium">SRAM:</span>
-                <span className="block text-muted-foreground">
-                  ~50 KB usable
-                </span>
+                <span className="block text-muted-foreground">520 KB</span>
               </li>
               <li className="space-y-1">
                 <span className="font-medium">ADC resolution:</span>
                 <span className="block text-muted-foreground">
-                  10-bit (0–1023 range)
+                  12-bit (0–4095 steps)
                 </span>
               </li>
               <li className="space-y-1">
                 <span className="font-medium">Max current per GPIO:</span>
                 <span className="block text-muted-foreground">
-                  ~12 mA (safe), up to 20 mA (absolute max)
+                  ~12 mA (safe), up to 40 mA (absolute max)
                 </span>
               </li>
               <li className="space-y-1">
-                <span className="font-medium">Sleep current:</span>
+                <span className="font-medium">Deep Sleep current:</span>
                 <span className="block text-muted-foreground">
-                  &lt;20 µA in deep sleep
+                  &lt;10 µA (ideal for battery-powered projects)
                 </span>
               </li>
             </ul>
@@ -154,30 +155,10 @@ export function ESP8266Dialog() {
           <section>
             <h3 className="text-xl font-semibold mb-3">Practical Examples</h3>
             <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>Control an LED on GPIO2 (D4)</li>
-              <li>Read analog sensor (A0)</li>
-              <li>Send data to a cloud server using Wi-Fi</li>
-              <li>
-                Create a simple web server to control devices from a browser
-              </li>
-            </ul>
-            <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
-              <p className="text-sm text-purple-800">
-                <strong>Note:</strong> ESP8266 operates at 3.3V logic - don't
-                connect 5V signals directly. GPIO0, GPIO2, GPIO15 are "boot
-                mode" pins and must be in correct state during reset.
-              </p>
-            </div>
-          </section>
-
-          <section>
-            <h3 className="text-xl font-semibold mb-3">Common Applications</h3>
-            <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
-              <li>IoT devices and home automation</li>
-              <li>Wi-Fi enabled sensors</li>
-              <li>Smart home devices</li>
-              <li>Remote monitoring systems</li>
-              <li>Wireless data logging</li>
+              <li>Controlling an LED with PWM on GPIO2</li>
+              <li>Reading temperature from an analog sensor on GPIO34</li>
+              <li>Sending data to the cloud via Wi-Fi</li>
+              <li>Using Bluetooth Low Energy (BLE) for wireless control</li>
             </ul>
           </section>
         </div>
