@@ -9,6 +9,7 @@ import { ArduinoUnoDialog } from "@/components/ArduinoUnoDialog";
 import { ESP32Dialog } from "@/components/ESP32Dialog";
 import { ESP8266Dialog } from "@/components/ESP8266Dialog";
 import { ArduinoNanoDialog } from "@/components/ArduinoNanoDialog";
+import { STM32Dialog } from "@/components/STM32Dialog";
 
 const studyMaterials = [
   {
@@ -135,9 +136,7 @@ const Resources = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-accent">•</span>
-                            <span className="font-bold text-orange-600">
-                              STM32
-                            </span>
+                            <STM32Dialog />
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-accent">•</span>
