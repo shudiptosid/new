@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import ContactCTA from "@/components/ContactCTA";
 import booksImg from "@/assets/books.png";
 import boardImg from "@/assets/board.png";
+import { ArduinoUnoDialog } from "@/components/ArduinoUnoDialog";
 
 const studyMaterials = [
   {
@@ -96,7 +97,7 @@ const Resources = () => {
                 Know Your Board
               </h3>
               <div className="flex-1 flex flex-col justify-stretch w-full max-w-2xl mx-auto">
-                <Card className="p-6 flex flex-col justify-between h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-300 group bg-white/90 backdrop-blur-md relative overflow-hidden">
+                <Card className="p-6 flex flex-col justify-between h-auto min-h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-300 group bg-white/90 backdrop-blur-md relative overflow-hidden">
                   {/* Decorative accent shape in card */}
                   <div className="absolute -top-8 -right-8 w-24 h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
                   <div className="flex flex-col items-center">
@@ -106,47 +107,47 @@ const Resources = () => {
                       className="w-14 h-14 mb-3 object-contain"
                     />
                     <h4 className="text-xl font-bold mb-4 group-hover:text-accent transition">
-                      Popular Development Boards
+                      Know Your Board
                     </h4>
-                    <div className="flex justify-between w-full max-w-md mx-auto gap-12">
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-accent">•</span>
-                          <span className="font-bold text-primary">
-                            Arduino UNO
-                          </span>
+                    <div className="flex flex-col items-center space-y-6 w-full">
+                      <div className="flex justify-between w-full max-w-md mx-auto gap-6">
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <ArduinoUnoDialog />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <span className="font-bold text-emerald-600">
+                              ESP32
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <span className="font-bold text-blue-600">
+                              Arduino Nano
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-accent">•</span>
-                          <span className="font-bold text-emerald-600">
-                            ESP32
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-accent">•</span>
-                          <span className="font-bold text-blue-600">
-                            Arduino Nano
-                          </span>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-accent">•</span>
-                          <span className="font-bold text-purple-600">
-                            ESP8266
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-accent">•</span>
-                          <span className="font-bold text-orange-600">
-                            STM32
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-accent">•</span>
-                          <span className="font-bold text-red-600">
-                            Raspberry Pi
-                          </span>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <span className="font-bold text-purple-600">
+                              ESP8266
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <span className="font-bold text-orange-600">
+                              STM32
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <span className="font-bold text-red-600">
+                              Raspberry Pi
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
