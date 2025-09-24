@@ -8,6 +8,7 @@ import boardImg from "@/assets/board.png";
 import { ArduinoUnoDialog } from "@/components/ArduinoUnoDialog";
 import { ESP32Dialog } from "@/components/ESP32Dialog";
 import { ESP8266Dialog } from "@/components/ESP8266Dialog";
+import { ArduinoNanoDialog } from "@/components/ArduinoNanoDialog";
 
 const studyMaterials = [
   {
@@ -124,9 +125,7 @@ const Resources = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-accent">•</span>
-                            <span className="font-bold text-blue-600">
-                              Arduino Nano
-                            </span>
+                            <ArduinoNanoDialog />
                           </div>
                         </div>
                         <div className="space-y-2">
