@@ -9,22 +9,26 @@ import { Link } from "react-router-dom";
 const Blog = () => {
   const posts = [
     {
-      title: "Optimizing Power Consumption in IoT Devices",
+      slug: "power-consumption",
+      title: "Power Consumption in IoT Devices",
       excerpt:
         "Learn advanced techniques to extend battery life in your embedded systems through smart power management strategies and low-power design patterns.",
       date: "2024-01-15",
       readTime: "8 min read",
-      category: "Power Management",
+      category: "IoT",
       featured: true,
+      available: true,
     },
     {
-      title: "Secure Firmware Updates Over-The-Air",
+      slug: "rtos",
+      title: "Real-Time Operating Systems in IoT",
       excerpt:
-        "Implementing robust OTA update mechanisms that ensure security and reliability in production IoT devices while maintaining system integrity.",
-      date: "2024-01-08",
-      readTime: "12 min read",
-      category: "Security",
+        "Understanding RTOS principles and implementing them effectively in IoT projects using popular options like FreeRTOS and Zephyr.",
+      date: "2024-01-20",
+      readTime: "10 min read",
+      category: "IoT",
       featured: true,
+      available: true,
     },
     {
       title: "Building Resilient LoRaWAN Networks",
@@ -34,15 +38,17 @@ const Blog = () => {
       readTime: "10 min read",
       category: "Networking",
       featured: false,
+      available: false,
     },
     {
-      title: "Real-Time Operating Systems for Embedded Applications",
+      title: "Debugging Embedded Systems",
       excerpt:
-        "Choosing and implementing the right RTOS for your project: FreeRTOS, Zephyr, and custom solutions compared.",
-      date: "2023-12-20",
-      readTime: "15 min read",
-      category: "RTOS",
+        "Essential debugging strategies, tools, and methodologies for efficient embedded systems development and troubleshooting.",
+      date: "2023-12-15",
+      readTime: "11 min read",
+      category: "Development",
       featured: false,
+      available: false,
     },
     {
       title: "Debugging Embedded Systems: Tools and Techniques",
@@ -138,13 +144,22 @@ const Blog = () => {
             {featuredPosts.map((post, index) => (
               <Card
                 key={index}
-                className="overflow-hidden hover:shadow-strong transition-all duration-300 group cursor-pointer"
+                className={`overflow-hidden transition-all duration-300 group ${
+                  post.available
+                    ? "hover:shadow-strong cursor-pointer"
+                    : "opacity-70"
+                }`}
               >
                 <div className="p-8">
-                  <div className="mb-4">
+                  <div className="mb-4 flex justify-between items-center">
                     <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
                       {post.category}
                     </span>
+                    {!post.available && (
+                      <span className="text-sm text-muted-foreground">
+                        Coming Soon
+                      </span>
+                    )}
                   </div>
 
                   <h3 className="text-2xl font-semibold mb-4 text-foreground group-hover:text-accent transition-colors leading-tight">
@@ -172,13 +187,26 @@ const Blog = () => {
                     </div>
                   </div>
 
-                  <Button
-                    variant="ghost"
-                    className="p-0 h-auto text-accent hover:text-accent/80 font-medium text-lg"
-                  >
-                    Read Article
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
+                  {post.available ? (
+                    <Link to={`/blog/${post.slug}`}>
+                      <Button
+                        variant="ghost"
+                        className="p-0 h-auto text-accent hover:text-accent/80 font-medium text-lg"
+                      >
+                        Read Article
+                        <ArrowRight className="ml-2 w-5 h-5" />
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      className="p-0 h-auto text-muted-foreground font-medium text-lg cursor-not-allowed"
+                      disabled
+                    >
+                      Coming Soon
+                      <ArrowRight className="ml-2 w-5 h-5" />
+                    </Button>
+                  )}
                 </div>
               </Card>
             ))}
@@ -192,12 +220,21 @@ const Blog = () => {
             {regularPosts.map((post, index) => (
               <Card
                 key={index}
-                className="p-6 hover:shadow-medium transition-all duration-300 group cursor-pointer"
+                className={`p-6 transition-all duration-300 group ${
+                  post.available
+                    ? "hover:shadow-medium cursor-pointer"
+                    : "opacity-70"
+                }`}
               >
-                <div className="mb-4">
+                <div className="mb-4 flex justify-between items-center">
                   <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
                     {post.category}
                   </span>
+                  {!post.available && (
+                    <span className="text-sm text-muted-foreground">
+                      Coming Soon
+                    </span>
+                  )}
                 </div>
 
                 <h3 className="text-xl font-semibold mb-3 text-foreground group-hover:text-accent transition-colors leading-tight">
@@ -225,15 +262,26 @@ const Blog = () => {
                   </div>
                 </div>
 
-                <Link to={index === 0 ? "/blog/power-consumption" : "/blog"}>
+                {post.available ? (
+                  <Link to={`/blog/${post.slug}`}>
+                    <Button
+                      variant="ghost"
+                      className="p-0 h-auto text-accent hover:text-accent/80 font-medium"
+                    >
+                      Read Article
+                      <ArrowRight className="ml-1 w-4 h-4" />
+                    </Button>
+                  </Link>
+                ) : (
                   <Button
                     variant="ghost"
-                    className="p-0 h-auto text-accent hover:text-accent/80 font-medium"
+                    className="p-0 h-auto text-muted-foreground font-medium cursor-not-allowed"
+                    disabled
                   >
-                    Read Article
+                    Coming Soon
                     <ArrowRight className="ml-1 w-4 h-4" />
                   </Button>
-                </Link>
+                )}
               </Card>
             ))}
           </div>
