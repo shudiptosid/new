@@ -11,6 +11,13 @@ import { ESP8266Dialog } from "@/components/ESP8266Dialog";
 import { ArduinoNanoDialog } from "@/components/ArduinoNanoDialog";
 import { STM32Dialog } from "@/components/STM32Dialog";
 import { RaspberryPiPicoDialog } from "@/components/RaspberryPiPicoDialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const studyMaterials = [
   {
@@ -84,14 +91,24 @@ const Resources = () => {
                         {res.description}
                       </p>
                     </div>
-                    <a
-                      href={res.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-block mt-2 px-4 py-2 bg-accent text-white rounded hover:bg-accent/90 transition shadow self-center"
-                    >
-                      View / Download
-                    </a>
+                    <div className="w-full max-w-xs mx-auto -mt-6">
+                      <Select>
+                        <SelectTrigger className="w-full text-lg font-semibold bg-accent/5 border-2 border-accent/30 hover:border-accent/60 transition-colors">
+                          <SelectValue
+                            placeholder="Choose your Stream"
+                            className="text-accent"
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ece">ECE</SelectItem>
+                          <SelectItem value="cse">CSE</SelectItem>
+                          <SelectItem value="mechatronics">
+                            Mechatronics
+                          </SelectItem>
+                          <SelectItem value="mec">MEC</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </Card>
                 ))}
               </div>

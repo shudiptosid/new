@@ -49,7 +49,7 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/completed-projects">
+            <Link to="/projects">
               <Button
                 size="lg"
                 className="bg-accent hover:bg-accent/90 text-accent-foreground px-6 sm:px-8 py-4 text-base sm:text-lg font-semibold group"
@@ -73,16 +73,28 @@ const HeroSection = () => {
           {/* Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 mt-12 sm:mt-16 pt-8 border-t border-surface-elevated/20">
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-accent mb-2">3+</div>
-              <div className="text-surface-elevated/70 text-sm sm:text-base">Years Experience</div>
+              <div className="text-2xl sm:text-3xl font-bold text-accent mb-2">
+                3+
+              </div>
+              <div className="text-surface-elevated/70 text-sm sm:text-base">
+                Years Experience
+              </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-accent mb-2">50+</div>
-              <div className="text-surface-elevated/70 text-sm sm:text-base">Projects Delivered</div>
+              <div className="text-2xl sm:text-3xl font-bold text-accent mb-2">
+                50+
+              </div>
+              <div className="text-surface-elevated/70 text-sm sm:text-base">
+                Projects Delivered
+              </div>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-accent mb-2">24h</div>
-              <div className="text-surface-elevated/70 text-sm sm:text-base">Response Time</div>
+              <div className="text-2xl sm:text-3xl font-bold text-accent mb-2">
+                24h
+              </div>
+              <div className="text-surface-elevated/70 text-sm sm:text-base">
+                Response Time
+              </div>
             </div>
           </div>
         </div>
