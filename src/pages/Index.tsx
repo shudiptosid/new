@@ -6,12 +6,14 @@ import AboutSnippet from "@/components/AboutSnippet";
 import LatestBlogPosts from "@/components/LatestBlogPosts";
 import ContactCTA from "@/components/ContactCTA";
 import Footer from "@/components/Footer";
+import StickyContactBar from "@/components/StickyContactBar";
 import backgroundImage from "@/assets/background.png";
 
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
+      <StickyContactBar />
       <main className="flex-grow relative">
         <HeroSection />
         {/* Background wrapper for all content except Hero and Footer */}

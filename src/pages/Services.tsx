@@ -1,5 +1,6 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import StickyContactBar from "@/components/StickyContactBar";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -71,6 +72,7 @@ const Services = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navigation />
+      <StickyContactBar />
 
       {/* Hero Section */}
       <section className="pt-24 pb-20 bg-gradient-hero">
@@ -153,7 +155,7 @@ const Services = () => {
           </Button>
         </div>
       </section>
-      
+
       <Footer />
     </div>
   );
