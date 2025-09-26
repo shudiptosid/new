@@ -1,7 +1,8 @@
-import { useLocation } from "react-router-dom";
-import { Calendar, Clock } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Calendar, Clock, X, ArrowLeft } from "lucide-react";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
+import { Button } from "../components/ui/button";
 
 interface Article {
   title: string;
@@ -93,127 +94,91 @@ Optimizing power consumption in IoT devices is not just a design choice — it's
     ],
   },
   rtos: {
-    title: "Real-Time Operating Systems for Embedded Applications",
-    date: "2023-12-20",
-    readTime: "15 min read",
-    category: "RTOS",
+    title: "Real-Time Operating Systems in IoT: A Beginner-Friendly Guide",
+    date: "2024-01-20",
+    readTime: "10 min read",
+    category: "IoT",
     content: [
-      `Choosing and implementing the right RTOS for your project: FreeRTOS, Zephyr, and custom solutions compared.
+      `The Internet of Things (IoT) is everywhere — from smart home devices to industrial automation. As IoT systems become more complex, real-time performance is often required. This is where Real-Time Operating Systems (RTOS) come in. In this article, we'll explain what RTOS is, why it matters in IoT, and how to get started with popular options like FreeRTOS and Zephyr.`,
 
-In today's fast-paced world of embedded systems, real-time performance is often the key to success. Whether you're building a medical device, industrial automation system, or IoT product, you need precise timing, predictable task execution, and efficient resource management. This is where a Real-Time Operating System (RTOS) becomes essential.
+      `🔧 What is an RTOS?
 
-In this article, we will explore what an RTOS is, why you should use one, and compare three popular choices — FreeRTOS, Zephyr, and custom RTOS solutions — so you can make the right decision for your project.`,
+A Real-Time Operating System (RTOS) is a lightweight operating system designed to run tasks with precise timing. Unlike a general-purpose OS (like Windows or Linux), an RTOS focuses on:
 
-      `What is a Real-Time Operating System (RTOS)?
+• Deterministic behavior – tasks run at predictable times
+• Low latency – quick response to external events  
+• Multitasking – ability to handle multiple processes efficiently
 
-An RTOS is a lightweight operating system designed to run real-time applications that require deterministic response times. Unlike general-purpose operating systems like Windows or Linux, an RTOS ensures that critical tasks are executed within a guaranteed time frame.
+This makes RTOS perfect for IoT devices where timing is critical — like reading sensor data every few milliseconds or controlling a motor in real-time.`,
 
-Key Features of RTOS:
+      `🚀 Why Use RTOS in IoT Projects?
 
-• Task Scheduling – Prioritizes tasks based on urgency
-• Deterministic Behavior – Ensures tasks run within predictable time limits
-• Low Latency – Minimal delay in switching between tasks
-• Resource Management – Handles memory, I/O, and CPU efficiently`,
+IoT devices are often resource-constrained and need to be reliable, efficient, and responsive. RTOS helps you achieve this by:
 
-      `Benefits of Using an RTOS in Embedded Systems
+✅ Task Scheduling: Runs tasks based on priority, ensuring critical ones execute first.
+✅ Low Power Consumption: Supports sleep modes to extend battery life.
+✅ Code Maintainability: Breaks your project into modular tasks for easier debugging.
+✅ Real-Time Communication: Ensures sensors, actuators, and network events are handled on time.
 
-Using an RTOS can dramatically improve the performance and reliability of your embedded applications:
+Example: In a smart home thermostat, one task can read temperature data, another controls the display, while a third handles Wi-Fi communication — all without blocking each other.`,
 
-• Improved Responsiveness – Handles real-time events efficiently
-• Modular Design – Easier to scale and maintain large projects
-• Simplified Multitasking – Separate threads for communication, sensing, and control
-• Better Debugging – Built-in tracing and monitoring tools`,
+      `🏆 Popular RTOS Options for IoT
 
-      `Choosing the Right RTOS: FreeRTOS vs. Zephyr vs. Custom RTOS
+Here are two of the most widely used RTOS choices for IoT development:
 
-Let's compare three common approaches to real-time systems:
+1. FreeRTOS
 
-Feature	FreeRTOS	Zephyr OS	Custom RTOS
-License	Open source (MIT)	Open source (Apache 2.0)	Proprietary / In-house
-Hardware Support	Widely supported (MCUs & MPUs)	Strong support for IoT & ARM	Fully customizable
-Community & Support	Large community, great docs	Growing community, backed by Linux Foundation	Limited to internal team
-Complexity	Lightweight, easy to learn	More complex, feature-rich	Depends on your design
-Best For	Small to medium projects, resource-constrained devices	IoT, networking-heavy, scalable projects	Mission-critical, unique applications`,
+• Lightweight & Open Source
+• Supports over 40 microcontroller architectures (ESP32, STM32, ARM Cortex-M)
+• Easy to learn and well-documented
+• Large community and official support from AWS IoT
+• Best For: Beginners and projects where size and simplicity matter.
 
-      `1. FreeRTOS
+2. Zephyr RTOS
 
-FreeRTOS is one of the most popular RTOS options for embedded developers.
+• Feature-rich, scalable, and open source
+• Built-in support for networking stacks (Bluetooth, Wi-Fi, Thread)
+• Ideal for more advanced IoT products
+• Backed by the Linux Foundation
+• Best For: Professional-grade IoT devices and connected systems.`,
 
-Pros:
-✅ Lightweight and minimal footprint
-✅ Large community and excellent documentation
-✅ Easy to integrate with IoT platforms (AWS FreeRTOS, Azure RTOS)
+      `🛠️ How to Get Started
 
-Cons:
-❌ Limited advanced features compared to larger RTOSes
-❌ No built-in device drivers (you must implement them)`,
+1. Choose Your RTOS: FreeRTOS for simple projects, Zephyr for advanced.
+2. Pick Your Hardware: ESP32, STM32, or Raspberry Pi Pico are common boards.
+3. Set Up Toolchain: Install VS Code or PlatformIO for easy development.
+4. Write Modular Tasks: Break your code into small, independent tasks.
+5. Test & Debug: Use RTOS trace tools to analyze task execution.`,
 
-      `2. Zephyr OS
+      `💡 Best Practices for RTOS in IoT
 
-Zephyr is a Linux Foundation project that targets IoT, connected devices, and scalable embedded solutions.
+• Use Priorities Wisely: Don't give every task the highest priority.
+• Avoid Long Delays: Keep tasks short and responsive.
+• Manage Memory Carefully: Free unused memory to avoid crashes.
+• Use Queues & Semaphores: For safe communication between tasks.`,
 
-Pros:
-✅ Advanced networking and security support
-✅ Large ecosystem of supported boards and drivers
-✅ Supports multi-threading and power management
+      `📌 Key Takeaway
 
-Cons:
-❌ Steeper learning curve
-❌ Heavier footprint than FreeRTOS`,
+A Real-Time Operating System can transform your IoT projects, making them more responsive, power-efficient, and scalable. Whether you're building a DIY project with ESP32 or developing a commercial IoT product, understanding RTOS principles is essential.
 
-      `3. Custom RTOS
-
-Sometimes, building your own RTOS can make sense — especially for safety-critical or proprietary systems.
-
-Pros:
-✅ Fully tailored to your needs
-✅ Maximum control over performance and footprint
-✅ Can be optimized for specific hardware
-
-Cons:
-❌ High development and maintenance cost
-❌ Requires deep OS design expertise`,
-
-      `When to Use an RTOS
-
-You should consider using an RTOS if your embedded application needs:
-
-• Real-time performance (low latency, high determinism)
-• Multiple concurrent tasks (sensing, processing, communication)
-• Scalability for future features and updates
-• Networking and connectivity with cloud services
-
-If your project is simple — for example, reading a sensor and blinking an LED — a bare-metal approach might be more efficient.`,
-
-      `Best Practices for RTOS Implementation
-
-• Prioritize Tasks Properly – Misconfigured priorities can lead to missed deadlines
-• Minimize Interrupt Latency – Keep ISR (Interrupt Service Routine) short
-• Avoid Deadlocks – Use mutexes and semaphores carefully
-• Monitor Stack Usage – Prevent crashes due to stack overflow
-• Profile Power Consumption – Use RTOS sleep modes for battery-operated devices`,
-
-      `Key Takeaways
-
-Choosing the right RTOS can make or break your embedded project.
-
-• FreeRTOS is ideal for lightweight, resource-constrained devices
-• Zephyr OS is perfect for IoT and connectivity-heavy applications
-• Custom RTOS is a great option when you need full control and unique features
-
-By understanding your application requirements and hardware constraints, you can select the right RTOS to improve reliability, scalability, and overall performance.`,
+Start simple with FreeRTOS, and when you're ready for more complex, connected systems, try Zephyr. Mastering RTOS will make your IoT solutions robust and production-ready.`,
     ],
   },
 };
 
 const BlogPost = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const path = location.pathname.split("/").pop() || "power-consumption";
   const post = articles[path as keyof typeof articles];
 
   if (!post) {
     return <div>Article not found</div>;
   }
+
+  const handleClose = () => {
+    navigate("/blog");
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -222,6 +187,26 @@ const BlogPost = () => {
         <article className="py-16 md:py-24">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
+              {/* Close Button */}
+              <div className="flex justify-between items-center mb-8">
+                <Button
+                  onClick={handleClose}
+                  variant="outline"
+                  className="flex items-center gap-2 hover:bg-accent hover:text-accent-foreground transition-colors"
+                >
+                  <ArrowLeft className="w-4 h-4" />
+                  Back to Blog
+                </Button>
+                <Button
+                  onClick={handleClose}
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full hover:bg-red-50 hover:text-red-600 hover:border-red-300 transition-colors border-2 w-10 h-10 flex items-center justify-center"
+                  aria-label="Close article"
+                >
+                  <X className="w-5 h-5 text-gray-600 hover:text-red-600" />
+                </Button>
+              </div>
               {/* Header */}
               <header className="mb-12">
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">

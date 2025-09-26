@@ -72,7 +72,7 @@ const Resources = () => {
                 {studyMaterials.map((res, idx) => (
                   <Card
                     key={idx}
-                    className="p-6 flex flex-col justify-between h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-300 group bg-white/90 backdrop-blur-md relative overflow-hidden"
+                    className="p-6 flex flex-col justify-center h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-300 group bg-white/90 backdrop-blur-md relative overflow-hidden"
                   >
                     {/* Decorative accent shape in card */}
                     <div className="absolute -top-8 -right-8 w-24 h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
@@ -87,27 +87,27 @@ const Resources = () => {
                       <h4 className="text-xl font-bold mb-2 group-hover:text-accent transition">
                         {res.title}
                       </h4>
-                      <p className="text-muted-foreground mb-4 text-center">
+                      <p className="text-muted-foreground mb-0 text-center">
                         {res.description}
                       </p>
-                    </div>
-                    <div className="w-full max-w-xs mx-auto -mt-6">
-                      <Select>
-                        <SelectTrigger className="w-full text-lg font-semibold bg-accent/5 border-2 border-accent/30 hover:border-accent/60 transition-colors">
-                          <SelectValue
-                            placeholder="Choose your Stream"
-                            className="text-accent"
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="ece">ECE</SelectItem>
-                          <SelectItem value="cse">CSE</SelectItem>
-                          <SelectItem value="mechatronics">
-                            Mechatronics
-                          </SelectItem>
-                          <SelectItem value="mec">MEC</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="w-full max-w-sm mx-auto mt-3">
+                        <Select>
+                          <SelectTrigger className="w-full text-xl font-semibold bg-accent/5 border-2 border-accent/30 hover:border-accent/60 transition-colors h-14 px-6">
+                            <SelectValue
+                              placeholder="Choose your Stream"
+                              className="text-accent text-xl"
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ece">ECE</SelectItem>
+                            <SelectItem value="cse">CSE</SelectItem>
+                            <SelectItem value="mechatronics">
+                              Mechatronics
+                            </SelectItem>
+                            <SelectItem value="mec">MEC</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </Card>
                 ))}
