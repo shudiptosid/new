@@ -3,7 +3,6 @@ import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Calendar, ArrowRight } from "lucide-react";
-import { useState } from "react";
 
 // Import project images
 import iotSensorImage from "@/assets/Project A.jpg";
@@ -11,6 +10,123 @@ import smartHomeImage from "@/assets/Project B.jpg";
 import industrialImage from "@/assets/Project C.jpg";
 import homeAutomationImage from "@/assets/Project D.jpg";
 import servoVideo from "@/assets/Project E.mp4";
+import logoImage from "@/assets/circuit-crafters-logo.png";
+import { useRef, useEffect, useState } from "react";
+
+// Video Card with duration indicator and progress bar
+const VideoCard = () => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [duration, setDuration] = useState<number | null>(null);
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const [isHovering, setIsHovering] = useState<boolean>(false);
+
+  useEffect(() => {
+    const video = videoRef.current;
+
+    const handleLoadedMetadata = () => {
+      if (video) {
+        setDuration(video.duration);
+      }
+    };
+
+    const handleTimeUpdate = () => {
+      if (video) {
+        setCurrentTime(video.currentTime);
+      }
+    };
+
+    if (video) {
+      video.addEventListener("loadedmetadata", handleLoadedMetadata);
+      video.addEventListener("timeupdate", handleTimeUpdate);
+
+      // If video is already loaded
+      if (video.readyState >= 2) {
+        setDuration(video.duration);
+      }
+    }
+
+    return () => {
+      if (video) {
+        video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+        video.removeEventListener("timeupdate", handleTimeUpdate);
+      }
+    };
+  }, []);
+
+  // Format time to MM:SS
+  const formatTime = (timeInSeconds: number | null): string => {
+    if (timeInSeconds === null) return "--:--";
+
+    const minutes = Math.floor(timeInSeconds / 60);
+    const seconds = Math.floor(timeInSeconds % 60);
+
+    return `${minutes.toString().padStart(2, "0")}:${seconds
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  // Calculate progress percentage
+  const progressPercent = duration ? (currentTime / duration) * 100 : 0;
+
+  return (
+    <div
+      className="lg:col-span-2 h-full rounded-lg overflow-hidden shadow-lg relative"
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      <video
+        ref={videoRef}
+        className="w-full h-full object-cover min-h-[320px]"
+        autoPlay
+        loop
+        muted
+        playsInline
+        src={servoVideo}
+      >
+        Your browser does not support the video tag.
+      </video>
+      <div className="absolute top-0 left-0 p-4">
+        <div className="bg-black/50 p-3 rounded-br-lg inline-block">
+          <h3 className="text-xl font-bold mb-1 text-white">Servo Tinkering</h3>
+          <p className="text-white/90">To Know Servo Arm Angle Value 0-1024</p>
+        </div>
+      </div>
+
+      {/* Logo in top right corner */}
+      <div className="absolute top-4 right-4 z-10">
+        <div className="bg-black/40 p-2 rounded-lg backdrop-blur-sm">
+          <img
+            src={logoImage}
+            alt="Circuit Crafters Logo"
+            className="h-12 w-auto"
+          />
+        </div>
+      </div>
+
+      {/* YouTube-style controls overlay */}
+      <div
+        className={`absolute left-0 right-0 bottom-0 transition-opacity duration-300 ${
+          isHovering ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        {/* Progress bar background */}
+        <div className="w-full h-1 bg-white/30">
+          {/* Progress indicator */}
+          <div
+            className="h-full bg-accent"
+            style={{ width: `${progressPercent}%` }}
+          ></div>
+        </div>
+
+        {/* Time indicators and duration */}
+        <div className="flex justify-between items-center px-4 py-2 bg-gradient-to-t from-black/70 to-transparent">
+          <div className="text-white text-xs">{formatTime(currentTime)}</div>
+          <div className="text-white text-xs">{formatTime(duration)}</div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Expandable card for Remote Heart Rate and SPO2 monitor
 const HeartRateCard = () => {
@@ -591,28 +707,7 @@ const Projects = () => {
             <HeartRateCard />
             <GreenHouseCard />
             <HomeAutomationCard />
-            <div className="lg:col-span-2 h-full rounded-lg overflow-hidden shadow-lg relative">
-              <video
-                className="w-full h-full object-cover min-h-[320px]"
-                autoPlay
-                loop
-                muted
-                playsInline
-                src={servoVideo}
-              >
-                Your browser does not support the video tag.
-              </video>
-              <div className="absolute top-0 left-0 p-4">
-                <div className="bg-black/50 p-3 rounded-br-lg inline-block">
-                  <h3 className="text-xl font-bold mb-1 text-white">
-                    Servo Tinkering
-                  </h3>
-                  <p className="text-white/90">
-                    To Know Servo Arm Angle Value 0-1024
-                  </p>
-                </div>
-              </div>
-            </div>
+            <VideoCard />
           </div>
         </div>
       </section>
