@@ -9,17 +9,21 @@ import { useState } from "react";
 import iotSensorImage from "@/assets/Project A.jpg";
 import smartHomeImage from "@/assets/Project B.jpg";
 import industrialImage from "@/assets/Project C.jpg";
+import homeAutomationImage from "@/assets/Project D.jpg";
+import servoVideo from "@/assets/Project E.mp4";
 
 // Expandable card for Remote Heart Rate and SPO2 monitor
 const HeartRateCard = () => {
   const [expanded, setExpanded] = useState(false);
   return (
     <Card className="p-6 flex flex-col items-center text-center shadow-lg h-full">
-      <img
-        src={industrialImage}
-        alt="Remote Heart Rate and SPO2 monitor"
-        className="h-32 w-full object-cover rounded mb-4"
-      />
+      <div className="w-full h-44 mb-4 overflow-hidden rounded">
+        <img
+          src={industrialImage}
+          alt="Remote Heart Rate and SPO2 monitor"
+          className="w-full h-full object-cover object-center"
+        />
+      </div>
       <h3 className="text-xl font-bold mb-2">
         Remote Heart Rate and SPO₂ Monitor
       </h3>
@@ -133,11 +137,13 @@ const CropShadeCard = () => {
   const [expanded, setExpanded] = useState(false);
   return (
     <Card className="p-6 flex flex-col items-center text-center shadow-lg h-full">
-      <img
-        src={iotSensorImage}
-        alt="Smart Crop Shade Automation System"
-        className="h-32 w-full object-cover rounded mb-4"
-      />
+      <div className="w-full h-44 mb-4 overflow-hidden rounded">
+        <img
+          src={iotSensorImage}
+          alt="Smart Crop Shade Automation System"
+          className="w-full h-full object-cover object-center"
+        />
+      </div>
       <h3 className="text-xl font-bold mb-2">
         Smart Crop Shade Automation System
       </h3>
@@ -239,16 +245,169 @@ const CropShadeCard = () => {
   );
 };
 
+// Expandable card for Smart Home Automation & Appliance Control System
+const HomeAutomationCard = () => {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <Card className="p-4 pb-6 flex flex-col items-center text-center shadow-lg h-full">
+      <div className="w-full h-60 mb-3 overflow-hidden rounded flex items-center justify-center bg-gradient-to-br from-accent/10 to-accent/5">
+        <img
+          src={homeAutomationImage}
+          alt="Smart Home Automation & Appliance Control System"
+          className="max-h-56 object-contain p-1"
+          style={{
+            maxWidth: "100%",
+            filter: "contrast(1.05) brightness(1.02)",
+          }}
+        />
+      </div>
+      <h3 className="text-xl font-bold mb-2">
+        Smart Home Automation & Appliance Control System
+      </h3>
+      <p className="text-muted-foreground mb-2">
+        An ESP32-powered Wi-Fi system with relay control for lights, fans, and
+        appliances — enabling remote switching, real-time monitoring, and energy
+        efficiency.
+      </p>
+      {!expanded ? (
+        <button
+          className="mt-2 px-4 py-2 bg-accent text-white rounded font-semibold shadow hover:bg-accent/90 transition"
+          onClick={() => setExpanded(true)}
+        >
+          Read More
+        </button>
+      ) : (
+        <div className="w-full text-left mt-4">
+          <h4 className="text-lg font-semibold mb-2">Description</h4>
+          <p className="italic mb-4">
+            This system automates home appliance control using an ESP32
+            microcontroller and relay module. It allows users to remotely switch
+            ON/OFF lights, fans, and other devices, improving energy efficiency
+            and convenience. The system is battery-backed, ensuring
+            uninterrupted operation during power cuts.
+          </p>
+          <h4 className="text-2xl font-bold mb-2">Components Used</h4>
+          <table className="w-full mb-4 border rounded-lg overflow-hidden text-sm">
+            <thead>
+              <tr className="bg-accent text-white">
+                <th className="py-2 px-3 text-left">Component</th>
+                <th className="py-2 px-3 text-left">Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="bg-white even:bg-blue-50 border-b">
+                <td className="font-semibold py-2 px-3">
+                  ESP32 Development Board
+                </td>
+                <td className="py-2 px-3">
+                  Acts as the main controller, providing Wi-Fi connectivity and
+                  GPIO control for automation logic.
+                </td>
+              </tr>
+              <tr className="bg-blue-50 even:bg-white border-b">
+                <td className="font-semibold py-2 px-3">
+                  4-Channel Relay Module
+                </td>
+                <td className="py-2 px-3">
+                  Switches multiple home appliances like lights, fans, or plugs.
+                </td>
+              </tr>
+              <tr className="bg-white even:bg-blue-50 border-b">
+                <td className="font-semibold py-2 px-3">
+                  GPIO Expansion Board
+                </td>
+                <td className="py-2 px-3">
+                  Utilizes additional pins of ESP32 for more inputs/outputs.
+                </td>
+              </tr>
+              <tr className="bg-blue-50 even:bg-white border-b">
+                <td className="font-semibold py-2 px-3">
+                  18650 Li-ion Batteries (x2)
+                </td>
+                <td className="py-2 px-3">
+                  Provides backup power during electricity outages.
+                </td>
+              </tr>
+              <tr className="bg-white even:bg-blue-50 border-b">
+                <td className="font-semibold py-2 px-3">
+                  Battery Charging Module
+                </td>
+                <td className="py-2 px-3">
+                  Charges batteries when mains power is available and switches
+                  to backup when needed.
+                </td>
+              </tr>
+              <tr className="bg-blue-50 even:bg-white">
+                <td className="font-semibold py-2 px-3">Wiring & Connectors</td>
+                <td className="py-2 px-3">
+                  Distributes power and connects appliances securely.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <h4 className="text-2xl font-bold mb-2">Working Principle</h4>
+          <ul className="list-disc pl-5 mb-4">
+            <li>
+              The ESP32 connects to Wi-Fi and allows users to control appliances
+              via a mobile app, web dashboard, or voice assistant integration.
+            </li>
+            <li>
+              When a user toggles a command, the ESP32 activates the
+              corresponding relay channel, switching the appliance ON or OFF.
+            </li>
+            <li>
+              The battery charging module keeps the 18650 batteries charged;
+              during a power failure, the system automatically switches to
+              battery mode.
+            </li>
+            <li>
+              Real-time status of appliance states (ON/OFF) can be monitored
+              remotely, reducing energy wastage.
+            </li>
+          </ul>
+          <h4 className="text-2xl font-bold mb-2">Use Cases</h4>
+          <ul className="list-disc pl-5 mb-4">
+            <li>
+              Smart Home Control: Operate lights, fans, and other appliances
+              from anywhere.
+            </li>
+            <li>
+              Energy Efficiency: Schedule device usage and prevent unnecessary
+              power consumption.
+            </li>
+            <li>
+              Power Backup Automation: Continue controlling critical appliances
+              even during power cuts.
+            </li>
+            <li>
+              Scalability: Expandable design supports more GPIOs and appliances
+              as needed.
+            </li>
+          </ul>
+          <button
+            className="mt-2 px-4 py-2 bg-accent text-white rounded font-semibold shadow hover:bg-accent/90 transition"
+            onClick={() => setExpanded(false)}
+          >
+            Show Less
+          </button>
+        </div>
+      )}
+    </Card>
+  );
+};
+
 // Expandable card for Automatic Green House Ambience Control
 const GreenHouseCard = () => {
   const [expanded, setExpanded] = useState(false);
   return (
     <Card className="p-6 flex flex-col items-center text-center shadow-lg h-full">
-      <img
-        src={smartHomeImage}
-        alt="Automatic Green House Ambience Control"
-        className="h-32 w-full object-cover rounded mb-4"
-      />
+      <div className="w-full h-44 mb-4 overflow-hidden rounded">
+        <img
+          src={smartHomeImage}
+          alt="Automatic Green House Ambience Control"
+          className="w-full h-full object-cover object-center"
+        />
+      </div>
       <h3 className="text-xl font-bold mb-2">
         Automatic Green House Ambience Control
       </h3>
@@ -426,11 +585,34 @@ const Projects = () => {
             </p>
           </div>
 
-          {/* Static 2x3 grid for top projects */}
+          {/* Responsive grid with video box */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12">
             <CropShadeCard />
-            <GreenHouseCard />
             <HeartRateCard />
+            <GreenHouseCard />
+            <HomeAutomationCard />
+            <div className="lg:col-span-2 h-full rounded-lg overflow-hidden shadow-lg relative">
+              <video
+                className="w-full h-full object-cover min-h-[320px]"
+                autoPlay
+                loop
+                muted
+                playsInline
+                src={servoVideo}
+              >
+                Your browser does not support the video tag.
+              </video>
+              <div className="absolute top-0 left-0 p-4">
+                <div className="bg-black/50 p-3 rounded-br-lg inline-block">
+                  <h3 className="text-xl font-bold mb-1 text-white">
+                    Servo Tinkering
+                  </h3>
+                  <p className="text-white/90">
+                    To Know Servo Arm Angle Value 0-1024
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
