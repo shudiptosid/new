@@ -22,7 +22,7 @@ const HeroSection = () => {
       <div className="absolute inset-0 bg-gradient-hero opacity-60" />
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 text-center">
+      <div className="relative z-20 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-surface-elevated/10 backdrop-blur-sm rounded-full border border-accent/20 mb-6">

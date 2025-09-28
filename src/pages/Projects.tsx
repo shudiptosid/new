@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Calendar, ArrowRight } from "lucide-react";
+import FloatingIconsFix from "@/components/FloatingIconsFix";
 
 // Import project images
 import iotSensorImage from "@/assets/Project A.jpg";
@@ -668,11 +669,16 @@ const GreenHouseCard = () => {
 
 const Projects = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
+      {/* Floating icons across the projects page */}
+      <div className="fixed inset-0 pointer-events-none z-10">
+        <FloatingIconsFix />
+      </div>
+
       <Navigation />
 
       {/* Hero Section */}
-      <section className="pt-24 pb-20 bg-gradient-hero">
+      <section className="pt-24 pb-20 bg-gradient-hero relative z-20">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-6xl font-bold text-surface-elevated mb-6">
@@ -689,7 +695,7 @@ const Projects = () => {
       </section>
 
       {/* Featured Projects Section */}
-      <section className="py-16 md:py-20">
+      <section className="py-16 md:py-20 relative z-20">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 md:mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 md:mb-6">
