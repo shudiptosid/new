@@ -182,19 +182,19 @@ const FloatingIconsHome: React.FC<FloatingIconsHomeProps> = ({
       // Higher opacity in About section for better visibility
       let baseOpacity;
       if (isTopSection) {
-        baseOpacity = 0.9; // Hero section - increased for bg3.jpg
+        baseOpacity = 0.6; // Hero section - reduced opacity
       } else if (isAboutSection) {
-        baseOpacity = 0.95; // About section - highest opacity
+        baseOpacity = 0.7; // About section - higher but still reduced opacity
       } else if (isBottomSection) {
-        baseOpacity = 0.92; // Bottom section - increased for bg3.jpg
+        baseOpacity = 0.6; // Bottom section - reduced opacity
       } else {
-        baseOpacity = 0.85; // Middle section - increased for bg3.jpg
+        baseOpacity = 0.5; // Middle section - lowest opacity
       }
 
       const opacityVariance = 0.1;
       const opacity = Math.min(
-        1,
-        Math.max(0.7, baseOpacity + (Math.random() - 0.5) * opacityVariance)
+        0.7,
+        Math.max(0.4, baseOpacity + (Math.random() - 0.5) * opacityVariance)
       );
 
       return {
@@ -281,28 +281,28 @@ const FloatingIconsHome: React.FC<FloatingIconsHomeProps> = ({
         // Apply special styling for sections where visibility needs enhancement
         let filterValue;
         if (isAboutSection) {
-          // Enhanced visibility for About/Why Choose Me section - optimized for bg3.jpg
+          // Enhanced visibility for About/Why Choose Me section - optimized for bg3.jpg but more subtle
           filterValue =
-            "drop-shadow(0 0 12px rgba(255,255,255,0.8)) brightness(1.4) contrast(1.15)";
+            "drop-shadow(0 0 8px rgba(255,255,255,0.6)) brightness(1.2) contrast(1.1)";
         } else if (isTopSection || isBottomSection) {
-          // Standard enhanced visibility for top and bottom sections - optimized for bg3.jpg
+          // Standard enhanced visibility for top and bottom sections - optimized for bg3.jpg but more subtle
           filterValue =
-            "drop-shadow(0 0 10px rgba(255,255,255,0.7)) brightness(1.3) contrast(1.1)";
+            "drop-shadow(0 0 6px rgba(255,255,255,0.5)) brightness(1.15) contrast(1.05)";
         } else {
-          // Default styling for middle section - enhanced for bg3.jpg
+          // Default styling for middle section - enhanced for bg3.jpg but more subtle
           filterValue =
-            "drop-shadow(0 0 7px rgba(255,255,255,0.6)) brightness(1.1)";
+            "drop-shadow(0 0 4px rgba(255,255,255,0.4)) brightness(1.05)";
         }
 
         return (
           <div
             key={icon.id}
-            className="absolute transition-all duration-300"
+            className="absolute transition-all duration-300 hover:opacity-70"
             style={{
               width: `${icon.size}px`,
               height: `${icon.size}px`,
               transform: `translate(${icon.x}px, ${icon.y}px) rotate(${icon.rotation}deg)`,
-              transition: "transform 0.2s ease-out",
+              transition: "transform 0.2s ease-out, opacity 0.3s ease",
               opacity: icon.opacity,
               filter: filterValue,
               zIndex: isAboutSection ? 60 : isBottomSection ? 50 : 10, // Highest z-index for About section

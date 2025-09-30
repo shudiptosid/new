@@ -188,13 +188,13 @@ const FloatingIconsFix: React.FC = () => {
       {icons.map((icon) => (
         <div
           key={icon.id}
-          className="absolute opacity-70 hover:opacity-100 transition-all duration-300"
+          className="absolute opacity-40 hover:opacity-70 transition-all duration-300"
           style={{
             width: `${icon.size}px`,
             height: `${icon.size}px`,
             transform: `translate(${icon.x}px, ${icon.y}px) rotate(${icon.rotation}deg)`,
             transition: "transform 0.2s ease-out",
-            filter: "drop-shadow(0 0 4px rgba(255,255,255,0.4))",
+            filter: "drop-shadow(0 0 4px rgba(255,255,255,0.3))",
           }}
         >
           <img
