@@ -15,6 +15,7 @@ import CompletedProjects from "./pages/CompletedProjects";
 import Resources from "./pages/Resources";
 import SortQuestionsPage2 from "./pages/SortQuestionsPage2";
 import BlogPost from "./pages/BlogPost";
+import ECEResources from "./pages/ECEResources";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/completed-projects" element={<CompletedProjects />} />
           <Route path="/resources" element={<Resources />} />
+          <Route path="/resources/ece" element={<ECEResources />} />
           <Route
             path="/resources/questions/2"
             element={<SortQuestionsPage2 />}

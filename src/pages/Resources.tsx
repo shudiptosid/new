@@ -91,7 +91,13 @@ const Resources = () => {
                         {res.description}
                       </p>
                       <div className="w-full max-w-sm mx-auto mt-3">
-                        <Select>
+                        <Select
+                          onValueChange={(value) => {
+                            if (value === "ece") {
+                              navigate("/resources/ece");
+                            }
+                          }}
+                        >
                           <SelectTrigger className="w-full text-xl font-semibold bg-accent/5 border-2 border-accent/30 hover:border-accent/60 transition-colors h-14 px-6">
                             <SelectValue
                               placeholder="Choose your Stream"
