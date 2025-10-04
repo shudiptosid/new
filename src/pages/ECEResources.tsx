@@ -56,6 +56,7 @@ import Transducer from "@/assets/ECE/NOC Introduction to Internet of Things/Tran
 // Import Reference Books
 import CommunicationsNetworkingBook from "@/assets/ECE/Books/Data-Communications-and-Networking-By-Behrouz-A.Forouzan.pdf";
 import IntroToIoTBook from "@/assets/ECE/Books/INTRODUCTION TO IOT by SUDIP MISRA, ANANDARUP MUKHERJEE, ARIJIT ROY.pdf";
+import IoTRajKamalBook from "@/assets/ECE/Books/Internet of things IoT by Raj Kamal Text Book.pdf";
 
 interface PDFFile {
   id: string;
@@ -308,6 +309,13 @@ const ECEResources = () => {
       author: "Sudip Misra, Anandarup Mukherjee, Arijit Roy",
       path: IntroToIoTBook,
       size: 6291456, // Approximate size, will be calculated by browser
+    },
+    {
+      id: "book3",
+      bookName: "Internet of Things (IoT)",
+      author: "Raj Kamal",
+      path: IoTRajKamalBook,
+      size: 7340032, // Approximate size, will be calculated by browser
     },
   ]);
 
