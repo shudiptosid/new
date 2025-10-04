@@ -38,6 +38,24 @@ import CMOSLogic from "@/assets/ECE/Digital Electronics/CMOS Logic.pdf";
 import BooleanAlgebra from "@/assets/ECE/Digital Electronics/Boolean Algebra and Basic Operators.pdf";
 import CombinationalLogicCircuits from "@/assets/ECE/Digital Electronics/Analyses and Synthesis of Combinational Logic Circuits.pdf";
 
+// Import NOC Introduction to Internet of Things PDFs
+import AdvancedTechnologiesSDN from "@/assets/ECE/NOC Introduction to Internet of Things/Advanced Technologies SDN in IIoT P2.pdf";
+import AnalyticsDataManagement from "@/assets/ECE/NOC Introduction to Internet of Things/Analytics and Data Management.pdf";
+import ComponentsCybersecurity from "@/assets/ECE/NOC Introduction to Internet of Things/Components of Cybersecurity.pdf";
+import CyberPhysicalSystems from "@/assets/ECE/NOC Introduction to Internet of Things/Cyber-Physical Systems and Next-Generation Sensors.pdf";
+import HistoricalContext from "@/assets/ECE/NOC Introduction to Internet of Things/Historical Context.pdf";
+import IIoTAnalytics from "@/assets/ECE/NOC Introduction to Internet of Things/IIoT Analytics and Data Management.pdf";
+import IIoTHealthcare from "@/assets/ECE/NOC Introduction to Internet of Things/IIoT Applications Healthcare.pdf";
+import IIoTOilChemical from "@/assets/ECE/NOC Introduction to Internet of Things/IIoT Applications Oil Chemical and Pharma.pdf";
+import Industry40 from "@/assets/ECE/NOC Introduction to Internet of Things/Industry 4.0 – Different Sectors.pdf";
+import IntroLPWAN from "@/assets/ECE/NOC Introduction to Internet of Things/Introduction to LPWAN.pdf";
+import KeyEnablers from "@/assets/ECE/NOC Introduction to Internet of Things/Key Enablers of Industrial IoT.pdf";
+import Transducer from "@/assets/ECE/NOC Introduction to Internet of Things/Transducer.pdf";
+
+// Import Reference Books
+import CommunicationsNetworkingBook from "@/assets/ECE/Books/Data-Communications-and-Networking-By-Behrouz-A.Forouzan.pdf";
+import IntroToIoTBook from "@/assets/ECE/Books/INTRODUCTION TO IOT by SUDIP MISRA, ANANDARUP MUKHERJEE, ARIJIT ROY.pdf";
+
 interface PDFFile {
   id: string;
   name: string;
@@ -170,6 +188,81 @@ const ECEResources = () => {
     },
   ];
 
+  const nocIoTFiles: PDFFile[] = [
+    {
+      id: "noc1",
+      name: "Historical Context",
+      path: HistoricalContext,
+      size: 1500000,
+    },
+    {
+      id: "noc2",
+      name: "Introduction to LPWAN",
+      path: IntroLPWAN,
+      size: 1600000,
+    },
+    {
+      id: "noc3",
+      name: "Key Enablers of Industrial IoT",
+      path: KeyEnablers,
+      size: 1700000,
+    },
+    {
+      id: "noc4",
+      name: "Cyber-Physical Systems and Next-Generation Sensors",
+      path: CyberPhysicalSystems,
+      size: 1800000,
+    },
+    {
+      id: "noc5",
+      name: "Transducer",
+      path: Transducer,
+      size: 1400000,
+    },
+    {
+      id: "noc6",
+      name: "Industry 4.0 – Different Sectors",
+      path: Industry40,
+      size: 1900000,
+    },
+    {
+      id: "noc7",
+      name: "Analytics and Data Management",
+      path: AnalyticsDataManagement,
+      size: 1750000,
+    },
+    {
+      id: "noc8",
+      name: "IIoT Analytics and Data Management",
+      path: IIoTAnalytics,
+      size: 1850000,
+    },
+    {
+      id: "noc9",
+      name: "IIoT Applications Healthcare",
+      path: IIoTHealthcare,
+      size: 1650000,
+    },
+    {
+      id: "noc10",
+      name: "IIoT Applications Oil Chemical and Pharma",
+      path: IIoTOilChemical,
+      size: 1950000,
+    },
+    {
+      id: "noc11",
+      name: "Components of Cybersecurity",
+      path: ComponentsCybersecurity,
+      size: 1550000,
+    },
+    {
+      id: "noc12",
+      name: "Advanced Technologies SDN in IIoT P2",
+      path: AdvancedTechnologiesSDN,
+      size: 2000000,
+    },
+  ];
+
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([
     {
       id: "folder1",
@@ -186,11 +279,11 @@ const ECEResources = () => {
       files: digitalElectronicsFiles,
     },
     {
-      id: "3",
-      name: "Communication Systems Study Guide.docx",
-      size: 987654,
-      uploadDate: "2024-09-20",
-      type: "application/docx",
+      id: "folder3",
+      name: "NOC: Introduction to Internet of Things",
+      type: "folder",
+      uploadDate: "2024-10-04",
+      files: nocIoTFiles,
     },
   ]);
 
@@ -201,14 +294,20 @@ const ECEResources = () => {
 
   // Reference Books State - Add your books here later
   const [referenceBooks, setReferenceBooks] = useState<ReferenceBook[]>([
-    // Example structure - you'll add your actual books here
-    // {
-    //   id: "book1",
-    //   bookName: "Example Book Title",
-    //   author: "Author Name",
-    //   path: "/path/to/book.pdf",
-    //   size: 1234567,
-    // },
+    {
+      id: "book1",
+      bookName: "Data Communications and Networking",
+      author: "Behrouz A. Forouzan",
+      path: CommunicationsNetworkingBook,
+      size: 5242880, // Approximate size, will be calculated by browser
+    },
+    {
+      id: "book2",
+      bookName: "Introduction to IoT",
+      author: "Sudip Misra, Anandarup Mukherjee, Arijit Roy",
+      path: IntroToIoTBook,
+      size: 6291456, // Approximate size, will be calculated by browser
+    },
   ]);
 
   const toggleFolder = (folderId: string) => {
@@ -555,11 +654,10 @@ const ECEResources = () => {
                                         `${book.bookName}.pdf`
                                       )
                                     }
-                                    className="h-8 px-3 text-primary hover:text-primary/80 hover:bg-primary/10 border border-primary/30"
+                                    className="h-8 px-2 text-primary hover:text-primary/80 hover:bg-primary/10 border border-primary/30"
                                     title="Download Book"
                                   >
-                                    <Download className="w-4 h-4 mr-1" />
-                                    <span className="text-xs">Download</span>
+                                    <Download className="w-4 h-4" />
                                   </Button>
                                 </div>
                               </div>
