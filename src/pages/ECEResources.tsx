@@ -26,6 +26,17 @@ import EmbeddedProcessorsII from "@/assets/ECE/Embeded System/Embedded Processor
 import EmbeddedProcessorsI from "@/assets/ECE/Embeded System/Embedded Processors - I.pdf";
 import DigitalSignalProcessors from "@/assets/ECE/Embeded System/Digital Signal Processors.pdf";
 
+// Import Digital Electronics PDFs
+import AdditionalLogicOperations from "@/assets/ECE/Digital Electronics/Additional Logic Operations .pdf";
+import TransistorTransistorLogic from "@/assets/ECE/Digital Electronics/Transistor-Transistor Logic (TTL) .pdf";
+import NumberSystem from "@/assets/ECE/Digital Electronics/Number System.pdf";
+import Memories from "@/assets/ECE/Digital Electronics/MEMORIES.pdf";
+import LogicExpressionMinimization from "@/assets/ECE/Digital Electronics/Logic Expression Minimization.pdf";
+import NumberBaseConversions from "@/assets/ECE/Digital Electronics/Introduction - Number Base Conversions.pdf";
+import CMOSLogic from "@/assets/ECE/Digital Electronics/CMOS Logic.pdf";
+import BooleanAlgebra from "@/assets/ECE/Digital Electronics/Boolean Algebra and Basic Operators.pdf";
+import CombinationalLogicCircuits from "@/assets/ECE/Digital Electronics/Analyses and Synthesis of Combinational Logic Circuits.pdf";
+
 interface PDFFile {
   id: string;
   name: string;
@@ -93,6 +104,63 @@ const ECEResources = () => {
     },
   ];
 
+  const digitalElectronicsFiles: PDFFile[] = [
+    {
+      id: "de1",
+      name: "Additional Logic Operations",
+      path: AdditionalLogicOperations,
+      size: 2456789,
+    },
+    {
+      id: "de2",
+      name: "Analyses and Synthesis of Combinational Logic Circuits",
+      path: CombinationalLogicCircuits,
+      size: 2134567,
+    },
+    {
+      id: "de3",
+      name: "Boolean Algebra and Basic Operators",
+      path: BooleanAlgebra,
+      size: 1987654,
+    },
+    {
+      id: "de4",
+      name: "CMOS Logic",
+      path: CMOSLogic,
+      size: 1876543,
+    },
+    {
+      id: "de5",
+      name: "Introduction - Number Base Conversions",
+      path: NumberBaseConversions,
+      size: 1654321,
+    },
+    {
+      id: "de6",
+      name: "Logic Expression Minimization",
+      path: LogicExpressionMinimization,
+      size: 2012345,
+    },
+    {
+      id: "de7",
+      name: "MEMORIES",
+      path: Memories,
+      size: 2234567,
+    },
+    {
+      id: "de8",
+      name: "Number System",
+      path: NumberSystem,
+      size: 1765432,
+    },
+    {
+      id: "de9",
+      name: "Transistor-Transistor Logic (TTL)",
+      path: TransistorTransistorLogic,
+      size: 2098765,
+    },
+  ];
+
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([
     {
       id: "folder1",
@@ -102,11 +170,11 @@ const ECEResources = () => {
       files: embeddedSystemFiles,
     },
     {
-      id: "2",
-      name: "VLSI Design Tutorial.pdf",
-      size: 1876543,
-      uploadDate: "2024-09-25",
-      type: "application/pdf",
+      id: "folder2",
+      name: "Digital Electronics",
+      type: "folder",
+      uploadDate: "2024-09-27",
+      files: digitalElectronicsFiles,
     },
     {
       id: "3",
