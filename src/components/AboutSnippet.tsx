@@ -17,7 +17,7 @@ const AboutSnippet = () => {
     },
     {
       icon: <Clock className="w-5 h-5" />,
-      text: "24h Response Time",
+      text: "4h Response Time",
     },
   ];
 
@@ -112,8 +112,8 @@ const AboutSnippet = () => {
               </div>
             </div>
 
-            {/* Card Content */}
-            <Card className="relative -mt-16 pt-20 pb-8 px-6 md:px-8 shadow-xl bg-gradient-to-br from-white to-gray-50/50 border-0">
+            {/* Card Content with Glowing Effect */}
+            <Card className="glow-card relative -mt-16 pt-20 pb-8 px-6 md:px-8 shadow-xl bg-gradient-to-br from-white to-gray-50/50 border-0">
               {/* Decorative top border */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-accent to-blue-600 rounded-full"></div>
 

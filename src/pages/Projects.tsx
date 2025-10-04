@@ -11,7 +11,7 @@ import smartHomeImage from "@/assets/Project B.jpg";
 import industrialImage from "@/assets/Project C.jpg";
 import homeAutomationImage from "@/assets/Project D.jpg";
 import servoVideo from "@/assets/Project E.mp4";
-import logoImage from "@/assets/circuit-crafters-logo.png";
+import logoImage from "@/assets/2nd logo.png";
 import { useRef, useEffect, useState } from "react";
 
 // Video Card with duration indicator and progress bar
@@ -95,7 +95,7 @@ const VideoCard = () => {
 
       {/* Logo in top right corner */}
       <div className="absolute top-4 right-4 z-10">
-        <div className="bg-black/60 p-3 rounded-lg backdrop-blur-md border border-accent/30 shadow-lg glow-accent">
+        <div className="bg-black/70 p-4 rounded-lg backdrop-blur-md border border-accent/30 shadow-lg glow-accent">
           <img
             src={logoImage}
             alt="Circuit Crafters Logo"

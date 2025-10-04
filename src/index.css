@@ -277,4 +277,145 @@ All colors MUST be HSL.
   .glow-accent:hover {
     box-shadow: 0 0 30px rgba(0, 154, 217, 0.5);
   }
+
+  /* Animated trail light effect around logo */
+  @keyframes trail-rotate {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes trail-pulse {
+    0%,
+    100% {
+      opacity: 0.4;
+      box-shadow: 0 0 20px 5px rgba(0, 154, 217, 0.6);
+    }
+    50% {
+      opacity: 0.8;
+      box-shadow: 0 0 40px 10px rgba(0, 154, 217, 0.9);
+    }
+  }
+
+  .logo-trail-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .logo-trail-container::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      rgba(0, 154, 217, 0.8) 60deg,
+      rgba(0, 200, 255, 0.9) 120deg,
+      rgba(0, 154, 217, 0.8) 180deg,
+      transparent 240deg,
+      transparent 360deg
+    );
+    border-radius: 12px;
+    animation: trail-rotate 3s linear infinite;
+    z-index: -1;
+    filter: blur(8px);
+  }
+
+  .logo-trail-container::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    background: radial-gradient(
+      circle,
+      rgba(0, 200, 255, 0.3) 0%,
+      transparent 70%
+    );
+    border-radius: 10px;
+    animation: trail-pulse 2s ease-in-out infinite;
+    z-index: -1;
+  }
+
+  /* Alternative spinning light trail */
+  @keyframes spin-trail {
+    0% {
+      transform: rotate(0deg) scale(1);
+      opacity: 0.6;
+    }
+    50% {
+      transform: rotate(180deg) scale(1.05);
+      opacity: 1;
+    }
+    100% {
+      transform: rotate(360deg) scale(1);
+      opacity: 0.6;
+    }
+  }
+
+  .logo-spin-trail {
+    position: relative;
+    display: inline-block;
+  }
+
+  .logo-spin-trail::before {
+    content: "";
+    position: absolute;
+    inset: -10px;
+    background: linear-gradient(
+      45deg,
+      transparent 30%,
+      rgba(0, 154, 217, 0.6) 50%,
+      rgba(0, 200, 255, 0.8) 60%,
+      transparent 70%
+    );
+    border-radius: 50%;
+    animation: spin-trail 2.5s linear infinite;
+    z-index: -1;
+    filter: blur(10px);
+  }
+
+  /* Glowing effect for Why Choose Me section */
+  @keyframes glow-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 20px rgba(0, 200, 255, 0.3),
+        0 0 40px rgba(0, 154, 217, 0.2), 0 0 60px rgba(0, 200, 255, 0.1),
+        0 8px 24px -4px rgba(0, 0, 0, 0.12);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(0, 200, 255, 0.5),
+        0 0 60px rgba(0, 154, 217, 0.3), 0 0 90px rgba(0, 200, 255, 0.2),
+        0 8px 24px -4px rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  .glow-card {
+    position: relative;
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+
+  .glow-card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(
+      135deg,
+      rgba(0, 200, 255, 0.4) 0%,
+      rgba(0, 154, 217, 0.3) 50%,
+      rgba(0, 200, 255, 0.4) 100%
+    );
+    border-radius: 1rem;
+    z-index: -1;
+    opacity: 0.6;
+  }
+
+  .glow-card:hover {
+    animation-duration: 1.5s;
+  }
+
+  .glow-card:hover::before {
+    opacity: 0.8;
+  }
 }

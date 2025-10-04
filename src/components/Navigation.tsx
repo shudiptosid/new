@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import QuoteDialog from "./QuoteDialog";
-import logoImage from "@/assets/circuit-crafters-logo.png";
+import logoImage from "@/assets/2nd logo.png";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -50,7 +50,7 @@ const Navigation = () => {
             to="/"
             className="flex items-center gap-3 group relative p-2 rounded-lg hover:bg-accent/10 transition-all duration-300"
           >
-            <div className="relative">
+            <div className="relative bg-surface-elevated/90 rounded-lg p-2 -m-2">
               <img
                 src={logoImage}
                 alt="Circuit Crafters Logo"

@@ -90,7 +90,7 @@ const HeroSection = () => {
             </div>
             <div className="text-center">
               <div className="text-2xl sm:text-3xl font-bold text-accent mb-2">
-                24h
+                4h
               </div>
               <div className="text-surface-elevated/70 text-sm sm:text-base">
                 Response Time
