@@ -95,11 +95,15 @@ const VideoCard = () => {
 
       {/* Logo in top right corner */}
       <div className="absolute top-4 right-4 z-10">
-        <div className="bg-black/40 p-2 rounded-lg backdrop-blur-sm">
+        <div className="bg-black/60 p-3 rounded-lg backdrop-blur-md border border-accent/30 shadow-lg glow-accent">
           <img
             src={logoImage}
             alt="Circuit Crafters Logo"
-            className="h-12 w-auto"
+            className="h-14 w-auto brightness-110 contrast-125 saturate-110"
+            style={{
+              filter:
+                "drop-shadow(0 2px 8px rgba(0, 154, 217, 0.4)) brightness(1.15) contrast(1.3)",
+            }}
           />
         </div>
       </div>

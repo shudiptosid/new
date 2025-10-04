@@ -1,3 +1,7 @@
+User-agent: *
+Allow: /
+
+# Specific bot permissions
 User-agent: Googlebot
 Allow: /
 
@@ -9,6 +13,12 @@ Allow: /
 
 User-agent: facebookexternalhit
 Allow: /
+
+# Sitemaps
+Sitemap: https://circuit-crafters.vercel.app/sitemap.xml
+
+# Crawl-delay for better server performance
+Crawl-delay: 1
 
 User-agent: *
 Allow: /

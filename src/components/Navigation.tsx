@@ -8,7 +8,7 @@ import logoImage from "@/assets/circuit-crafters-logo.png";
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  
+
   const navItems = [
     {
       label: "Home",
@@ -46,12 +46,23 @@ const Navigation = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
-            <img
-              src={logoImage}
-              alt="Circuit Crafters Logo"
-              className="h-10 w-auto"
-            />
+          <Link
+            to="/"
+            className="flex items-center gap-3 group relative p-2 rounded-lg hover:bg-accent/10 transition-all duration-300"
+          >
+            <div className="relative">
+              <img
+                src={logoImage}
+                alt="Circuit Crafters Logo"
+                className="h-12 w-auto drop-shadow-lg brightness-110 contrast-125 saturate-110 group-hover:scale-105 transition-transform duration-300"
+                style={{
+                  filter:
+                    "drop-shadow(0 2px 8px rgba(0, 154, 217, 0.3)) brightness(1.1) contrast(1.25)",
+                }}
+              />
+              {/* Glow effect on hover */}
+              <div className="absolute inset-0 bg-accent/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -61,7 +72,9 @@ const Navigation = () => {
                 key={item.href}
                 to={item.href}
                 className={`text-foreground hover:text-accent transition-colors duration-200 text-base px-2 py-1 rounded-md font-medium ${
-                  location.pathname === item.href ? "text-accent font-semibold" : ""
+                  location.pathname === item.href
+                    ? "text-accent font-semibold"
+                    : ""
                 }`}
               >
                 {item.label}

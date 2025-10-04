@@ -1,0 +1,37 @@
+{
+  "name": "Circuit Crafters - IoT Development",
+  "short_name": "Circuit Crafters",
+  "description": "Professional embedded systems development, IoT solutions, and firmware engineering",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#001a33",
+  "theme_color": "#001a33",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/opengraph-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "categories": ["business", "education", "productivity"],
+  "screenshots": [
+    {
+      "src": "/opengraph-image.png",
+      "sizes": "1200x630",
+      "type": "image/png"
+    }
+  ]
+}

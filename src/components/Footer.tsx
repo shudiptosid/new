@@ -15,10 +15,10 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-foreground">
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent drop-shadow-lg">
               Circuit Crafters
             </h3>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground font-medium">
               Expert firmware and IoT prototyping solutions for innovative
               embedded systems.
             </p>
