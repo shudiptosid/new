@@ -1,3 +1,4 @@
+// ECE Resources Page - Updated with NOC IoT folder and Reference Books
 import React, { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
