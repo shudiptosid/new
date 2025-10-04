@@ -4,7 +4,42 @@ import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import ContactCTA from "@/components/ContactCTA";
-import { Upload, FileText, X, Download, Calendar } from "lucide-react";
+import {
+  Upload,
+  FileText,
+  X,
+  Download,
+  Calendar,
+  Folder,
+  ChevronDown,
+  ChevronRight,
+  Eye,
+} from "lucide-react";
+
+// Import Embedded System PDFs
+import MemoryInterfacing from "@/assets/ECE/Embeded System/Memory-Interfacing.pdf";
+import MemoryII from "@/assets/ECE/Embeded System/Memory-II.pdf";
+import MemoryI from "@/assets/ECE/Embeded System/Memory-I.pdf";
+import GeneralPurposeProcessorsII from "@/assets/ECE/Embeded System/General Purpose Processors - II.pdf";
+import GeneralPurposeProcessorsI from "@/assets/ECE/Embeded System/General Purpose Processors - I.pdf";
+import EmbeddedProcessorsII from "@/assets/ECE/Embeded System/Embedded Processors - II.pdf";
+import EmbeddedProcessorsI from "@/assets/ECE/Embeded System/Embedded Processors - I.pdf";
+import DigitalSignalProcessors from "@/assets/ECE/Embeded System/Digital Signal Processors.pdf";
+
+interface PDFFile {
+  id: string;
+  name: string;
+  path: string;
+  size: number;
+}
+
+interface FolderItem {
+  id: string;
+  name: string;
+  type: "folder";
+  uploadDate: string;
+  files: PDFFile[];
+}
 
 interface UploadedFile {
   id: string;
@@ -14,14 +49,57 @@ interface UploadedFile {
   type: string;
 }
 
+type LibraryItem = FolderItem | UploadedFile;
+
 const ECEResources = () => {
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
+  const embeddedSystemFiles: PDFFile[] = [
     {
-      id: "1",
-      name: "Digital Signal Processing - Lecture Notes.pdf",
-      size: 2456789,
+      id: "es1",
+      name: "Digital Signal Processors",
+      path: DigitalSignalProcessors,
+      size: 1234567,
+    },
+    {
+      id: "es2",
+      name: "Embedded Processors - I",
+      path: EmbeddedProcessorsI,
+      size: 987654,
+    },
+    {
+      id: "es3",
+      name: "Embedded Processors - II",
+      path: EmbeddedProcessorsII,
+      size: 1098765,
+    },
+    {
+      id: "es4",
+      name: "General Purpose Processors - I",
+      path: GeneralPurposeProcessorsI,
+      size: 1123456,
+    },
+    {
+      id: "es5",
+      name: "General Purpose Processors - II",
+      path: GeneralPurposeProcessorsII,
+      size: 1234890,
+    },
+    { id: "es6", name: "Memory - I", path: MemoryI, size: 876543 },
+    { id: "es7", name: "Memory - II", path: MemoryII, size: 923456 },
+    {
+      id: "es8",
+      name: "Memory Interfacing",
+      path: MemoryInterfacing,
+      size: 1045678,
+    },
+  ];
+
+  const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([
+    {
+      id: "folder1",
+      name: "Embedded System",
+      type: "folder",
       uploadDate: "2024-09-28",
-      type: "application/pdf",
+      files: embeddedSystemFiles,
     },
     {
       id: "2",
@@ -38,40 +116,37 @@ const ECEResources = () => {
       type: "application/docx",
     },
   ]);
+
+  const [expandedFolders, setExpandedFolders] = useState<Set<string>>(
+    new Set()
+  );
   const [isDragging, setIsDragging] = useState(false);
 
-  const handleFileUpload = (files: FileList | null) => {
-    if (!files) return;
-
-    const newFiles: UploadedFile[] = Array.from(files).map((file) => ({
-      id: Math.random().toString(36).substr(2, 9),
-      name: file.name,
-      size: file.size,
-      uploadDate: new Date().toISOString().split("T")[0],
-      type: file.type,
-    }));
-
-    setUploadedFiles([...newFiles, ...uploadedFiles]);
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    handleFileUpload(e.dataTransfer.files);
+  const toggleFolder = (folderId: string) => {
+    setExpandedFolders((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(folderId)) {
+        newSet.delete(folderId);
+      } else {
+        newSet.add(folderId);
+      }
+      return newSet;
+    });
   };
 
   const handleRemoveFile = (id: string) => {
-    setUploadedFiles(uploadedFiles.filter((file) => file.id !== id));
+    setLibraryItems(libraryItems.filter((item) => item.id !== id));
+  };
+
+  const handleDownloadPDF = (path: string, fileName: string) => {
+    const link = document.createElement("a");
+    link.href = path;
+    link.download = fileName;
+    link.click();
+  };
+
+  const handleViewPDF = (path: string) => {
+    window.open(path, "_blank");
   };
 
   const formatFileSize = (bytes: number) => {
@@ -124,54 +199,163 @@ const ECEResources = () => {
                   <div className="flex items-center justify-between mb-4">
                     <h4 className="text-xl font-bold text-gray-700 flex items-center gap-2">
                       <FileText className="w-5 h-5 text-accent" />
-                      Uploaded Materials ({uploadedFiles.length})
+                      Learning Materials ({libraryItems.length})
                     </h4>
                   </div>
 
                   <div className="max-h-96 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
-                    {uploadedFiles.map((file) => (
-                      <div
-                        key={file.id}
-                        className="group bg-gradient-to-r from-white to-accent/5 border-2 border-accent/20 rounded-xl p-4 hover:border-accent/60 hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div className="flex items-start gap-3 flex-1 min-w-0">
-                            <div className="p-3 bg-accent/10 rounded-lg group-hover:bg-accent/20 transition-colors">
-                              <FileText className="w-6 h-6 text-accent" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-semibold text-gray-800 truncate group-hover:text-accent transition-colors">
-                                {file.name}
-                              </p>
-                              <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
-                                <span className="flex items-center gap-1">
-                                  <Calendar className="w-3 h-3" />
-                                  {file.uploadDate}
-                                </span>
-                                <span>{formatFileSize(file.size)}</span>
+                    {libraryItems.map((item) => {
+                      const isFolder = "type" in item && item.type === "folder";
+                      const isExpanded =
+                        isFolder && expandedFolders.has(item.id);
+
+                      return (
+                        <div key={item.id} className="space-y-2">
+                          {/* Folder or File Item */}
+                          <div
+                            className={`group bg-gradient-to-r from-white to-accent/5 border-2 border-accent/20 rounded-xl p-4 hover:border-accent/60 hover:shadow-lg transition-all duration-300 ${
+                              !isFolder ? "hover:scale-[1.02]" : ""
+                            }`}
+                          >
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="flex items-start gap-3 flex-1 min-w-0">
+                                <div
+                                  className={`p-3 bg-accent/10 rounded-lg group-hover:bg-accent/20 transition-colors ${
+                                    isFolder ? "cursor-pointer" : ""
+                                  }`}
+                                  onClick={
+                                    isFolder
+                                      ? () => toggleFolder(item.id)
+                                      : undefined
+                                  }
+                                >
+                                  {isFolder ? (
+                                    <Folder className="w-6 h-6 text-accent" />
+                                  ) : (
+                                    <FileText className="w-6 h-6 text-accent" />
+                                  )}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2">
+                                    {isFolder && (
+                                      <button
+                                        onClick={() => toggleFolder(item.id)}
+                                        className="hover:text-accent transition-colors"
+                                      >
+                                        {isExpanded ? (
+                                          <ChevronDown className="w-4 h-4" />
+                                        ) : (
+                                          <ChevronRight className="w-4 h-4" />
+                                        )}
+                                      </button>
+                                    )}
+                                    <p
+                                      className={`font-semibold text-gray-800 truncate group-hover:text-accent transition-colors ${
+                                        isFolder ? "cursor-pointer" : ""
+                                      }`}
+                                      onClick={
+                                        isFolder
+                                          ? () => toggleFolder(item.id)
+                                          : undefined
+                                      }
+                                    >
+                                      {item.name}
+                                    </p>
+                                  </div>
+                                  <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
+                                    <span className="flex items-center gap-1">
+                                      <Calendar className="w-3 h-3" />
+                                      {item.uploadDate}
+                                    </span>
+                                    {!isFolder && (
+                                      <span>
+                                        {formatFileSize(
+                                          (item as UploadedFile).size
+                                        )}
+                                      </span>
+                                    )}
+                                    {isFolder && (
+                                      <span className="text-accent">
+                                        {(item as FolderItem).files.length}{" "}
+                                        files
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
                               </div>
+                              {!isFolder && (
+                                <div className="flex gap-2">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="border-accent/30 text-accent hover:bg-accent hover:text-white transition-all"
+                                  >
+                                    <Download className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => handleRemoveFile(item.id)}
+                                    className="border-red-300 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              )}
                             </div>
                           </div>
-                          <div className="flex gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="border-accent/30 text-accent hover:bg-accent hover:text-white transition-all"
-                            >
-                              <Download className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleRemoveFile(file.id)}
-                              className="border-red-300 text-red-500 hover:bg-red-500 hover:text-white transition-all"
-                            >
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </div>
+
+                          {/* Expanded Folder Content */}
+                          {isFolder && isExpanded && (
+                            <div className="ml-12 space-y-2 animate-in slide-in-from-top">
+                              {(item as FolderItem).files.map((pdf) => (
+                                <div
+                                  key={pdf.id}
+                                  className="bg-white border border-accent/10 rounded-lg p-3 hover:border-accent/40 hover:shadow-md transition-all duration-200"
+                                >
+                                  <div className="flex items-center justify-between gap-3">
+                                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                                      <FileText className="w-4 h-4 text-accent/70 flex-shrink-0" />
+                                      <span className="text-sm font-medium text-gray-700 truncate">
+                                        {pdf.name}
+                                      </span>
+                                      <span className="text-xs text-gray-400 flex-shrink-0">
+                                        {formatFileSize(pdf.size)}
+                                      </span>
+                                    </div>
+                                    <div className="flex gap-1 flex-shrink-0">
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => handleViewPDF(pdf.path)}
+                                        className="h-7 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                        title="View PDF"
+                                      >
+                                        <Eye className="w-3.5 h-3.5" />
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() =>
+                                          handleDownloadPDF(
+                                            pdf.path,
+                                            `${pdf.name}.pdf`
+                                          )
+                                        }
+                                        className="h-7 px-2 text-accent hover:text-accent/80 hover:bg-accent/10"
+                                        title="Download PDF"
+                                      >
+                                        <Download className="w-3.5 h-3.5" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               </div>
