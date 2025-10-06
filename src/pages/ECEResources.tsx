@@ -22,19 +22,7 @@ import {
 
 // Digital Electronics PDFs - Now hosted on Google Drive (no imports needed)
 
-// Import NOC Introduction to Internet of Things PDFs
-import AdvancedTechnologiesSDN from "@/assets/ECE/NOC Introduction to Internet of Things/Advanced Technologies SDN in IIoT P2.pdf";
-import AnalyticsDataManagement from "@/assets/ECE/NOC Introduction to Internet of Things/Analytics and Data Management.pdf";
-import ComponentsCybersecurity from "@/assets/ECE/NOC Introduction to Internet of Things/Components of Cybersecurity.pdf";
-import CyberPhysicalSystems from "@/assets/ECE/NOC Introduction to Internet of Things/Cyber-Physical Systems and Next-Generation Sensors.pdf";
-import HistoricalContext from "@/assets/ECE/NOC Introduction to Internet of Things/Historical Context.pdf";
-import IIoTAnalytics from "@/assets/ECE/NOC Introduction to Internet of Things/IIoT Analytics and Data Management.pdf";
-import IIoTHealthcare from "@/assets/ECE/NOC Introduction to Internet of Things/IIoT Applications Healthcare.pdf";
-import IIoTOilChemical from "@/assets/ECE/NOC Introduction to Internet of Things/IIoT Applications Oil Chemical and Pharma.pdf";
-import Industry40 from "@/assets/ECE/NOC Introduction to Internet of Things/Industry 4.0 – Different Sectors.pdf";
-import IntroLPWAN from "@/assets/ECE/NOC Introduction to Internet of Things/Introduction to LPWAN.pdf";
-import KeyEnablers from "@/assets/ECE/NOC Introduction to Internet of Things/Key Enablers of Industrial IoT.pdf";
-import Transducer from "@/assets/ECE/NOC Introduction to Internet of Things/Transducer.pdf";
+// NOC Introduction to Internet of Things PDFs - Now hosted on Google Drive (no imports needed)
 
 // Import Reference Books
 import CommunicationsNetworkingBook from "@/assets/ECE/Books/Data-Communications-and-Networking-By-Behrouz-A.Forouzan.pdf";
@@ -187,73 +175,73 @@ const ECEResources = () => {
     {
       id: "noc1",
       name: "Historical Context",
-      path: HistoricalContext,
+      path: "https://drive.google.com/file/d/1Dun5agme38OyCnN84SPueqtY-Km1Se_q/view?usp=drive_link",
       size: 1500000,
     },
     {
       id: "noc2",
       name: "Introduction to LPWAN",
-      path: IntroLPWAN,
+      path: "https://drive.google.com/file/d/1VCOLwCamy3ryiVY9tzmSmOnZ24JhbFPY/view?usp=drive_link",
       size: 1600000,
     },
     {
       id: "noc3",
       name: "Key Enablers of Industrial IoT",
-      path: KeyEnablers,
+      path: "https://drive.google.com/file/d/125OnzBUvmp-46PBNEk1xNA9vqQTSvgFB/view?usp=drive_link",
       size: 1700000,
     },
     {
       id: "noc4",
       name: "Cyber-Physical Systems and Next-Generation Sensors",
-      path: CyberPhysicalSystems,
+      path: "https://drive.google.com/file/d/1KFXBbKt07BC_pdJbvyOxPo-ju9PmPhuT/view?usp=drive_link",
       size: 1800000,
     },
     {
       id: "noc5",
       name: "Transducer",
-      path: Transducer,
+      path: "https://drive.google.com/file/d/1fyzELX9Uwgwu3JYqzxzs1jZ-mOkpXEgk/view?usp=drive_link",
       size: 1400000,
     },
     {
       id: "noc6",
       name: "Industry 4.0 – Different Sectors",
-      path: Industry40,
+      path: "https://drive.google.com/file/d/1pSZSVFFiuRPS4MJ_1EoCg3SeAgy45EvH/view?usp=drive_link",
       size: 1900000,
     },
     {
       id: "noc7",
       name: "Analytics and Data Management",
-      path: AnalyticsDataManagement,
+      path: "https://drive.google.com/file/d/1hj62hjimYQnBq9r56JyRmApoFt9Zp3Bn/view?usp=drive_link",
       size: 1750000,
     },
     {
       id: "noc8",
       name: "IIoT Analytics and Data Management",
-      path: IIoTAnalytics,
+      path: "https://drive.google.com/file/d/1ljPq44S2zZ6I_7HF4fMl98ovdCu8Tora/view?usp=drive_link",
       size: 1850000,
     },
     {
       id: "noc9",
       name: "IIoT Applications Healthcare",
-      path: IIoTHealthcare,
+      path: "https://drive.google.com/file/d/18iDY0gXsgysb9TK3l2bZXEwXoHsiH_Cx/view?usp=drive_link",
       size: 1650000,
     },
     {
       id: "noc10",
       name: "IIoT Applications Oil Chemical and Pharma",
-      path: IIoTOilChemical,
+      path: "https://drive.google.com/file/d/10qEP962VPJNkeb6GKhrSfH_1X6s01W4i/view?usp=drive_link",
       size: 1950000,
     },
     {
       id: "noc11",
       name: "Components of Cybersecurity",
-      path: ComponentsCybersecurity,
+      path: "https://drive.google.com/file/d/1lsyvwV9e7g4BQbvLA04sM5QQiolq9Nxo/view?usp=drive_link",
       size: 1550000,
     },
     {
       id: "noc12",
       name: "Advanced Technologies SDN in IIoT P2",
-      path: AdvancedTechnologiesSDN,
+      path: "https://drive.google.com/file/d/1WTCiqZ9eg0g_IkZDlu3H0g3eh3fvccLO/view?usp=drive_link",
       size: 2000000,
     },
   ];
