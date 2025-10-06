@@ -28,16 +28,7 @@ import EmbeddedProcessorsII from "@/assets/ECE/Embeded System/Embedded Processor
 import EmbeddedProcessorsI from "@/assets/ECE/Embeded System/Embedded Processors - I.pdf";
 import DigitalSignalProcessors from "@/assets/ECE/Embeded System/Digital Signal Processors.pdf";
 
-// Import Digital Electronics PDFs
-import AdditionalLogicOperations from "@/assets/ECE/Digital Electronics/Additional Logic Operations .pdf";
-import TransistorTransistorLogic from "@/assets/ECE/Digital Electronics/Transistor-Transistor Logic (TTL) .pdf";
-import NumberSystem from "@/assets/ECE/Digital Electronics/Number System.pdf";
-import Memories from "@/assets/ECE/Digital Electronics/MEMORIES.pdf";
-import LogicExpressionMinimization from "@/assets/ECE/Digital Electronics/Logic Expression Minimization.pdf";
-import NumberBaseConversions from "@/assets/ECE/Digital Electronics/Introduction - Number Base Conversions.pdf";
-import CMOSLogic from "@/assets/ECE/Digital Electronics/CMOS Logic.pdf";
-import BooleanAlgebra from "@/assets/ECE/Digital Electronics/Boolean Algebra and Basic Operators.pdf";
-import CombinationalLogicCircuits from "@/assets/ECE/Digital Electronics/Analyses and Synthesis of Combinational Logic Circuits.pdf";
+// Digital Electronics PDFs - Now hosted on Google Drive (no imports needed)
 
 // Import NOC Introduction to Internet of Things PDFs
 import AdvancedTechnologiesSDN from "@/assets/ECE/NOC Introduction to Internet of Things/Advanced Technologies SDN in IIoT P2.pdf";
@@ -137,55 +128,55 @@ const ECEResources = () => {
     {
       id: "de1",
       name: "Additional Logic Operations",
-      path: AdditionalLogicOperations,
+      path: "https://drive.google.com/file/d/1kydbQ9kKH-e4kX_6pbJvm5mGBjm_7Lga/view?usp=sharing",
       size: 2456789,
     },
     {
       id: "de2",
       name: "Analyses and Synthesis of Combinational Logic Circuits",
-      path: CombinationalLogicCircuits,
+      path: "https://drive.google.com/file/d/1e-qph85A-dxPECsSqwC8_cgznyOgZwjL/view?usp=drive_link",
       size: 2134567,
     },
     {
       id: "de3",
       name: "Boolean Algebra and Basic Operators",
-      path: BooleanAlgebra,
+      path: "https://drive.google.com/file/d/1SY5Qw6Qrwvz6FaYCxtxFaYxX-1RnEtlG/view?usp=drive_link",
       size: 1987654,
     },
     {
       id: "de4",
       name: "CMOS Logic",
-      path: CMOSLogic,
+      path: "https://drive.google.com/file/d/196cfAzTrui6Vm8S-Q4toa1-hF290jdSH/view?usp=drive_link",
       size: 1876543,
     },
     {
       id: "de5",
       name: "Introduction - Number Base Conversions",
-      path: NumberBaseConversions,
+      path: "https://drive.google.com/file/d/1R-CLuKu02f2F8DiBlWsO2J-twxAG9-Sy/view?usp=drive_link",
       size: 1654321,
     },
     {
       id: "de6",
       name: "Logic Expression Minimization",
-      path: LogicExpressionMinimization,
+      path: "https://drive.google.com/file/d/1ybjUcRy20MmEPueJmZU5Og99SMP6-6ER/view?usp=drive_link",
       size: 2012345,
     },
     {
       id: "de7",
       name: "MEMORIES",
-      path: Memories,
+      path: "https://drive.google.com/file/d/1Yx4n4p5tYvIEgipLhmg9jaZvnYZSd0MM/view?usp=drive_link",
       size: 2234567,
     },
     {
       id: "de8",
       name: "Number System",
-      path: NumberSystem,
+      path: "https://drive.google.com/file/d/1_U8TJHU-5iMWGFP435qtN-Lfu-aOysOd/view?usp=drive_link",
       size: 1765432,
     },
     {
       id: "de9",
       name: "Transistor-Transistor Logic (TTL)",
-      path: TransistorTransistorLogic,
+      path: "https://drive.google.com/file/d/1pfbEvRcF9bSGe-KonIBxuhFI-8iPC00O/view?usp=drive_link",
       size: 2098765,
     },
   ];
@@ -335,15 +326,32 @@ const ECEResources = () => {
     setLibraryItems(libraryItems.filter((item) => item.id !== id));
   };
 
+  // Convert Google Drive link to preview/download format
+  const convertGoogleDriveLink = (url: string, type: 'preview' | 'download') => {
+    // If it's already a Google Drive link, convert it
+    if (url.includes('drive.google.com/file/d/')) {
+      const fileIdMatch = url.match(/\/file\/d\/([^/]+)/);
+      if (fileIdMatch) {
+        const fileId = fileIdMatch[1];
+        if (type === 'preview') {
+          return `https://drive.google.com/file/d/${fileId}/preview`;
+        } else {
+          return `https://drive.google.com/uc?export=download&id=${fileId}`;
+        }
+      }
+    }
+    // If it's a local file, return as is
+    return url;
+  };
+
   const handleDownloadPDF = (path: string, fileName: string) => {
-    const link = document.createElement("a");
-    link.href = path;
-    link.download = fileName;
-    link.click();
+    const downloadUrl = convertGoogleDriveLink(path, 'download');
+    window.open(downloadUrl, '_blank');
   };
 
   const handleViewPDF = (path: string) => {
-    window.open(path, "_blank");
+    const previewUrl = convertGoogleDriveLink(path, 'preview');
+    window.open(previewUrl, "_blank");
   };
 
   const formatFileSize = (bytes: number) => {
