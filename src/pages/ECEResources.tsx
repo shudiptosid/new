@@ -18,15 +18,7 @@ import {
   Book,
 } from "lucide-react";
 
-// Import Embedded System PDFs
-import MemoryInterfacing from "@/assets/ECE/Embeded System/Memory-Interfacing.pdf";
-import MemoryII from "@/assets/ECE/Embeded System/Memory-II.pdf";
-import MemoryI from "@/assets/ECE/Embeded System/Memory-I.pdf";
-import GeneralPurposeProcessorsII from "@/assets/ECE/Embeded System/General Purpose Processors - II.pdf";
-import GeneralPurposeProcessorsI from "@/assets/ECE/Embeded System/General Purpose Processors - I.pdf";
-import EmbeddedProcessorsII from "@/assets/ECE/Embeded System/Embedded Processors - II.pdf";
-import EmbeddedProcessorsI from "@/assets/ECE/Embeded System/Embedded Processors - I.pdf";
-import DigitalSignalProcessors from "@/assets/ECE/Embeded System/Digital Signal Processors.pdf";
+// Embedded System PDFs - Now hosted on Google Drive (no imports needed)
 
 // Digital Electronics PDFs - Now hosted on Google Drive (no imports needed)
 
@@ -87,39 +79,49 @@ const ECEResources = () => {
     {
       id: "es1",
       name: "Digital Signal Processors",
-      path: DigitalSignalProcessors,
+      path: "https://drive.google.com/file/d/1jybgzAi0Gle16c1j76F_b8wDZXpG-M3P/view?usp=drive_link",
       size: 1234567,
     },
     {
       id: "es2",
       name: "Embedded Processors - I",
-      path: EmbeddedProcessorsI,
+      path: "https://drive.google.com/file/d/16bfL57AeskpAuCcgYCGWqjWpOVIuDfQS/view?usp=drive_link",
       size: 987654,
     },
     {
       id: "es3",
       name: "Embedded Processors - II",
-      path: EmbeddedProcessorsII,
+      path: "https://drive.google.com/file/d/1HXHQAoJnY9DOFBsIcFoeWL0TIMUJqZXx/view?usp=drive_link",
       size: 1098765,
     },
     {
       id: "es4",
       name: "General Purpose Processors - I",
-      path: GeneralPurposeProcessorsI,
+      path: "https://drive.google.com/file/d/1pAiEeVVk2n12O3svlP7MQL6DEh2SctNT/view?usp=drive_link",
       size: 1123456,
     },
     {
       id: "es5",
       name: "General Purpose Processors - II",
-      path: GeneralPurposeProcessorsII,
+      path: "https://drive.google.com/file/d/1ePTIS0-l61960ckdZDYpPN89SkS261_Q/view?usp=drive_link",
       size: 1234890,
     },
-    { id: "es6", name: "Memory - I", path: MemoryI, size: 876543 },
-    { id: "es7", name: "Memory - II", path: MemoryII, size: 923456 },
+    {
+      id: "es6",
+      name: "Memory - I",
+      path: "https://drive.google.com/file/d/18seOo6qPZOXRqYClCw30UQHidLgsMrw5/view?usp=drive_link",
+      size: 876543,
+    },
+    {
+      id: "es7",
+      name: "Memory - II",
+      path: "https://drive.google.com/file/d/1o9GoUx1-RhL_3qBymdDFhf07nX2vEntH/view?usp=drive_link",
+      size: 923456,
+    },
     {
       id: "es8",
       name: "Memory Interfacing",
-      path: MemoryInterfacing,
+      path: "https://drive.google.com/file/d/1kVq6TPf6d_uX6h-eOJzaHZ59XDD8EYHw/view?usp=drive_link",
       size: 1045678,
     },
   ];
