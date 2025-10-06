@@ -327,13 +327,16 @@ const ECEResources = () => {
   };
 
   // Convert Google Drive link to preview/download format
-  const convertGoogleDriveLink = (url: string, type: 'preview' | 'download') => {
+  const convertGoogleDriveLink = (
+    url: string,
+    type: "preview" | "download"
+  ) => {
     // If it's already a Google Drive link, convert it
-    if (url.includes('drive.google.com/file/d/')) {
+    if (url.includes("drive.google.com/file/d/")) {
       const fileIdMatch = url.match(/\/file\/d\/([^/]+)/);
       if (fileIdMatch) {
         const fileId = fileIdMatch[1];
-        if (type === 'preview') {
+        if (type === "preview") {
           return `https://drive.google.com/file/d/${fileId}/preview`;
         } else {
           return `https://drive.google.com/uc?export=download&id=${fileId}`;
@@ -345,12 +348,12 @@ const ECEResources = () => {
   };
 
   const handleDownloadPDF = (path: string, fileName: string) => {
-    const downloadUrl = convertGoogleDriveLink(path, 'download');
-    window.open(downloadUrl, '_blank');
+    const downloadUrl = convertGoogleDriveLink(path, "download");
+    window.open(downloadUrl, "_blank");
   };
 
   const handleViewPDF = (path: string) => {
-    const previewUrl = convertGoogleDriveLink(path, 'preview');
+    const previewUrl = convertGoogleDriveLink(path, "preview");
     window.open(previewUrl, "_blank");
   };
 
