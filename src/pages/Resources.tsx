@@ -29,6 +29,35 @@ import dht11Img from "@/assets/Sensor/DHT11.png";
 import pirImg from "@/assets/Sensor/PIR.png";
 import servoImg from "@/assets/Sensor/Servo.png";
 import ldrImg from "@/assets/Sensor/LDR.png";
+import accelerometerImg from "@/assets/Sensor/Accelerometer.png";
+import gyroscopeImg from "@/assets/Sensor/Gyroscope Sensor.png";
+import proximityImg from "@/assets/Sensor/Proximity Sensor.png";
+// New Sensor Images (25 more)
+import barometerImg from "@/assets/Sensor/Barometer.png";
+import biometricImg from "@/assets/Sensor/Biometric.png";
+import bloodPressureImg from "@/assets/Sensor/Blood Pressure.png";
+import capacitiveImg from "@/assets/Sensor/Capacitive.png";
+import coImg from "@/assets/Sensor/CO .png";
+import colorImg from "@/assets/Sensor/Color.png";
+import faceRecognitionImg from "@/assets/Sensor/Face Recognition Sensor.png";
+import forceImg from "@/assets/Sensor/Force.png";
+import gasImg from "@/assets/Sensor/gas.png";
+import gpsImg from "@/assets/Sensor/GPS.png";
+import hallEffectImg from "@/assets/Sensor/Hall Effect.png";
+import heartRateImg from "@/assets/Sensor/Heart Rate.png";
+import imageImg from "@/assets/Sensor/Image.png";
+import irImg from "@/assets/Sensor/IR.png";
+import magnetometerImg from "@/assets/Sensor/magnetometer.png";
+import moistureImg from "@/assets/Sensor/Moisture.png";
+import oxygenImg from "@/assets/Sensor/Oxygen.png";
+import pressureSensorImg from "@/assets/Sensor/Pressure Sensor.png";
+import radiationImg from "@/assets/Sensor/Radiation.png";
+import smokeImg from "@/assets/Sensor/Smoke.png";
+import soundSensorImg from "@/assets/Sensor/Sound Sensor.png";
+import tiltImg from "@/assets/Sensor/Tilt.png";
+import touchImg from "@/assets/Sensor/Touch .png";
+import vibrationImg from "@/assets/Sensor/Vibration.png";
+import weightImg from "@/assets/Sensor/Weight.png";
 
 const studyMaterials = [
   {
@@ -300,7 +329,7 @@ const sensorsData = [
     id: 6,
     name: "Accelerometer",
     description: "Measures acceleration and tilt in three axes (X, Y, Z)",
-    image: "/placeholder.svg", // TODO: Replace with actual image from assets/Sensor/
+    image: accelerometerImg,
     type: "Motion Sensor",
     shortDescription:
       "An accelerometer is a sensor that measures acceleration forces in three axes. Commonly used in smartphones, gaming controllers, and robotics for motion detection and orientation sensing.",
@@ -328,7 +357,7 @@ const sensorsData = [
     id: 7,
     name: "Gyroscope",
     description: "Measures angular velocity and rotation rate",
-    image: "/placeholder.svg", // TODO: Replace with actual image
+    image: gyroscopeImg,
     type: "Motion Sensor",
     shortDescription:
       "A gyroscope sensor measures the rate of rotation around three axes. Essential for drones, smartphones, and navigation systems requiring precise orientation tracking.",
@@ -356,7 +385,7 @@ const sensorsData = [
     id: 8,
     name: "Proximity Sensor",
     description: "Detects presence of nearby objects without physical contact",
-    image: "/placeholder.svg",
+    image: proximityImg,
     type: "Distance Sensor",
     shortDescription:
       "Proximity sensors detect the presence or absence of objects within a certain range without physical contact. Used in smartphones, industrial automation, and touchless switches.",
@@ -384,7 +413,7 @@ const sensorsData = [
     id: 9,
     name: "Magnetometer",
     description: "Measures magnetic field strength and direction",
-    image: "/placeholder.svg",
+    image: magnetometerImg,
     type: "Magnetic Sensor",
     shortDescription:
       "A magnetometer measures the strength and direction of magnetic fields. Used in compasses, metal detectors, and navigation systems.",
@@ -412,7 +441,7 @@ const sensorsData = [
     id: 10,
     name: "Barometer",
     description: "Measures atmospheric pressure",
-    image: "/placeholder.svg",
+    image: barometerImg,
     type: "Pressure Sensor",
     shortDescription:
       "A barometer measures atmospheric pressure, used for weather prediction, altitude measurement, and environmental monitoring.",
@@ -441,7 +470,7 @@ const sensorsData = [
     name: "Infrared (IR) Sensor",
     description:
       "Detects infrared radiation for object detection and temperature",
-    image: "/placeholder.svg",
+    image: irImg,
     type: "Optical Sensor",
     shortDescription:
       "Infrared sensors detect infrared radiation emitted by objects. Used in remote controls, night vision, temperature measurement, and motion detection.",
@@ -470,7 +499,7 @@ const sensorsData = [
     id: 12,
     name: "Pressure Sensor",
     description: "Measures force per unit area in gases or liquids",
-    image: "/placeholder.svg",
+    image: pressureSensorImg,
     type: "Pressure Sensor",
     shortDescription:
       "Pressure sensors measure the force exerted by gases or liquids. Used in automotive, medical devices, industrial control, and weather monitoring.",
@@ -498,7 +527,7 @@ const sensorsData = [
     id: 13,
     name: "GPS Sensor",
     description: "Determines geographic location using satellite signals",
-    image: "/placeholder.svg",
+    image: gpsImg,
     type: "Location Sensor",
     shortDescription:
       "GPS (Global Positioning System) sensors receive signals from satellites to determine precise geographic location, velocity, and time. Essential for navigation and tracking.",
@@ -526,7 +555,7 @@ const sensorsData = [
     id: 14,
     name: "Heart Rate Sensor",
     description: "Measures heart beat rate using optical or electrical methods",
-    image: "/placeholder.svg",
+    image: heartRateImg,
     type: "Biometric Sensor",
     shortDescription:
       "Heart rate sensors measure pulse rate using photoplethysmography (PPG) or electrocardiography (ECG). Used in fitness trackers, medical devices, and health monitoring.",
@@ -554,7 +583,7 @@ const sensorsData = [
     id: 15,
     name: "Blood Pressure Sensor",
     description: "Measures blood pressure using oscillometric method",
-    image: "/placeholder.svg",
+    image: bloodPressureImg,
     type: "Medical Sensor",
     shortDescription:
       "Blood pressure sensors measure systolic and diastolic blood pressure. Used in medical devices, health monitoring systems, and telemedicine applications.",
@@ -583,7 +612,7 @@ const sensorsData = [
     id: 16,
     name: "Touch Sensor",
     description: "Detects touch or proximity using capacitive technology",
-    image: "/placeholder.svg",
+    image: touchImg,
     type: "Input Sensor",
     shortDescription:
       "Touch sensors detect physical touch or proximity using capacitive, resistive, or piezoelectric technology. Used in smartphones, appliances, and interactive displays.",
@@ -611,7 +640,7 @@ const sensorsData = [
     id: 17,
     name: "Sound Sensor",
     description: "Detects sound waves and measures sound intensity",
-    image: "/placeholder.svg",
+    image: soundSensorImg,
     type: "Audio Sensor",
     shortDescription:
       "Sound sensors detect sound waves and convert them to electrical signals. Used in voice recognition, noise monitoring, and sound-activated systems.",
@@ -639,7 +668,7 @@ const sensorsData = [
     id: 18,
     name: "Gas Sensor",
     description: "Detects various gases like CO, CO2, methane, smoke",
-    image: "/placeholder.svg",
+    image: gasImg,
     type: "Chemical Sensor",
     shortDescription:
       "Gas sensors detect the presence and concentration of various gases in the air. Used in safety systems, air quality monitoring, and industrial applications.",
@@ -667,7 +696,7 @@ const sensorsData = [
     id: 19,
     name: "Image Sensor",
     description: "Captures visual images using CCD or CMOS technology",
-    image: "/placeholder.svg",
+    image: imageImg,
     type: "Vision Sensor",
     shortDescription:
       "Image sensors convert optical images into electronic signals. Used in cameras, smartphones, security systems, and machine vision applications.",
@@ -695,7 +724,7 @@ const sensorsData = [
     id: 20,
     name: "Color Sensor",
     description: "Detects and identifies colors using RGB values",
-    image: "/placeholder.svg",
+    image: colorImg,
     type: "Optical Sensor",
     shortDescription:
       "Color sensors detect and differentiate colors by measuring reflected light intensity in RGB wavelengths. Used in sorting, quality control, and robotics.",
@@ -723,7 +752,7 @@ const sensorsData = [
     id: 21,
     name: "Smoke Sensor",
     description: "Detects smoke particles for fire safety systems",
-    image: "/placeholder.svg",
+    image: smokeImg,
     type: "Safety Sensor",
     shortDescription:
       "Smoke sensors detect smoke particles in the air using optical or ionization methods. Critical component in fire alarm systems and safety equipment.",
@@ -751,7 +780,7 @@ const sensorsData = [
     id: 22,
     name: "Moisture Sensor",
     description: "Measures moisture content in soil or materials",
-    image: "/placeholder.svg",
+    image: moistureImg,
     type: "Environmental Sensor",
     shortDescription:
       "Moisture sensors measure water content in soil, wood, or other materials. Used in agriculture, gardening, and building maintenance.",
@@ -779,7 +808,7 @@ const sensorsData = [
     id: 23,
     name: "Vibration Sensor",
     description: "Detects vibration, shock, and mechanical movement",
-    image: "/placeholder.svg",
+    image: vibrationImg,
     type: "Motion Sensor",
     shortDescription:
       "Vibration sensors detect mechanical vibrations, shocks, and oscillations. Used in machinery monitoring, security systems, and structural health monitoring.",
@@ -807,7 +836,7 @@ const sensorsData = [
     id: 24,
     name: "Tilt Sensor",
     description: "Detects orientation and angular position changes",
-    image: "/placeholder.svg",
+    image: tiltImg,
     type: "Position Sensor",
     shortDescription:
       "Tilt sensors detect orientation changes and angular position. Used in gaming, robotics, leveling systems, and safety devices.",
@@ -835,7 +864,7 @@ const sensorsData = [
     id: 25,
     name: "Weight Sensor (Load Cell)",
     description: "Measures weight and force using strain gauge technology",
-    image: "/placeholder.svg",
+    image: weightImg,
     type: "Force Sensor",
     shortDescription:
       "Weight sensors (load cells) measure weight and force using strain gauge technology. Used in scales, industrial weighing, and force measurement applications.",
@@ -863,7 +892,7 @@ const sensorsData = [
     id: 26,
     name: "Force Sensor (FSR)",
     description: "Measures applied force and pressure",
-    image: "/placeholder.svg",
+    image: forceImg,
     type: "Pressure Sensor",
     shortDescription:
       "Force Sensitive Resistors (FSR) change resistance based on applied force. Used in touch interfaces, robotics, and pressure-sensitive applications.",
@@ -891,7 +920,7 @@ const sensorsData = [
     id: 27,
     name: "Capacitive Sensor",
     description: "Detects changes in capacitance for proximity and touch",
-    image: "/placeholder.svg",
+    image: capacitiveImg,
     type: "Proximity Sensor",
     shortDescription:
       "Capacitive sensors detect changes in electrical capacitance caused by proximity or touch. Used in touchscreens, proximity detection, and liquid level sensing.",
@@ -919,7 +948,7 @@ const sensorsData = [
     id: 28,
     name: "Hall Effect Sensor",
     description: "Detects magnetic fields for position and speed sensing",
-    image: "/placeholder.svg",
+    image: hallEffectImg,
     type: "Magnetic Sensor",
     shortDescription:
       "Hall effect sensors detect the presence and strength of magnetic fields. Used in position sensing, speed measurement, and current sensing applications.",
@@ -947,7 +976,7 @@ const sensorsData = [
     id: 29,
     name: "Biometric Sensor",
     description: "Identifies individuals using biological characteristics",
-    image: "/placeholder.svg",
+    image: biometricImg,
     type: "Security Sensor",
     shortDescription:
       "Biometric sensors identify individuals based on unique biological characteristics like fingerprints, iris, face, or voice. Used in security and authentication systems.",
@@ -975,7 +1004,7 @@ const sensorsData = [
     id: 30,
     name: "Facial Recognition Sensor",
     description: "Identifies individuals by analyzing facial features",
-    image: "/placeholder.svg",
+    image: faceRecognitionImg,
     type: "Vision Sensor",
     shortDescription:
       "Facial recognition sensors use AI and image processing to identify individuals based on facial features. Used in security, attendance, and personalized services.",
@@ -1000,39 +1029,10 @@ const sensorsData = [
     ],
   },
   {
-    id: 31,
-    name: "Fingerprint Sensor",
-    description: "Scans and matches fingerprint patterns for authentication",
-    image: "/placeholder.svg",
-    type: "Biometric Sensor",
-    shortDescription:
-      "Fingerprint sensors capture and analyze unique fingerprint ridge patterns for personal identification. Most common biometric authentication method.",
-    workingPrinciple: `<p>Optical or capacitive scanning captures fingerprint image, extracts minutiae points (ridge endings, bifurcations), creates template, compares with stored templates.</p>`,
-    pinDiagram: `<p>Typical pins: VCC, GND, TX, RX (UART), TOUCH (optional)</p>`,
-    useCases: [
-      "📱 Smartphones – Device unlock and payment",
-      "🔒 Access Control – Door locks",
-      "💻 Laptops – Windows Hello",
-      "🏦 Banking – ATM and payment authentication",
-      "⏱️ Attendance – Employee time tracking",
-    ],
-    metaTitle:
-      "Fingerprint Sensor: Biometric Authentication & Arduino Projects",
-    metaDescription:
-      "Learn fingerprint sensor technology, optical vs capacitive, Arduino interfacing, and security system projects.",
-    keywords: [
-      "fingerprint sensor",
-      "biometric sensor",
-      "fingerprint scanner",
-      "Arduino biometric",
-      "touch ID",
-    ],
-  },
-  {
     id: 32,
     name: "Oxygen Sensor",
     description: "Measures oxygen concentration in gases or liquids",
-    image: "/placeholder.svg",
+    image: oxygenImg,
     type: "Chemical Sensor",
     shortDescription:
       "Oxygen sensors measure O2 concentration in air, exhaust gases, or liquids. Used in medical devices, automotive, and environmental monitoring.",
@@ -1060,7 +1060,7 @@ const sensorsData = [
     id: 33,
     name: "Carbon Monoxide (CO) Sensor",
     description: "Detects deadly carbon monoxide gas",
-    image: "/placeholder.svg",
+    image: coImg,
     type: "Safety Sensor",
     shortDescription:
       "CO sensors detect carbon monoxide, a colorless, odorless toxic gas. Critical safety device for homes, vehicles, and industrial spaces.",
@@ -1088,7 +1088,7 @@ const sensorsData = [
     id: 34,
     name: "Radiation Sensor (Geiger Counter)",
     description: "Detects ionizing radiation",
-    image: "/placeholder.svg",
+    image: radiationImg,
     type: "Safety Sensor",
     shortDescription:
       "Radiation sensors detect alpha, beta, gamma, and X-ray radiation. Used in nuclear safety, medical imaging, and environmental monitoring.",
