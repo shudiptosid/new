@@ -13,7 +13,9 @@
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "type-check": "tsc --noEmit",
-    "optimize": "npm run lint:fix && npm run type-check && npm run build:prod"
+    "optimize": "npm run lint:fix && npm run type-check && npm run build:prod",
+    "seo:sitemap": "node generate-sitemap.js",
+    "seo:optimize": "npm run seo:sitemap && npm run build:prod"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

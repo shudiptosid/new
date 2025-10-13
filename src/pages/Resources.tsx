@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -1397,6 +1398,35 @@ const Resources = () => {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen flex flex-col relative">
+      <SEO
+        title="IoT Sensors & Electronics Resources - Complete Learning Guide"
+        description="Comprehensive guide to IoT sensors, actuators, Arduino boards, and electronics resources. Learn about ultrasonic sensors, DHT11, PIR motion detectors, and more with detailed tutorials, pinout diagrams, and real-world applications."
+        keywords={[
+          "IoT sensors",
+          "Arduino sensors",
+          "electronics resources",
+          "sensor tutorials",
+          "ultrasonic sensor HC-SR04",
+          "DHT11 temperature sensor",
+          "PIR motion sensor",
+          "Arduino boards",
+          "ESP32",
+          "Raspberry Pi",
+          "sensor pinout diagrams",
+          "IoT projects",
+          "embedded systems",
+          "electronics learning",
+          "sensor interfacing",
+          "actuators guide",
+          "microcontroller tutorials",
+          "Arduino programming",
+          "sensor applications",
+          "robotics sensors",
+        ]}
+        image="/resources-og-image.jpg"
+        type="website"
+        category="Electronics, IoT, Education"
+      />
       <Navigation />
       <main className="flex-grow relative z-20">
         <section className="relative py-16 min-h-screen bg-gradient-to-br from-blue-50 via-slate-100 to-blue-100 overflow-hidden">
