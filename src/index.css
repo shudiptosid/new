@@ -418,4 +418,227 @@ All colors MUST be HSL.
   .glow-card:hover::before {
     opacity: 0.8;
   }
+
+  /* Floating icons for Resources page - keep them visible behind content */
+  .floating-icons-resources * {
+    pointer-events: none !important;
+  }
+
+  /* ========================================
+     RESPONSIVE DESIGN OPTIMIZATIONS
+     Phone (320px-767px) | Tablet (768px-1023px) | Desktop (1024px+)
+     ======================================== */
+
+  /* Base mobile-first styles */
+  body {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* Ensure images are responsive */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Prevent horizontal scroll on mobile */
+  html,
+  body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  /* Touch-friendly button and link sizes on mobile */
+  @media (max-width: 767px) {
+    button,
+    a {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Larger text for readability on small screens */
+    h1 {
+      font-size: 2rem !important;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 1.75rem !important;
+      line-height: 1.3;
+    }
+
+    h3 {
+      font-size: 1.5rem !important;
+      line-height: 1.3;
+    }
+
+    h4 {
+      font-size: 1.25rem !important;
+      line-height: 1.4;
+    }
+
+    /* Reduce padding on mobile for more content space */
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    /* Stack cards vertically on mobile */
+    .grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Smaller gap on mobile */
+    .gap-8 {
+      gap: 1rem !important;
+    }
+
+    .gap-12 {
+      gap: 1.5rem !important;
+    }
+
+    /* Full width dialogs on mobile */
+    [role="dialog"] {
+      max-width: 95vw !important;
+      max-height: 90vh !important;
+    }
+
+    /* Better mobile navigation */
+    nav {
+      padding: 0.5rem 1rem;
+    }
+
+    /* Reduce floating icon size on mobile */
+    .floating-icons-resources img {
+      max-width: 30px !important;
+      max-height: 30px !important;
+    }
+  }
+
+  /* Tablet optimizations (768px - 1023px) */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+
+    h1 {
+      font-size: 2.5rem !important;
+    }
+
+    h2 {
+      font-size: 2rem !important;
+    }
+
+    /* 2-column grid for tablets */
+    .grid-responsive {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Medium floating icons on tablet */
+    .floating-icons-resources img {
+      max-width: 40px !important;
+      max-height: 40px !important;
+    }
+  }
+
+  /* Desktop optimizations (1024px+) */
+  @media (min-width: 1024px) {
+    .container {
+      max-width: 1280px;
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+
+    h1 {
+      font-size: 3.5rem !important;
+    }
+
+    h2 {
+      font-size: 2.5rem !important;
+    }
+
+    /* Larger hover effects on desktop */
+    button:hover,
+    a:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Full size floating icons on desktop */
+    .floating-icons-resources img {
+      max-width: 50px !important;
+      max-height: 50px !important;
+    }
+  }
+
+  /* Large desktop (1440px+) */
+  @media (min-width: 1440px) {
+    .container {
+      max-width: 1400px;
+    }
+
+    h1 {
+      font-size: 4rem !important;
+    }
+
+    h2 {
+      font-size: 3rem !important;
+    }
+  }
+
+  /* Landscape phone optimization */
+  @media (max-width: 767px) and (orientation: landscape) {
+    .min-h-screen {
+      min-height: 100vh;
+    }
+
+    /* Reduce vertical spacing in landscape */
+    section {
+      padding-top: 2rem !important;
+      padding-bottom: 2rem !important;
+    }
+  }
+
+  /* Print styles */
+  @media print {
+    .no-print,
+    nav,
+    footer,
+    button {
+      display: none !important;
+    }
+
+    body {
+      background: white;
+      color: black;
+    }
+  }
+
+  /* High DPI/Retina displays */
+  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    img {
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+    }
+  }
+
+  /* Reduced motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .floating-icons-resources {
+      display: none;
+    }
+  }
+
+  /* Dark mode support (if needed in future) */
+  @media (prefers-color-scheme: dark) {
+    /* Add dark mode styles here if needed */
+  }
 }

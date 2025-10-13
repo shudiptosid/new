@@ -58,6 +58,12 @@ import tiltImg from "@/assets/Sensor/Tilt.png";
 import touchImg from "@/assets/Sensor/Touch .png";
 import vibrationImg from "@/assets/Sensor/Vibration.png";
 import weightImg from "@/assets/Sensor/Weight.png";
+import flameImg from "@/assets/Sensor/Flame.png";
+import magneticFieldImg from "@/assets/Sensor/Magnetic Field.png";
+import ambientLightImg from "@/assets/Sensor/Ambient Light.png";
+import soilMoistureImg from "@/assets/Sensor/Soil Moisture.png";
+import gestureImg from "@/assets/Sensor/Gesture.png";
+import lidarImg from "@/assets/Sensor/Lidar.png";
 
 const studyMaterials = [
   {
@@ -1116,7 +1122,7 @@ const sensorsData = [
     id: 35,
     name: "Flame Sensor",
     description: "Detects presence of fire using IR radiation",
-    image: "/placeholder.svg",
+    image: flameImg,
     type: "Safety Sensor",
     shortDescription:
       "Flame sensors detect infrared radiation emitted by flames. Used in fire detection, safety systems, and firefighting robots.",
@@ -1141,38 +1147,10 @@ const sensorsData = [
     ],
   },
   {
-    id: 36,
-    name: "Electric Field Sensor",
-    description: "Measures strength and direction of electric fields",
-    image: "/placeholder.svg",
-    type: "Field Sensor",
-    shortDescription:
-      "Electric field sensors detect and measure electric field strength. Used in research, EMF detection, and proximity sensing.",
-    workingPrinciple: `<p>Measures voltage difference in space or uses antenna to detect field oscillations. Output proportional to field strength.</p>`,
-    pinDiagram: `<p>Typical pins: VCC, GND, AOUT (field strength)</p>`,
-    useCases: [
-      "🔬 Scientific Research – Field measurement",
-      "📡 EMF Detection – Electromagnetic pollution monitoring",
-      "⚡ Power Systems – High voltage detection",
-      "🤖 Robotics – Non-contact proximity",
-      "🏭 Industrial – Static charge detection",
-    ],
-    metaTitle: "Electric Field Sensor: EMF Detection & Measurement",
-    metaDescription:
-      "Learn electric field sensing, EMF detection, Arduino interfacing, and electromagnetic field monitoring.",
-    keywords: [
-      "electric field sensor",
-      "EMF sensor",
-      "electromagnetic field",
-      "field detector",
-      "static charge",
-    ],
-  },
-  {
     id: 37,
     name: "Magnetic Field Sensor",
     description: "Detects and measures magnetic field intensity",
-    image: "/placeholder.svg",
+    image: magneticFieldImg,
     type: "Magnetic Sensor",
     shortDescription:
       "Magnetic field sensors measure magnetic flux density. Used in compasses, metal detection, current sensing, and position measurement.",
@@ -1200,7 +1178,7 @@ const sensorsData = [
     id: 38,
     name: "Ambient Light Sensor",
     description: "Measures surrounding light intensity",
-    image: "/placeholder.svg",
+    image: ambientLightImg,
     type: "Optical Sensor",
     shortDescription:
       "Ambient light sensors measure visible light intensity in lux. Used in smartphones, displays, and smart lighting for automatic brightness adjustment.",
@@ -1225,38 +1203,10 @@ const sensorsData = [
     ],
   },
   {
-    id: 39,
-    name: "Distance Sensor",
-    description: "Measures distance using various technologies",
-    image: "/placeholder.svg",
-    type: "Distance Sensor",
-    shortDescription:
-      "Distance sensors measure range to objects using ultrasonic, infrared, laser, or time-of-flight technology. Used in robotics, automation, and parking systems.",
-    workingPrinciple: `<p>Various methods: ultrasonic (sound echo time), IR (triangulation), laser ToF (light travel time). Each suited for different ranges and applications.</p>`,
-    pinDiagram: `<p>Varies by type: Ultrasonic (Trig, Echo), IR/ToF (I2C/UART), Laser (serial/I2C)</p>`,
-    useCases: [
-      "🤖 Robotics – Obstacle avoidance",
-      "🚗 Automotive – Parking assistance",
-      "🚁 Drones – Altitude hold",
-      "🏭 Industrial – Level measurement",
-      "📏 Measurement – Laser rangefinders",
-    ],
-    metaTitle: "Distance Sensor: Ultrasonic, IR, ToF & Laser Comparison",
-    metaDescription:
-      "Complete distance sensor guide: ultrasonic vs IR vs ToF vs laser, Arduino interfacing, and robotics projects.",
-    keywords: [
-      "distance sensor",
-      "ultrasonic",
-      "time of flight",
-      "laser rangefinder",
-      "proximity sensor",
-    ],
-  },
-  {
     id: 40,
     name: "Soil Moisture Sensor",
     description: "Measures water content in soil for irrigation",
-    image: "/placeholder.svg",
+    image: soilMoistureImg,
     type: "Agricultural Sensor",
     shortDescription:
       "Soil moisture sensors measure volumetric water content in soil. Essential for smart irrigation, precision agriculture, and plant care.",
@@ -1284,7 +1234,7 @@ const sensorsData = [
     id: 41,
     name: "Gesture Sensor",
     description: "Detects hand gestures for touchless control",
-    image: "/placeholder.svg",
+    image: gestureImg,
     type: "Motion Sensor",
     shortDescription:
       "Gesture sensors detect hand movements and gestures in 3D space using IR or ToF technology. Enables touchless control interfaces.",
@@ -1312,7 +1262,7 @@ const sensorsData = [
     id: 42,
     name: "LiDAR Sensor",
     description: "Creates 3D maps using laser scanning",
-    image: "/placeholder.svg",
+    image: lidarImg,
     type: "Distance Sensor",
     shortDescription:
       "LiDAR (Light Detection and Ranging) sensors use laser pulses to create detailed 3D maps. Used in autonomous vehicles, drones, and robotics.",
@@ -1370,36 +1320,36 @@ const SensorsAndActuatorsSection = () => {
 
   return (
     <>
-      <div className="mt-8 mb-8 flex flex-col items-center px-4">
-        <h3 className="text-2xl font-bold text-foreground mb-4 text-center">
+      <div className="mt-8 mb-8 flex flex-col items-center px-2 sm:px-4">
+        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-4 text-center">
           Sensors and Actuators
         </h3>
-        <div className="max-w-4xl w-full bg-white/90 rounded-xl shadow-lg border-2 border-accent/20 p-6 hover:bg-white/95 transition-colors duration-300">
+        <div className="max-w-4xl w-full bg-white/90 rounded-xl shadow-lg border-2 border-accent/20 p-3 sm:p-4 md:p-6 hover:bg-white/95 transition-colors duration-300">
           {/* Search Bar */}
           <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search sensors and actuators..."
+              placeholder="Search sensors..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 w-full border-2 border-accent/30 focus:border-accent rounded-lg"
+              className="pl-9 sm:pl-10 pr-4 py-2 text-sm sm:text-base w-full border-2 border-accent/30 focus:border-accent rounded-lg"
             />
           </div>
 
           {/* Scrollable Sensors Grid */}
-          <div className="max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="max-h-[400px] sm:max-h-[500px] md:max-h-[600px] overflow-y-auto pr-1 sm:pr-2 custom-scrollbar">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-3 sm:gap-4">
               {filteredSensors.length > 0 ? (
                 filteredSensors.map((sensor) => (
                   <Card
                     key={sensor.id}
-                    className="p-4 hover:shadow-xl transition-all duration-300 border-2 border-accent/20 hover:border-accent/60 group cursor-pointer"
+                    className="p-3 sm:p-4 hover:shadow-xl transition-all duration-300 border-2 border-accent/20 hover:border-accent/60 group cursor-pointer"
                     onClick={() => handleSensorClick(sensor)}
                   >
-                    <div className="flex gap-4">
+                    <div className="flex gap-3 sm:gap-4">
                       {/* Sensor Image */}
-                      <div className="flex-shrink-0 w-24 h-24 bg-white rounded-lg border-2 border-accent/20 group-hover:border-accent/40 transition overflow-hidden flex items-center justify-center p-2">
+                      <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-white rounded-lg border-2 border-accent/20 group-hover:border-accent/40 transition overflow-hidden flex items-center justify-center p-1 sm:p-2">
                         <img
                           src={sensor.image}
                           alt={sensor.name}
@@ -1407,14 +1357,14 @@ const SensorsAndActuatorsSection = () => {
                         />
                       </div>
                       {/* Sensor Details */}
-                      <div className="flex-1">
-                        <h4 className="text-lg font-bold text-foreground mb-1 group-hover:text-accent transition">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm sm:text-base md:text-lg font-bold text-foreground mb-1 group-hover:text-accent transition truncate">
                           {sensor.name}
                         </h4>
-                        <p className="text-xs text-accent/80 font-semibold mb-2">
+                        <p className="text-xs text-accent/80 font-semibold mb-1 sm:mb-2">
                           {sensor.type}
                         </p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">
                           {sensor.description}
                         </p>
                       </div>
@@ -1446,9 +1396,9 @@ const SensorsAndActuatorsSection = () => {
 const Resources = () => {
   const navigate = useNavigate();
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative">
       <Navigation />
-      <main className="flex-grow">
+      <main className="flex-grow relative z-20">
         <section className="relative py-16 min-h-screen bg-gradient-to-br from-blue-50 via-slate-100 to-blue-100 overflow-hidden">
           {/* Decorative background shapes */}
           <div
@@ -1461,36 +1411,36 @@ const Resources = () => {
           />
           <div className="container mx-auto px-4 relative z-10">
             <div className="mx-auto mb-12 max-w-2xl rounded-2xl bg-white/90 shadow-xl border-2 border-accent/30 p-6 flex flex-col items-center backdrop-blur-md hover:bg-white/95 transition-colors duration-300">
-              <h2 className="text-4xl md:text-5xl font-extrabold text-center drop-shadow-lg bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse px-4">
                 Study Materials & Resources
               </h2>
-              <span className="block mx-auto mt-2 w-24 h-1 rounded-full bg-gradient-to-r from-accent via-primary to-accent opacity-80 animate-pulse" />
+              <span className="block mx-auto mt-2 w-16 sm:w-20 md:w-24 h-1 rounded-full bg-gradient-to-r from-accent via-primary to-accent opacity-80 animate-pulse" />
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12 px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 mb-8 sm:mb-10 md:mb-12 px-2 sm:px-4">
             {/* Study Material Section */}
             <div className="flex flex-col items-center h-full">
-              <h3 className="text-2xl font-bold text-foreground mb-4 mt-0 w-full max-w-2xl text-center mx-auto">
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3 sm:mb-4 mt-0 w-full max-w-2xl text-center mx-auto">
                 Study Material
               </h3>
               <div className="flex-1 flex flex-col justify-center w-full max-w-2xl h-full">
                 {studyMaterials.map((res, idx) => (
                   <Card
                     key={idx}
-                    className="p-6 flex flex-col justify-center h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-300 group bg-white/90 backdrop-blur-md relative overflow-hidden"
+                    className="p-4 sm:p-5 md:p-6 flex flex-col justify-center min-h-[280px] sm:h-[300px] md:h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-300 group bg-white/90 backdrop-blur-md relative overflow-hidden"
                   >
                     {/* Decorative accent shape in card */}
-                    <div className="absolute -top-8 -right-8 w-24 h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
+                    <div className="absolute -top-8 -right-8 w-16 sm:w-20 md:w-24 h-16 sm:h-20 md:h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
                     <div className="flex flex-col items-center">
                       {res.title === "Reference Books and Article" && (
                         <img
                           src={booksImg}
                           alt="Book Reference"
-                          className="w-14 h-14 mb-3 object-contain"
+                          className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 mb-2 sm:mb-3 object-contain"
                         />
                       )}
-                      <h4 className="text-xl font-bold mb-2 group-hover:text-accent transition">
+                      <h4 className="text-lg sm:text-xl font-bold mb-2 group-hover:text-accent transition text-center">
                         {res.title}
                       </h4>
                       <p className="text-muted-foreground mb-0 text-center">
