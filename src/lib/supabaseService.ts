@@ -1,5 +1,11 @@
 import { supabase } from '@/lib/supabaseClient'
 
+// Email validation function
+const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  return emailRegex.test(email);
+}
+
 // Contact form submission
 export const submitContactForm = async (formData: {
   firstName: string
@@ -9,6 +15,11 @@ export const submitContactForm = async (formData: {
   projectType?: string
   message: string
 }) => {
+  // Validate email before database insertion
+  if (!isValidEmail(formData.email)) {
+    throw new Error('Invalid email address format');
+  }
+
   const { data, error } = await supabase
     .from('contacts')
     .insert([
@@ -40,6 +51,11 @@ export const submitQuoteForm = async (formData: {
   projectType?: string
   projectDetails: string
 }) => {
+  // Validate email before database insertion
+  if (!isValidEmail(formData.email)) {
+    throw new Error('Invalid email address format');
+  }
+
   const { data, error } = await supabase
     .from('quotes')
     .insert([

@@ -32,8 +32,25 @@ const QuoteDialog = ({ children }: QuoteDialogProps) => {
     'Complete Project'
   ];
 
+  const validateEmail = (email: string): boolean => {
+    // RFC 5322 compliant email validation regex
+    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    return emailRegex.test(email);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate email before submission
+    if (!validateEmail(formData.email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address (e.g., example@domain.com)",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     
     try {
