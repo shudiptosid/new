@@ -1322,7 +1322,7 @@ const SensorsAndActuatorsSection = () => {
   return (
     <>
       <div className="mt-8 mb-8 flex flex-col items-center px-2 sm:px-4">
-        <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-4 text-center">
+        <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-4 text-center bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-lg">
           Sensors and Actuators
         </h3>
         <div className="max-w-4xl w-full bg-white/90 rounded-xl shadow-lg border-2 border-accent/20 p-3 sm:p-4 md:p-6 hover:bg-white/95 transition-colors duration-300">
