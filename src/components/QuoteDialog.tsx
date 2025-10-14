@@ -1,13 +1,25 @@
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Send } from 'lucide-react';
-import { submitQuoteForm } from '@/lib/supabaseService';
-import { toast } from '@/components/ui/use-toast';
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Send } from "lucide-react";
+import { submitQuoteForm } from "@/lib/supabaseService";
+import { toast } from "@/components/ui/use-toast";
 
 interface QuoteDialogProps {
   children: React.ReactNode;
@@ -17,42 +29,44 @@ const QuoteDialog = ({ children }: QuoteDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    company: '',
-    projectType: 'Consulting',
-    projectDetails: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    company: "",
+    projectType: "Consulting",
+    projectDetails: "",
   });
 
   const projectTypeOptions = [
-    'Consulting',
-    'Prototyping', 
-    'Firmware Development',
-    'Complete Project'
+    "Consulting",
+    "Prototyping",
+    "Firmware Development",
+    "Complete Project",
   ];
 
   const validateEmail = (email: string): boolean => {
     // RFC 5322 compliant email validation regex
-    const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    const emailRegex =
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     return emailRegex.test(email);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validate email before submission
     if (!validateEmail(formData.email)) {
       toast({
         title: "Invalid Email",
-        description: "Please enter a valid email address (e.g., example@domain.com)",
+        description:
+          "Please enter a valid email address (e.g., example@domain.com)",
         variant: "destructive",
       });
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       await submitQuoteForm({
         firstName: formData.firstName,
@@ -62,53 +76,59 @@ const QuoteDialog = ({ children }: QuoteDialogProps) => {
         projectType: formData.projectType,
         projectDetails: formData.projectDetails,
       });
-      
+
       toast({
         title: "Quote Request Submitted!",
-        description: "Thank you for your request. We'll get back to you within 24 hours with a quote.",
+        description:
+          "Thank you for your request. We'll get back to you within 24 hours with a quote.",
       });
-      
+
       // Reset form and close dialog
       setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        company: '',
-        projectType: 'Consulting',
-        projectDetails: ''
+        firstName: "",
+        lastName: "",
+        email: "",
+        company: "",
+        projectType: "Consulting",
+        projectDetails: "",
       });
       setOpen(false);
     } catch (error) {
       toast({
         title: "Error",
-        description: "There was an error submitting your quote request. Please try again.",
+        description:
+          "There was an error submitting your quote request. Please try again.",
         variant: "destructive",
       });
-      console.error('Error submitting quote form:', error);
+      console.error("Error submitting quote form:", error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const words = e.target.value.split(/\s+/).filter(word => word.length > 0);
+  const handleDescriptionChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
+    const words = e.target.value.split(/\s+/).filter((word) => word.length > 0);
     if (words.length <= 1000) {
       setFormData({ ...formData, projectDetails: e.target.value });
     }
   };
 
-  const wordCount = formData.projectDetails.split(/\s+/).filter(word => word.length > 0).length;
+  const wordCount = formData.projectDetails
+    .split(/\s+/)
+    .filter((word) => word.length > 0).length;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-foreground">Get Project Quote</DialogTitle>
+          <DialogTitle className="text-2xl font-bold text-foreground">
+            Get Project Quote
+          </DialogTitle>
         </DialogHeader>
-        
+
         <form onSubmit={handleSubmit} className="space-y-6 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -117,7 +137,9 @@ const QuoteDialog = ({ children }: QuoteDialogProps) => {
                 id="firstName"
                 type="text"
                 value={formData.firstName}
-                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, firstName: e.target.value })
+                }
                 className="mt-1"
                 required
               />
@@ -128,7 +150,9 @@ const QuoteDialog = ({ children }: QuoteDialogProps) => {
                 id="lastName"
                 type="text"
                 value={formData.lastName}
-                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, lastName: e.target.value })
+                }
                 className="mt-1"
               />
             </div>
@@ -140,7 +164,9 @@ const QuoteDialog = ({ children }: QuoteDialogProps) => {
               id="email"
               type="email"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               className="mt-1"
               required
             />
@@ -152,7 +178,9 @@ const QuoteDialog = ({ children }: QuoteDialogProps) => {
               id="company"
               type="text"
               value={formData.company}
-              onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, company: e.target.value })
+              }
               className="mt-1"
             />
           </div>
@@ -161,7 +189,9 @@ const QuoteDialog = ({ children }: QuoteDialogProps) => {
             <Label htmlFor="projectType">Project Type</Label>
             <Select
               value={formData.projectType}
-              onValueChange={(value) => setFormData({ ...formData, projectType: value })}
+              onValueChange={(value) =>
+                setFormData({ ...formData, projectType: value })
+              }
               required
             >
               <SelectTrigger className="mt-1">
@@ -192,8 +222,8 @@ const QuoteDialog = ({ children }: QuoteDialogProps) => {
             </div>
           </div>
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full bg-accent hover:bg-accent/90"
             disabled={isSubmitting}
           >
