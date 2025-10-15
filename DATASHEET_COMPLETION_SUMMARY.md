@@ -9,6 +9,7 @@ All sensor datasheets have been successfully added to the Resources page!
 ## ✅ Completed Sensors (All 39)
 
 ### Batch 1 (Sensors 1-5)
+
 1. **HC-SR04 Ultrasonic Sensor** - SparkFun datasheet
 2. **DHT11 Temperature & Humidity** - Mouser datasheet
 3. **PIR Motion Sensor (HC-SR501)** - Epitran datasheet
@@ -16,6 +17,7 @@ All sensor datasheets have been successfully added to the Resources page!
 5. **LDR (Light Dependent Resistor)** - Components101 datasheet
 
 ### Batch 2 (Sensors 6-15)
+
 6. **Accelerometer (ADXL345)** - Analog Devices datasheet
 7. **Gyroscope (MPU6050)** - InvenSense/TDK datasheet
 8. **Proximity Sensor** - SparkFun GP2Y0A21YK datasheet
@@ -28,6 +30,7 @@ All sensor datasheets have been successfully added to the Resources page!
 15. **Blood Pressure Sensor** - Analog Devices ADXL335 datasheet
 
 ### Batch 3 (Sensors 16-25)
+
 16. **Touch Sensor (TTP223)** - Components101 datasheet
 17. **Sound Sensor (KY-038)** - Components101 datasheet
 18. **Gas Sensor (MQ-2)** - SparkFun datasheet
@@ -40,6 +43,7 @@ All sensor datasheets have been successfully added to the Resources page!
 25. **Weight Sensor / Load Cell (HX711)** - SparkFun datasheet
 
 ### Batch 4 (Sensors 26-39)
+
 26. **Force Sensor (FSR402)** - SparkFun datasheet
 27. **Capacitive Touch Sensor** - Cypress datasheet
 28. **Hall Effect Sensor (A3144)** - Allegro Micro datasheet
@@ -97,6 +101,7 @@ When users click on any sensor in the Resources page, they will now see:
 ## ✨ Feature Highlights
 
 ### For Users:
+
 - ✅ Instant access to official datasheets
 - ✅ One-click PDF download
 - ✅ Trusted manufacturer sources
@@ -104,6 +109,7 @@ When users click on any sensor in the Resources page, they will now see:
 - ✅ Enhanced learning resources
 
 ### For Developers:
+
 - ✅ Clean optional field implementation (`datasheet?: string`)
 - ✅ Conditional rendering in SensorDialog
 - ✅ Extensible for future sensors
@@ -115,6 +121,7 @@ When users click on any sensor in the Resources page, they will now see:
 ## 🚀 Next Steps
 
 ### Testing
+
 1. Run the development server: `npm run dev`
 2. Visit the Resources page
 3. Click on any sensor (e.g., HC-SR04, DHT11, MPU6050)
@@ -124,6 +131,7 @@ When users click on any sensor in the Resources page, they will now see:
 7. Confirm PDF opens in new tab
 
 ### Deployment
+
 - Commit changes to git
 - Push to repository
 - Deploy to production

@@ -5,6 +5,7 @@ This file contains all the datasheet links that have been added to your sensors.
 ## ✅ Added Datasheets (2/39)
 
 1. **HC-SR04 Ultrasonic Sensor**
+
    - Datasheet: https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf
 
 2. **DHT11 Temperature & Humidity Sensor**

@@ -21,6 +21,7 @@ Add a `datasheet` property to any sensor object with the URL to the datasheet PD
 ## 📋 Example: DHT11 Sensor with Datasheet
 
 **Before:**
+
 ```typescript
 {
   id: 2,
@@ -39,6 +40,7 @@ Add a `datasheet` property to any sensor object with the URL to the datasheet PD
 ```
 
 **After (with datasheet):**
+
 ```typescript
 {
   id: 2,
@@ -62,36 +64,43 @@ Add a `datasheet` property to any sensor object with the URL to the datasheet PD
 ## 🎯 Quick Copy-Paste Examples
 
 ### HC-SR04 Ultrasonic Sensor
+
 ```typescript
 datasheet: "https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf",
 ```
 
 ### DHT11 Temperature & Humidity
+
 ```typescript
 datasheet: "https://www.mouser.com/datasheet/2/758/DHT11-Technical-Data-Sheet-Translated-Version-1143054.pdf",
 ```
 
 ### PIR Motion Sensor (HC-SR501)
+
 ```typescript
 datasheet: "https://www.epitran.it/ebayDrive/datasheet/44.pdf",
 ```
 
 ### LDR (Light Dependent Resistor)
+
 ```typescript
 datasheet: "https://components101.com/sites/default/files/component_datasheet/LDR%20Datasheet.pdf",
 ```
 
 ### MQ-2 Gas Sensor
+
 ```typescript
 datasheet: "https://www.pololu.com/file/0J309/MQ2.pdf",
 ```
 
 ### MPU6050 Gyroscope/Accelerometer
+
 ```typescript
 datasheet: "https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf",
 ```
 
 ### Servo Motor (SG90)
+
 ```typescript
 datasheet: "http://www.ee.ic.ac.uk/pcheung/teaching/DE1_EE/stores/sg90_datasheet.pdf",
 ```
@@ -138,6 +147,7 @@ When a user clicks on a sensor with a datasheet:
 ## ❓ Need Help Finding Datasheets?
 
 Just tell me which sensor you need and I'll find the datasheet link for you! Examples:
+
 - "Give me datasheet for DHT11"
 - "Find datasheet for HC-SR04"
 - "I need datasheets for all sensors"
