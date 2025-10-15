@@ -180,6 +180,19 @@ export function ESP8266Dialog() {
               <li>Wireless data logging</li>
             </ul>
           </section>
+
+          {/* Datasheet Link */}
+          <section className="pt-4 border-t border-border">
+            <h3 className="text-xl font-semibold mb-3">📄 Datasheet</h3>
+            <a
+              href="https://www.espressif.com/sites/default/files/documentation/0a-esp8266ex_datasheet_en.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg transition-colors duration-200 font-medium"
+            >
+              View Datasheet
+            </a>
+          </section>
         </div>
       </DialogContent>
     </Dialog>

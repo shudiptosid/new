@@ -222,6 +222,19 @@ export function STM32Dialog() {
               </li>
             </ul>
           </section>
+
+          {/* Datasheet Link */}
+          <section className="pt-4 border-t border-border">
+            <h3 className="text-xl font-semibold mb-3">📄 Datasheet</h3>
+            <a
+              href="https://www.st.com/resource/en/datasheet/stm32f103c8.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 hover:bg-orange-100 text-orange-700 rounded-lg transition-colors duration-200 font-medium"
+            >
+              View Datasheet
+            </a>
+          </section>
         </div>
       </DialogContent>
     </Dialog>

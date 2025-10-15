@@ -161,6 +161,19 @@ export function ESP32Dialog() {
               <li>Using Bluetooth Low Energy (BLE) for wireless control</li>
             </ul>
           </section>
+
+          {/* Datasheet Link */}
+          <section className="pt-4 border-t border-border">
+            <h3 className="text-xl font-semibold mb-3">📄 Datasheet</h3>
+            <a
+              href="https://www.espressif.com/sites/default/files/documentation/esp32_datasheet_en.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg transition-colors duration-200 font-medium"
+            >
+              View Datasheet
+            </a>
+          </section>
         </div>
       </DialogContent>
     </Dialog>

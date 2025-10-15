@@ -120,6 +120,19 @@ export function ArduinoUnoDialog() {
             </ul>
           </section>
         </div>
+
+        {/* Datasheet Link */}
+        <div className="pt-4 border-t border-border">
+          <h3 className="text-xl font-semibold mb-3">📄 Datasheet</h3>
+          <a
+            href="https://docs.arduino.cc/hardware/uno-rev3"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-lg transition-colors duration-200 font-medium"
+          >
+            View Datasheet
+          </a>
+        </div>
       </DialogContent>
     </Dialog>
   );
