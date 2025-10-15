@@ -127,6 +127,7 @@ const sensorsData = [
       "HC-SR04 pinout",
       "ultrasonic distance measurement",
     ],
+    datasheet: "https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf",
   },
   {
     id: 2,
@@ -176,6 +177,7 @@ const sensorsData = [
       "DHT11 pinout",
       "smart home sensor",
     ],
+    datasheet: "https://handsontec.com/dataspecs/sensor/Vibration%20Sensor.pdf",
   },
   {
     id: 3,
@@ -230,6 +232,7 @@ const sensorsData = [
       "IoT motion sensor",
       "PIR sensor working",
     ],
+    datasheet: "http://www.handsontec.com/dataspecs/SR501%20Motion%20Sensor.pdf",
   },
   {
     id: 4,
@@ -283,6 +286,7 @@ const sensorsData = [
       "180 degree servo",
       "micro servo motor",
     ],
+    datasheet: "http://www.ee.ic.ac.uk/pcheung/teaching/DE1_EE/stores/sg90_datasheet.pdf",
   },
   {
     id: 5,
@@ -330,6 +334,7 @@ const sensorsData = [
       "photoresistor working",
       "light sensing circuit",
     ],
+    datasheet: "https://www.rajguruelectronics.com/Product/8749/A87493_LDR%20Module_Datasheet.pdf",
   },
   // ============= NEW SENSORS - Waiting for images and articles =============
   {
@@ -359,6 +364,7 @@ const sensorsData = [
       "MEMS accelerometer",
       "tilt sensor",
     ],
+    datasheet: "https://www.analog.com/media/en/technical-documentation/data-sheets/ADXL345.pdf",
   },
   {
     id: 7,
@@ -387,6 +393,7 @@ const sensorsData = [
       "IMU sensor",
       "drone stabilization",
     ],
+    datasheet: "https://www.robotics.org.za/GY-521",
   },
   {
     id: 8,
@@ -415,6 +422,7 @@ const sensorsData = [
       "touchless sensor",
       "industrial sensor",
     ],
+    datasheet: "https://www.pololu.com/file/0j85/gp2y0a21yk0f.pdf",
   },
   {
     id: 9,
@@ -443,6 +451,7 @@ const sensorsData = [
       "Hall effect sensor",
       "navigation sensor",
     ],
+    datasheet: "https://cdn-shop.adafruit.com/datasheets/HMC5883L_3-Axis_Digital_Compass_IC.pdf",
   },
   {
     id: 10,
@@ -471,6 +480,7 @@ const sensorsData = [
       "altitude sensor",
       "weather station",
     ],
+    datasheet: "https://www.tinytronics.nl/product_files/000198_BMP180.pdf",
   },
   {
     id: 11,
@@ -501,6 +511,7 @@ const sensorsData = [
       "obstacle detection",
       "line follower robot",
     ],
+    datasheet: "http://www.handsontec.com/dataspecs/sensor/IR%20Obstacle%20Detector.pdf",
   },
   {
     id: 12,
@@ -529,6 +540,7 @@ const sensorsData = [
       "tire pressure",
       "industrial sensor",
     ],
+    datasheet: "https://www.nxp.com/docs/en/data-sheet/MPX5700.pdf",
   },
   {
     id: 13,
@@ -557,6 +569,7 @@ const sensorsData = [
       "GPS module",
       "satellite tracking",
     ],
+    datasheet: "https://components.ubitap.com/datasheet/UART_GPS_NEO-6M_UserManual.pdf",
   },
   {
     id: 14,
@@ -585,6 +598,7 @@ const sensorsData = [
       "fitness tracker",
       "biometric sensor",
     ],
+    datasheet: "https://www.analog.com/media/en/technical-documentation/data-sheets/max30100.pdf",
   },
   {
     id: 15,
@@ -614,6 +628,7 @@ const sensorsData = [
       "health monitoring",
       "BP monitor",
     ],
+    datasheet: "https://www.analog-micro.com/products/pressure-sensors/board-mount-pressure-sensors/ams5915/ams5915-an03.pdf",
   },
   {
     id: 16,
@@ -642,6 +657,7 @@ const sensorsData = [
       "touch switch",
       "interactive sensor",
     ],
+    datasheet: "https://www.handsontec.com/dataspecs/sensor/TTP223B+.pdf",
   },
   {
     id: 17,
@@ -670,6 +686,7 @@ const sensorsData = [
       "voice recognition",
       "clap switch",
     ],
+    datasheet: "https://www.handsontec.com/dataspecs/sensor/Sound%20Detector.pdf",
   },
   {
     id: 18,
@@ -698,6 +715,7 @@ const sensorsData = [
       "air quality",
       "smoke detector",
     ],
+    datasheet: "https://www.pololu.com/file/0j309/mq2.pdf",
   },
   {
     id: 19,
@@ -726,6 +744,7 @@ const sensorsData = [
       "camera sensor",
       "computer vision",
     ],
+    datasheet: "https://web.mit.edu/6.111/www/f2016/tools/OV7670_2006.pdf",
   },
   {
     id: 20,
@@ -754,6 +773,7 @@ const sensorsData = [
       "color detection",
       "sorting sensor",
     ],
+    datasheet: "https://www.mouser.com/catalog/specsheets/tcs3200-e11.pdf",
   },
   {
     id: 21,
@@ -782,6 +802,7 @@ const sensorsData = [
       "fire safety",
       "optical smoke detector",
     ],
+    datasheet: "https://www.mouser.com/datasheet/2/1398/Soldered_333111-3395313.pdf",
   },
   {
     id: 22,
@@ -810,6 +831,7 @@ const sensorsData = [
       "irrigation sensor",
       "plant monitoring",
     ],
+    datasheet: "https://handsontec.com/dataspecs/sensor/Soil%20Moisture%20Sensor.pdf",
   },
   {
     id: 23,
@@ -838,6 +860,7 @@ const sensorsData = [
       "machinery monitoring",
       "earthquake sensor",
     ],
+    datasheet: "https://www.mouser.com/datasheet/2/758/DHT11-Technical-Data-Sheet-Translated-Version-1143054.pdf",
   },
   {
     id: 24,
@@ -866,6 +889,7 @@ const sensorsData = [
       "orientation sensor",
       "digital level",
     ],
+    datasheet: "https://www.electro-sensors.com/download_file/567/499",
   },
   {
     id: 25,
@@ -894,6 +918,7 @@ const sensorsData = [
       "HX711",
       "force sensor",
     ],
+    datasheet: "https://www.mouser.com/catalog/specsheets/Soldered_108321%20load%20cell%20module%20high%20precision%205kg.pdf",
   },
   {
     id: 26,
@@ -922,6 +947,7 @@ const sensorsData = [
       "force sensitive resistor",
       "touch sensor",
     ],
+    datasheet: "https://cdn.sparkfun.com/assets/8/a/1/2/0/2010-10-26-DataSheet-FSR402-Layout2.pdf",
   },
   {
     id: 27,
@@ -950,6 +976,7 @@ const sensorsData = [
       "capacitive touch",
       "liquid level sensor",
     ],
+    datasheet: "https://www.cypress.com/file/138911/download",
   },
   {
     id: 28,
@@ -978,6 +1005,7 @@ const sensorsData = [
       "position sensor",
       "current sensor",
     ],
+    datasheet: "https://www.mpja.com/download/a3144eul.pdf",
   },
   {
     id: 29,
@@ -1006,6 +1034,7 @@ const sensorsData = [
       "iris scanner",
       "authentication",
     ],
+    datasheet: "https://www.rajguruelectronics.com/Product/1276/R307%20Fingerprint%20Module.pdf",
   },
   {
     id: 30,
@@ -1034,6 +1063,7 @@ const sensorsData = [
       "biometric authentication",
       "face ID",
     ],
+    datasheet: "https://www.handsontec.com/dataspecs/module/ESP32-CAM.pdf",
   },
   {
     id: 32,
@@ -1062,6 +1092,7 @@ const sensorsData = [
       "air fuel ratio",
       "pulse oximeter",
     ],
+    datasheet: "https://www.farnell.com/datasheets/4376685.pdf",
   },
   {
     id: 33,
@@ -1090,6 +1121,7 @@ const sensorsData = [
       "gas sensor",
       "safety alarm",
     ],
+    datasheet: "https://www.sparkfun.com/datasheets/Sensors/Biometric/MQ-7.pdf",
   },
   {
     id: 34,
@@ -1118,6 +1150,7 @@ const sensorsData = [
       "nuclear sensor",
       "ionizing radiation",
     ],
+    datasheet: "http://f4fdw.free.fr/geiger/DIY%20Geiger%20Counter%20Radiation%20Detector%20Kit%20ver.2.pdf",
   },
   {
     id: 35,
@@ -1146,6 +1179,7 @@ const sensorsData = [
       "fire alarm",
       "firefighting robot",
     ],
+    datasheet: "https://buybestelectronic.com/part-image/7492/datasheet/7492.pdf",
   },
   {
     id: 37,
@@ -1174,6 +1208,7 @@ const sensorsData = [
       "Hall sensor",
       "flux density",
     ],
+    datasheet: "https://cdn-shop.adafruit.com/datasheets/HMC5883L_3-Axis_Digital_Compass_IC.pdf",
   },
   {
     id: 38,
@@ -1202,6 +1237,7 @@ const sensorsData = [
       "BH1750",
       "auto brightness",
     ],
+    datasheet: "https://www.handsontec.com/dataspecs/sensor/BH1750%20Light%20Sensor.pdf",
   },
   {
     id: 40,
@@ -1230,6 +1266,7 @@ const sensorsData = [
       "smart gardening",
       "plant monitoring",
     ],
+    datasheet: "https://rajguruelectronics.com/Product/5538/Capacitive%20Soil%20Moisture%20Sensor%20V2(1).0.pdf",
   },
   {
     id: 41,
@@ -1258,6 +1295,7 @@ const sensorsData = [
       "hand gesture",
       "motion detection",
     ],
+    datasheet: "https://cdn.sparkfun.com/assets/learn_tutorials/3/2/1/Avago-APDS-9960-datasheet.pdf",
   },
   {
     id: 42,
@@ -1286,6 +1324,7 @@ const sensorsData = [
       "SLAM",
       "autonomous vehicle",
     ],
+    datasheet: "https://en.benewake.com/uploadfiles/2024/04/20240426135921367.pdf",
   },
   // Add more sensors and actuators as needed
 ];

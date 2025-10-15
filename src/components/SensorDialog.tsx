@@ -21,6 +21,7 @@ interface SensorDialogProps {
     metaTitle: string;
     metaDescription: string;
     keywords: string[];
+    datasheet?: string; // Optional datasheet URL
   };
 }
 
@@ -139,6 +140,36 @@ export const SensorDialog = ({
               ))}
             </ul>
           </div>
+
+          {/* Datasheet Link */}
+          {sensor.datasheet && (
+            <div className="pt-4 border-t border-border">
+              <h3 className="text-xl font-bold text-foreground mb-3 flex items-center gap-2">
+                📄 Datasheet
+              </h3>
+              <a
+                href={sensor.datasheet}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-lg transition-colors duration-200 font-medium"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                  />
+                </svg>
+                View Datasheet
+              </a>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
