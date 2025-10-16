@@ -26,6 +26,7 @@ import {
   RotateCcw,
   ChevronDown,
   Settings2,
+  AlertCircle,
 } from "lucide-react";
 import productsData from "@/data/productsData.json";
 import Navigation from "@/components/Navigation";
@@ -925,6 +926,23 @@ export default function CostEstimator() {
                         ₹{totalCost.toLocaleString("en-IN")}
                       </span>
                     </div>
+
+                    {/* Important Note - Price Disclaimer */}
+                    {totalCost > 0 && (
+                      <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-amber-50 dark:bg-amber-950/30 border-l-4 border-amber-500 rounded-r-md">
+                        <div className="flex items-start gap-2">
+                          <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-amber-600 dark:text-amber-500 shrink-0 mt-0.5" />
+                          <div className="flex-1">
+                            <p className="text-[10px] sm:text-xs font-semibold text-amber-800 dark:text-amber-400 mb-1">
+                              N.B: Important Notice
+                            </p>
+                            <p className="text-[10px] sm:text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
+                              Prices may not exactly match current market rates. This cost estimation is <span className="font-bold">approximate</span> and subject to change based on availability and market conditions.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
                     {totalCost === 0 && (
                       <p className="text-[10px] sm:text-xs text-muted-foreground text-center mb-3 sm:mb-4">
