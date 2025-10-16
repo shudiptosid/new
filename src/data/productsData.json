@@ -3,7 +3,7 @@
     "id": "SEN-01",
     "serialNo": 1,
     "name": "Ultra Sonic (HC-SR04)",
-    "price": 70,
+    "price": 65,
     "description": "Non-contact distance measurement sensor using sonar; range 2cm-400cm.",
     "category": "Distance Sensor",
     "imageUrl": "/src/assets/Sensor/HC-SR04.png"

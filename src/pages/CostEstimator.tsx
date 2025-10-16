@@ -937,7 +937,11 @@ export default function CostEstimator() {
                               N.B: Important Notice
                             </p>
                             <p className="text-[10px] sm:text-xs text-amber-700 dark:text-amber-300 leading-relaxed">
-                              Prices may not exactly match current market rates. This cost estimation is <span className="font-bold">approximate</span> and subject to change based on availability and market conditions.
+                              Prices may not exactly match current market rates.
+                              This cost estimation is{" "}
+                              <span className="font-bold">approximate</span> and
+                              subject to change based on availability and market
+                              conditions.
                             </p>
                           </div>
                         </div>
