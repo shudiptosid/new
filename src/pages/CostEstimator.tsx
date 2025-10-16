@@ -384,29 +384,29 @@ export default function CostEstimator() {
   return (
     <>
       <Navigation />
-      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 pt-40 pb-8 px-4">
-        <div className="container mx-auto max-w-6xl">
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 pt-24 sm:pt-32 md:pt-40 pb-8 px-3 sm:px-4 md:px-6">
+        <div className="container mx-auto max-w-7xl">
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-accent to-purple-600 bg-clip-text text-transparent">
+          <div className="text-center mb-8 sm:mb-10 md:mb-12">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 md:mb-8 bg-gradient-to-r from-accent to-purple-600 bg-clip-text text-transparent px-2">
               IoT Project Cost Estimator
             </h1>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground text-sm sm:text-base md:text-lg px-4">
               Build your project step-by-step and get instant cost estimates
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
             {/* Left Column - Selection Cards */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-5 md:space-y-6">
               {/* Card 1: Choose MCU */}
-              <Card className="border-2 border-accent/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Cpu className="w-5 h-5 text-accent" />
+              <Card className="border-2 border-accent/20 shadow-sm">
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
+                    <Cpu className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
                     1. Choose Your MCU
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">
                     Select the microcontroller for your project
                   </CardDescription>
                 </CardHeader>
@@ -432,73 +432,78 @@ export default function CostEstimator() {
               </Card>
 
               {/* Card 2: Choose Sensors */}
-              <Card className="border-2 border-accent/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Gauge className="w-5 h-5 text-accent" />
+              <Card className="border-2 border-accent/20 shadow-sm">
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
+                    <Gauge className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
                     2. Choose Sensors
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">
                     Select multiple sensors (optional - {selectedSensors.length}{" "}
                     selected)
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                <CardContent className="space-y-3 sm:space-y-4 max-h-[400px] sm:max-h-[500px] overflow-y-auto pr-1 sm:pr-2">
                   {Object.entries(sensorsByCategory).map(
                     ([category, sensors]) => (
                       <div key={category} className="space-y-2">
-                        <h4 className="font-semibold text-sm text-muted-foreground flex items-center gap-2 sticky top-0 bg-background py-1">
-                          <ChevronDown className="w-4 h-4" />
+                        <h4 className="font-semibold text-xs sm:text-sm text-muted-foreground flex items-center gap-2 sticky top-0 bg-background py-1">
+                          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
                           {category}
                         </h4>
-                        <div className="grid gap-2 pl-6">
+                        <div className="grid gap-2 pl-3 sm:pl-6">
                           {sensors.map((sensor) => (
                             <div
                               key={sensor.id}
-                              className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
+                              className={`p-2 sm:p-3 rounded-lg border transition-colors ${
                                 selectedSensors.includes(sensor.id)
                                   ? "border-accent bg-accent/5"
                                   : "border-border hover:border-accent/50"
                               }`}
                             >
-                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                              {/* Top row: Checkbox, Name, and Price */}
+                              <div className="flex items-start gap-2 sm:gap-3 w-full">
                                 <Checkbox
                                   checked={selectedSensors.includes(sensor.id)}
                                   onCheckedChange={() =>
                                     toggleSensor(sensor.id)
                                   }
+                                  className="shrink-0 mt-0.5"
                                 />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium truncate">
+                                  <p className="text-xs sm:text-sm font-medium leading-tight mb-0.5">
                                     {sensor.name}
                                   </p>
-                                  <p className="text-xs text-muted-foreground">
+                                  <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
                                     {sensor.id}
                                   </p>
                                 </div>
-                                <Badge variant="outline" className="shrink-0">
+                                <Badge variant="outline" className="shrink-0 text-xs font-semibold">
                                   ₹{sensor.price}
                                 </Badge>
                               </div>
+                              
+                              {/* Bottom row: Quantity controls (only when selected) */}
                               {selectedSensors.includes(sensor.id) && (
-                                <div className="flex items-center gap-2 ml-4 shrink-0">
+                                <div className="flex items-center gap-1.5 sm:gap-2 mt-2 ml-6 sm:ml-8">
+                                  <span className="text-[10px] sm:text-xs text-muted-foreground mr-1">Qty:</span>
                                   <Button
                                     variant="outline"
                                     size="icon"
-                                    className="h-7 w-7"
+                                    className="h-6 w-6 sm:h-7 sm:w-7"
                                     onClick={() =>
                                       updateQuantity(sensor.id, -1, "sensor")
                                     }
                                   >
                                     -
                                   </Button>
-                                  <span className="w-8 text-center text-sm font-medium">
+                                  <span className="w-6 sm:w-8 text-center text-xs sm:text-sm font-medium">
                                     {sensorQuantities[sensor.id] || 1}
                                   </span>
                                   <Button
                                     variant="outline"
                                     size="icon"
-                                    className="h-7 w-7"
+                                    className="h-6 w-6 sm:h-7 sm:w-7"
                                     onClick={() =>
                                       updateQuantity(sensor.id, 1, "sensor")
                                     }
@@ -517,36 +522,37 @@ export default function CostEstimator() {
               </Card>
 
               {/* Card 3: Components & Power */}
-              <Card className="border-2 border-accent/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-accent" />
+              <Card className="border-2 border-accent/20 shadow-sm">
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
+                    <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
                     3. Components & Power
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">
                     Add power supplies and other components (
                     {selectedComponents.length} selected)
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4">
                   {Object.entries(componentsByCategory).map(
                     ([category, components]) => (
                       <div key={category} className="space-y-2">
-                        <h4 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
-                          <ChevronDown className="w-4 h-4" />
+                        <h4 className="font-semibold text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+                          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
                           {category}
                         </h4>
-                        <div className="grid gap-2 pl-6">
+                        <div className="grid gap-2 pl-3 sm:pl-6">
                           {components.map((component) => (
                             <div
                               key={component.id}
-                              className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
+                              className={`p-2 sm:p-3 rounded-lg border transition-colors ${
                                 selectedComponents.includes(component.id)
                                   ? "border-accent bg-accent/5"
                                   : "border-border hover:border-accent/50"
                               }`}
                             >
-                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                              {/* Top row: Checkbox, Name, and Price */}
+                              <div className="flex items-start gap-2 sm:gap-3 w-full">
                                 <Checkbox
                                   checked={selectedComponents.includes(
                                     component.id
@@ -554,22 +560,26 @@ export default function CostEstimator() {
                                   onCheckedChange={() =>
                                     toggleComponent(component.id)
                                   }
+                                  className="shrink-0 mt-0.5"
                                 />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium truncate">
+                                  <p className="text-xs sm:text-sm font-medium leading-tight">
                                     {component.name}
                                   </p>
                                 </div>
-                                <Badge variant="outline" className="shrink-0">
+                                <Badge variant="outline" className="shrink-0 text-xs font-semibold">
                                   ₹{component.price}
                                 </Badge>
                               </div>
+                              
+                              {/* Bottom row: Quantity controls (only when selected) */}
                               {selectedComponents.includes(component.id) && (
-                                <div className="flex items-center gap-2 ml-4 shrink-0">
+                                <div className="flex items-center gap-1.5 sm:gap-2 mt-2 ml-6 sm:ml-8">
+                                  <span className="text-[10px] sm:text-xs text-muted-foreground mr-1">Qty:</span>
                                   <Button
                                     variant="outline"
                                     size="icon"
-                                    className="h-7 w-7"
+                                    className="h-6 w-6 sm:h-7 sm:w-7"
                                     onClick={() =>
                                       updateQuantity(
                                         component.id,
@@ -580,13 +590,13 @@ export default function CostEstimator() {
                                   >
                                     -
                                   </Button>
-                                  <span className="w-8 text-center text-sm font-medium">
+                                  <span className="w-6 sm:w-8 text-center text-xs sm:text-sm font-medium">
                                     {componentQuantities[component.id] || 1}
                                   </span>
                                   <Button
                                     variant="outline"
                                     size="icon"
-                                    className="h-7 w-7"
+                                    className="h-6 w-6 sm:h-7 sm:w-7"
                                     onClick={() =>
                                       updateQuantity(
                                         component.id,
@@ -609,36 +619,37 @@ export default function CostEstimator() {
               </Card>
 
               {/* Card 4: Choose Actuators */}
-              <Card className="border-2 border-accent/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Settings2 className="w-5 h-5 text-accent" />
+              <Card className="border-2 border-accent/20 shadow-sm">
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
+                    <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
                     4. Choose Actuators
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">
                     Add motors, servos, and pumps ({selectedActuators.length}{" "}
                     selected)
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4">
                   {Object.entries(actuatorsByCategory).map(
                     ([category, actuators]) => (
                       <div key={category} className="space-y-2">
-                        <h4 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
-                          <ChevronDown className="w-4 h-4" />
+                        <h4 className="font-semibold text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+                          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
                           {category}
                         </h4>
-                        <div className="grid gap-2 pl-6">
+                        <div className="grid gap-2 pl-3 sm:pl-6">
                           {actuators.map((actuator) => (
                             <div
                               key={actuator.id}
-                              className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
+                              className={`p-2 sm:p-3 rounded-lg border transition-colors ${
                                 selectedActuators.includes(actuator.id)
                                   ? "border-accent bg-accent/5"
                                   : "border-border hover:border-accent/50"
                               }`}
                             >
-                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                              {/* Top row: Checkbox, Name, and Price */}
+                              <div className="flex items-start gap-2 sm:gap-3 w-full">
                                 <Checkbox
                                   checked={selectedActuators.includes(
                                     actuator.id
@@ -646,22 +657,26 @@ export default function CostEstimator() {
                                   onCheckedChange={() =>
                                     toggleActuator(actuator.id)
                                   }
+                                  className="shrink-0 mt-0.5"
                                 />
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium truncate">
+                                  <p className="text-xs sm:text-sm font-medium leading-tight">
                                     {actuator.name}
                                   </p>
                                 </div>
-                                <Badge variant="outline" className="shrink-0">
+                                <Badge variant="outline" className="shrink-0 text-xs font-semibold">
                                   ₹{actuator.price}
                                 </Badge>
                               </div>
+                              
+                              {/* Bottom row: Quantity controls (only when selected) */}
                               {selectedActuators.includes(actuator.id) && (
-                                <div className="flex items-center gap-2 ml-4 shrink-0">
+                                <div className="flex items-center gap-1.5 sm:gap-2 mt-2 ml-6 sm:ml-8">
+                                  <span className="text-[10px] sm:text-xs text-muted-foreground mr-1">Qty:</span>
                                   <Button
                                     variant="outline"
                                     size="icon"
-                                    className="h-7 w-7"
+                                    className="h-6 w-6 sm:h-7 sm:w-7"
                                     onClick={() =>
                                       updateQuantity(
                                         actuator.id,
@@ -672,13 +687,13 @@ export default function CostEstimator() {
                                   >
                                     -
                                   </Button>
-                                  <span className="w-8 text-center text-sm font-medium">
+                                  <span className="w-6 sm:w-8 text-center text-xs sm:text-sm font-medium">
                                     {actuatorQuantities[actuator.id] || 1}
                                   </span>
                                   <Button
                                     variant="outline"
                                     size="icon"
-                                    className="h-7 w-7"
+                                    className="h-6 w-6 sm:h-7 sm:w-7"
                                     onClick={() =>
                                       updateQuantity(actuator.id, 1, "actuator")
                                     }
@@ -697,13 +712,13 @@ export default function CostEstimator() {
               </Card>
 
               {/* Card 5: Choose Display */}
-              <Card className="border-2 border-accent/20">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Monitor className="w-5 h-5 text-accent" />
+              <Card className="border-2 border-accent/20 shadow-sm">
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
+                    <Monitor className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
                     5. Choose Display
                   </CardTitle>
-                  <CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">
                     Select a display for your project (optional)
                   </CardDescription>
                 </CardHeader>
@@ -741,25 +756,25 @@ export default function CostEstimator() {
 
             {/* Right Column - Cost Summary (Card 6) */}
             <div className="lg:col-span-1">
-              <Card className="sticky top-4 border-2 border-accent">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calculator className="w-5 h-5 text-accent" />
+              <Card className="lg:sticky lg:top-24 border-2 border-accent shadow-lg">
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
+                    <Calculator className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
                     6. Cost Estimate
                   </CardTitle>
-                  <CardDescription>Your project breakdown</CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">Your project breakdown</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4">
                   {/* MCU Cost */}
                   {selectedMCU && (
                     <div className="pb-2 border-b">
-                      <div className="flex justify-between text-sm mb-1">
+                      <div className="flex justify-between text-xs sm:text-sm mb-1">
                         <span className="text-muted-foreground">
                           Microcontroller:
                         </span>
                         <span className="font-medium">₹{mcuCost}</span>
                       </div>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
                         {mcuOptions.find((m) => m.id === selectedMCU)?.name}
                       </p>
                     </div>
@@ -768,13 +783,13 @@ export default function CostEstimator() {
                   {/* Sensors Cost */}
                   {selectedSensors.length > 0 && (
                     <div className="pb-2 border-b">
-                      <div className="flex justify-between text-sm mb-1">
+                      <div className="flex justify-between text-xs sm:text-sm mb-1">
                         <span className="text-muted-foreground">
                           Sensors ({selectedSensors.length}):
                         </span>
                         <span className="font-medium">₹{sensorsCost}</span>
                       </div>
-                      <div className="text-xs text-muted-foreground space-y-1">
+                      <div className="text-[10px] sm:text-xs text-muted-foreground space-y-1">
                         {selectedSensors.slice(0, 3).map((sensorId) => {
                           const sensor = productsData.find(
                             (s) => s.id === sensorId
@@ -884,16 +899,16 @@ export default function CostEstimator() {
                   )}
 
                   {/* Total */}
-                  <div className="pt-4 border-t-2 border-accent">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-lg font-bold">Total Estimate:</span>
-                      <span className="text-2xl font-bold text-accent">
+                  <div className="pt-3 sm:pt-4 border-t-2 border-accent">
+                    <div className="flex justify-between items-center mb-3 sm:mb-4">
+                      <span className="text-sm sm:text-base md:text-lg font-bold">Total Estimate:</span>
+                      <span className="text-lg sm:text-xl md:text-2xl font-bold text-accent">
                         ₹{totalCost.toLocaleString("en-IN")}
                       </span>
                     </div>
 
                     {totalCost === 0 && (
-                      <p className="text-xs text-muted-foreground text-center mb-4">
+                      <p className="text-[10px] sm:text-xs text-muted-foreground text-center mb-3 sm:mb-4">
                         Start by selecting components above
                       </p>
                     )}
@@ -902,26 +917,26 @@ export default function CostEstimator() {
                       <div className="space-y-2">
                         <Button
                           onClick={exportEstimate}
-                          className="w-full"
+                          className="w-full text-xs sm:text-sm"
                           variant="default"
                         >
-                          <Download className="w-4 h-4 mr-2" />
+                          <Download className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                           Download Estimate
                         </Button>
                         <Button
                           onClick={resetAll}
-                          className="w-full"
+                          className="w-full text-xs sm:text-sm"
                           variant="outline"
                         >
-                          <RotateCcw className="w-4 h-4 mr-2" />
+                          <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                           Start Over
                         </Button>
                       </div>
                     )}
                   </div>
 
-                  <div className="pt-4 text-xs text-muted-foreground text-center border-t">
-                    <p>
+                  <div className="pt-3 sm:pt-4 text-[10px] sm:text-xs text-muted-foreground text-center border-t">
+                    <p className="px-2">
                       This is an estimate only. Contact us for a detailed quote
                       and availability.
                     </p>
