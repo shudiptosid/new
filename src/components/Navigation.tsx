@@ -31,6 +31,10 @@ const Navigation = () => {
       href: "/resources",
     },
     {
+      label: "Cost Estimator",
+      href: "/cost-estimator",
+    },
+    {
       label: "Contact",
       href: "/contact",
     },
@@ -71,10 +75,14 @@ const Navigation = () => {
               <Link
                 key={item.href}
                 to={item.href}
-                className={`text-foreground hover:text-accent transition-colors duration-200 text-base px-2 py-1 rounded-md font-medium ${
-                  location.pathname === item.href
-                    ? "text-accent font-semibold"
-                    : ""
+                className={`transition-all duration-200 text-base px-3 py-1.5 rounded-md font-medium ${
+                  item.href === "/cost-estimator"
+                    ? "bg-accent text-white hover:bg-accent/90 shadow-md hover:shadow-lg font-semibold"
+                    : `text-foreground hover:text-accent ${
+                        location.pathname === item.href
+                          ? "text-accent font-semibold"
+                          : ""
+                      }`
                 }`}
               >
                 {item.label}
@@ -108,8 +116,10 @@ const Navigation = () => {
                 <Link
                   key={item.href}
                   to={item.href}
-                  className={`py-2 px-4 rounded-md transition-colors ${
-                    location.pathname === item.href
+                  className={`py-2 px-4 rounded-md transition-all ${
+                    item.href === "/cost-estimator"
+                      ? "bg-accent text-white font-semibold shadow-md"
+                      : location.pathname === item.href
                       ? "bg-accent/10 text-accent font-semibold"
                       : "text-foreground hover:bg-accent/5"
                   }`}

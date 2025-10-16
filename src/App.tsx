@@ -19,6 +19,7 @@ const Resources = lazy(() => import("./pages/Resources"));
 const SortQuestionsPage2 = lazy(() => import("./pages/SortQuestionsPage2"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const ECEResources = lazy(() => import("./pages/ECEResources"));
+const CostEstimator = lazy(() => import("./pages/CostEstimator"));
 
 // Optimized QueryClient configuration
 const queryClient = new QueryClient({
@@ -62,6 +63,7 @@ const App = () => (
               path="/resources/questions/2"
               element={<SortQuestionsPage2 />}
             />
+            <Route path="/cost-estimator" element={<CostEstimator />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

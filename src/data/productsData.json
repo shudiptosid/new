@@ -1,0 +1,335 @@
+[
+  {
+    "id": "SEN-01",
+    "serialNo": 1,
+    "name": "Ultra Sonic (HC-SR04)",
+    "price": 65,
+    "description": "Non-contact distance measurement sensor using sonar; range 2cm-400cm.",
+    "category": "Distance Sensor",
+    "imageUrl": "/src/assets/Sensor/HC-SR04.png"
+  },
+  {
+    "id": "SEN-11",
+    "serialNo": 2,
+    "name": "Temperature & Humidity Sensor (DHT11)",
+    "price": 80,
+    "description": "Basic digital sensor for measuring temperature (0-50°C) and humidity (20-90% RH).",
+    "category": "Environmental Sensor",
+    "imageUrl": "/src/assets/Sensor/DHT11.png"
+  },
+  {
+    "id": "SEN-02",
+    "serialNo": 3,
+    "name": "PIR Motion Sensor (HC-SR501)",
+    "price": 55,
+    "description": "Passive Infrared sensor to detect motion of humans or animals; adjustable sensitivity.",
+    "category": "Motion Sensor",
+    "imageUrl": "/src/assets/Sensor/PIR.png"
+  },
+  {
+    "id": "SEN-18",
+    "serialNo": 4,
+    "name": "LDR (Light Dependent Resistor)",
+    "price": 15,
+    "description": "Photoresistor whose resistance decreases with increasing light intensity.",
+    "category": "Light Sensor",
+    "imageUrl": "/src/assets/Sensor/LDR.png"
+  },
+  {
+    "id": "SEN-03",
+    "serialNo": 5,
+    "name": "Accelerometer Gyroscope (MPU-6050)",
+    "price": 150,
+    "description": "6-DoF IMU combining a 3-axis accelerometer and 3-axis gyroscope for orientation sensing.",
+    "category": "Motion Sensor",
+    "imageUrl": "/src/assets/Sensor/Accelerometer.png"
+  },
+  {
+    "id": "SEN-31",
+    "serialNo": 6,
+    "name": "IR Proximity Sensor (Sharp GP2Y0A21YK0F)",
+    "price": 400,
+    "description": "Analog IR distance sensor using triangulation for 10-80cm range; non-linear output.",
+    "category": "Distance Sensor",
+    "imageUrl": "/src/assets/Sensor/Proximity-Sensor.png"
+  },
+  {
+    "id": "SEN-04",
+    "serialNo": 7,
+    "name": "Magnetometer (HMC5883L/QMC5883L)",
+    "price": 150,
+    "description": "3-axis digital compass for measuring magnetic fields to determine absolute heading.",
+    "category": "Magnetic Sensor",
+    "imageUrl": "/src/assets/Sensor/magnetometer.png"
+  },
+  {
+    "id": "SEN-12",
+    "serialNo": 8,
+    "name": "Barometer (BMP180)",
+    "price": 100,
+    "description": "Digital sensor for measuring absolute barometric pressure and temperature; used for altimetry.",
+    "category": "Environmental Sensor",
+    "imageUrl": "/src/assets/Sensor/Barometer.png"
+  },
+  {
+    "id": "SEN-19",
+    "serialNo": 9,
+    "name": "IR Sensor Module",
+    "price": 27,
+    "description": "Digital IR proximity sensor for short-range (2-30cm) object detection and line following.",
+    "category": "Distance Sensor",
+    "imageUrl": "/src/assets/Sensor/IR.png"
+  },
+  {
+    "id": "SEN-13",
+    "serialNo": 10,
+    "name": "Pressure Sensor (MPX5700AP)",
+    "price": 2400,
+    "description": "High-precision industrial absolute pressure sensor with analog output (15-700 kPa).",
+    "category": "Environmental Sensor",
+    "imageUrl": "/src/assets/Sensor/Pressure-Sensor.png"
+  },
+  {
+    "id": "SEN-05",
+    "serialNo": 11,
+    "name": "GPS Module (NEO-6M)",
+    "price": 250,
+    "description": "Complete GPS receiver module for acquiring satellite-based location data (lat, lon, alt).",
+    "category": "Navigation Sensor",
+    "imageUrl": "/src/assets/Sensor/GPS.png"
+  },
+  {
+    "id": "SEN-26",
+    "serialNo": 12,
+    "name": "Heart Rate Sensor (MAX30100)",
+    "price": 110,
+    "description": "Integrated pulse oximetry and heart rate sensor using PPG for wearable health monitoring.",
+    "category": "Medical Sensor",
+    "imageUrl": "/src/assets/Sensor/Heart-Rate.png"
+  },
+  {
+    "id": "SEN-27",
+    "serialNo": 13,
+    "name": "Blood Pressure Sensor Module",
+    "price": 2500,
+    "description": "Complete oscillometric system with cuff, pump, and sensor for non-invasive blood pressure measurement.",
+    "category": "Medical Sensor",
+    "imageUrl": "/src/assets/Sensor/Blood-Pressure.png"
+  },
+  {
+    "id": "SEN-28",
+    "serialNo": 14,
+    "name": "Capacitive Touch Sensor (TTP223B Module)",
+    "price": 25,
+    "description": "Capacitive touch sensor module that acts as a digital replacement for a mechanical button.",
+    "category": "Touch Sensor",
+    "imageUrl": "/src/assets/Sensor/Touch-.png"
+  },
+  {
+    "id": "SEN-21",
+    "serialNo": 15,
+    "name": "Sound Detection Sensor (LM393 Module)",
+    "price": 45,
+    "description": "Detects sound levels exceeding a set threshold and provides a digital output signal.",
+    "category": "Sound Sensor",
+    "imageUrl": "/src/assets/Sensor/Sound-Sensor.png"
+  },
+  {
+    "id": "SEN-14",
+    "serialNo": 16,
+    "name": "Gas Sensor (MQ-2)",
+    "price": 85,
+    "description": "Semiconductor sensor for detecting combustible gases like LPG, propane, and smoke.",
+    "category": "Gas Sensor",
+    "imageUrl": "/src/assets/Sensor/gas.png"
+  },
+  {
+    "id": "SEN-34",
+    "serialNo": 17,
+    "name": "Image Sensor (OV7670 Module)",
+    "price": 150,
+    "description": "VGA (640x480) resolution CMOS camera module for capturing images and video.",
+    "category": "Camera Sensor",
+    "imageUrl": "/src/assets/Sensor/Image.png"
+  },
+  {
+    "id": "SEN-35",
+    "serialNo": 18,
+    "name": "Colour Sensor (TCS3200)",
+    "price": 450,
+    "description": "Converts light color to frequency, allowing a microcontroller to measure RGB color values.",
+    "category": "Light Sensor",
+    "imageUrl": "/src/assets/Sensor/Color.png"
+  },
+  {
+    "id": "SEN-15",
+    "serialNo": 19,
+    "name": "Smoke/Air Quality Sensor (MQ-135)",
+    "price": 110,
+    "description": "General air quality sensor sensitive to Benzene, smoke, NH3, NOx, and other gases.",
+    "category": "Gas Sensor",
+    "imageUrl": "/src/assets/Sensor/Smoke.png"
+  },
+  {
+    "id": "SEN-22",
+    "serialNo": 20,
+    "name": "Soil Moisture Sensor (Resistive)",
+    "price": 42,
+    "description": "Measures soil moisture by sensing electrical resistance between two probes; prone to corrosion.",
+    "category": "Environmental Sensor",
+    "imageUrl": "/src/assets/Sensor/Soil-Moisture.png"
+  },
+  {
+    "id": "SEN-06",
+    "serialNo": 21,
+    "name": "Vibration Sensor (SW-420 Module)",
+    "price": 50,
+    "description": "Digital shock and vibration detection module using a normally closed switch.",
+    "category": "Motion Sensor",
+    "imageUrl": "/src/assets/Sensor/Vibration.png"
+  },
+  {
+    "id": "SEN-07",
+    "serialNo": 22,
+    "name": "Tilt Sensor Switch Module",
+    "price": 30,
+    "description": "Simple digital switch that detects inclination using an internal rolling ball mechanism.",
+    "category": "Motion Sensor",
+    "imageUrl": "/src/assets/Sensor/Tilt.png"
+  },
+  {
+    "id": "SEN-32",
+    "serialNo": 23,
+    "name": "Load Cell (5kg)",
+    "price": 150,
+    "description": "Strain gauge transducer for measuring weight up to 5kg; requires an HX711 amplifier.",
+    "category": "Force Sensor",
+    "imageUrl": "/src/assets/Sensor/Weight.png"
+  },
+  {
+    "id": "SEN-33",
+    "serialNo": 24,
+    "name": "Force Sensing Resistor (FSR 402)",
+    "price": 250,
+    "description": "Resistor that changes its value based on applied force; used for pressure-sensitive interfaces.",
+    "category": "Force Sensor",
+    "imageUrl": "/src/assets/Sensor/Force.png"
+  },
+  {
+    "id": "SEN-23",
+    "serialNo": 25,
+    "name": "Soil Moisture Sensor (Capacitive)",
+    "price": 80,
+    "description": "Measures soil moisture via changes in capacitance; corrosion-resistant for long-term use.",
+    "category": "Environmental Sensor",
+    "imageUrl": "/src/assets/Sensor/Moisture.png"
+  },
+  {
+    "id": "SEN-08",
+    "serialNo": 26,
+    "name": "Hall Effect Sensor (A3144 Module)",
+    "price": 25,
+    "description": "Digital switch that activates in the presence of a magnetic field.",
+    "category": "Magnetic Sensor",
+    "imageUrl": "/src/assets/Sensor/Hall-Effect.png"
+  },
+  {
+    "id": "SEN-29",
+    "serialNo": 27,
+    "name": "Biometric Fingerprint Sensor (R307)",
+    "price": 850,
+    "description": "Optical fingerprint reader module with onboard storage for up to 1000 fingerprints.",
+    "category": "Biometric Sensor",
+    "imageUrl": "/src/assets/Sensor/Biometric.png"
+  },
+  {
+    "id": "SEN-30",
+    "serialNo": 28,
+    "name": "Facial Recognition Module (ESP32-CAM)",
+    "price": 660,
+    "description": "Integrated ESP32 microcontroller and camera for WiFi video streaming and face recognition.",
+    "category": "Biometric Sensor",
+    "imageUrl": "/src/assets/Sensor/Face-Recognition-Sensor.png"
+  },
+  {
+    "id": "SEN-16",
+    "serialNo": 29,
+    "name": "Oxygen Sensor (Electrochemical)",
+    "price": 5000,
+    "description": "Measures atmospheric oxygen concentration (0-25% Vol) using an electrochemical cell.",
+    "category": "Gas Sensor",
+    "imageUrl": "/src/assets/Sensor/Oxygen.png"
+  },
+  {
+    "id": "SEN-17",
+    "serialNo": 30,
+    "name": "Carbon Dioxide Sensor (NDIR)",
+    "price": 6000,
+    "description": "High-accuracy Non-Dispersive Infrared (NDIR) sensor for measuring CO2 concentration.",
+    "category": "Gas Sensor",
+    "imageUrl": "/src/assets/Sensor/CO-.png"
+  },
+  {
+    "id": "SEN-25",
+    "serialNo": 31,
+    "name": "Radiation Sensor (Geiger Counter Module)",
+    "price": 3200,
+    "description": "Detects ionizing radiation (alpha, beta, gamma) using a Geiger-Müller tube.",
+    "category": "Radiation Sensor",
+    "imageUrl": "/src/assets/Sensor/Radiation.png"
+  },
+  {
+    "id": "SEN-24",
+    "serialNo": 32,
+    "name": "Flame Sensor Module",
+    "price": 30,
+    "description": "Detects flames by sensing infrared radiation in the 760-1100 nm wavelength range.",
+    "category": "Fire Sensor",
+    "imageUrl": "/src/assets/Sensor/Flame.png"
+  },
+  {
+    "id": "SEN-04-MAG",
+    "serialNo": 33,
+    "name": "Magnetic Field Sensor",
+    "price": 150,
+    "description": "3-axis digital compass for measuring magnetic fields to determine absolute heading.",
+    "category": "Magnetic Sensor",
+    "imageUrl": "/src/assets/Sensor/Magnetic-Field.png"
+  },
+  {
+    "id": "SEN-20",
+    "serialNo": 34,
+    "name": "Ambient Light Sensor (BH1750)",
+    "price": 100,
+    "description": "Digital I2C sensor that measures ambient light intensity directly in lux.",
+    "category": "Light Sensor",
+    "imageUrl": "/src/assets/Sensor/Ambient-Light.png"
+  },
+  {
+    "id": "SEN-23-CAP",
+    "serialNo": 35,
+    "name": "Soil Moisture Sensor (Capacitive)",
+    "price": 80,
+    "description": "Measures soil moisture via changes in capacitance; corrosion-resistant for long-term use.",
+    "category": "Environmental Sensor",
+    "imageUrl": "/src/assets/Sensor/Soil-Moisture.png"
+  },
+  {
+    "id": "SEN-09",
+    "serialNo": 36,
+    "name": "Gesture Sensor (APDS-9960)",
+    "price": 150,
+    "description": "Multi-function I2C sensor for gesture, proximity, ambient light, and RGB color sensing.",
+    "category": "Gesture Sensor",
+    "imageUrl": "/src/assets/Sensor/Gesture.png"
+  },
+  {
+    "id": "SEN-10",
+    "serialNo": 37,
+    "name": "Lidar Sensor (TF-Luna)",
+    "price": 2200,
+    "description": "Time-of-Flight (ToF) LiDAR sensor for fast and accurate distance measurement up to 8m.",
+    "category": "Distance Sensor",
+    "imageUrl": "/src/assets/Sensor/Lidar.png"
+  }
+]

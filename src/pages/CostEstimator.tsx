@@ -1,0 +1,939 @@
+import { useState, useMemo } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Cpu,
+  Gauge,
+  Zap,
+  Monitor,
+  Calculator,
+  Download,
+  RotateCcw,
+  ChevronDown,
+  Settings2,
+} from "lucide-react";
+import productsData from "@/data/productsData.json";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
+import StickyContactBar from "@/components/StickyContactBar";
+
+// MCU options
+const mcuOptions = [
+  { id: "MCU-01", name: "Arduino Uno", price: 450 },
+  { id: "MCU-02", name: "Arduino Nano", price: 350 },
+  { id: "MCU-03", name: "ESP32", price: 850 },
+  { id: "MCU-04", name: "ESP8266", price: 300 },
+  { id: "MCU-05", name: "Raspberry Pi Pico", price: 400 },
+  { id: "MCU-06", name: "STM32 Blue Pill", price: 550 },
+];
+
+// Display options
+const displayOptions = [
+  { id: "DISP-01", name: "16x2 LCD Display", price: 120 },
+  { id: "DISP-02", name: '0.96" OLED Display', price: 180 },
+  { id: "DISP-03", name: '1.3" OLED Display', price: 250 },
+  { id: "DISP-04", name: "Nokia 5110 LCD", price: 150 },
+  { id: "DISP-05", name: 'TFT 1.8" Color Display', price: 350 },
+  { id: "DISP-06", name: 'TFT 2.4" Touchscreen', price: 650 },
+  { id: "DISP-07", name: "None", price: 0 },
+];
+
+// Power & Components options
+const powerComponents = [
+  {
+    id: "PWR-01",
+    name: "5V Power Adapter",
+    price: 80,
+    category: "Power Supply",
+  },
+  { id: "PWR-02", name: "9V Battery", price: 30, category: "Power Supply" },
+  {
+    id: "PWR-03",
+    name: "18650 Battery",
+    price: 50,
+    category: "Power Supply",
+  },
+  {
+    id: "PWR-04",
+    name: "18650 Battery Holder (Single)",
+    price: 40,
+    category: "Power Supply",
+  },
+  {
+    id: "PWR-05",
+    name: "18650 Battery Holder (Double)",
+    price: 60,
+    category: "Power Supply",
+  },
+  {
+    id: "PWR-06",
+    name: "18650 Battery Holder (Triple)",
+    price: 80,
+    category: "Power Supply",
+  },
+  { id: "PWR-07", name: "USB Cable", price: 25, category: "Cable" },
+  {
+    id: "COMP-01",
+    name: "Breadboard 400 Points",
+    price: 45,
+    category: "Component",
+  },
+  {
+    id: "COMP-02",
+    name: "Breadboard 830 Points",
+    price: 80,
+    category: "Component",
+  },
+  {
+    id: "COMP-03",
+    name: "Jumper Wires (Pack)",
+    price: 30,
+    category: "Component",
+  },
+  { id: "COMP-04", name: "LED Pack (10pcs)", price: 20, category: "Component" },
+  { id: "COMP-05", name: "Resistor Kit", price: 50, category: "Component" },
+  {
+    id: "COMP-06",
+    name: "Push Button (5pcs)",
+    price: 15,
+    category: "Component",
+  },
+  { id: "COMP-07", name: "Relay Module", price: 60, category: "Module" },
+  { id: "COMP-08", name: "Motor Driver L298N", price: 120, category: "Module" },
+];
+
+// Actuator options
+const actuatorOptions = [
+  { id: "ACT-01", name: "DC Motor (Standard)", price: 40, category: "Motor" },
+  { id: "ACT-02", name: "Geared DC Motor", price: 80, category: "Motor" },
+  { id: "ACT-03", name: "9g Servo Motor", price: 90, category: "Servo" },
+  { id: "ACT-04", name: "Tower Pro SG90 Servo", price: 120, category: "Servo" },
+  {
+    id: "ACT-05",
+    name: "MG996R Servo (Metal Gear)",
+    price: 350,
+    category: "Servo",
+  },
+  { id: "ACT-06", name: "Mini Water Pump", price: 120, category: "Pump" },
+  {
+    id: "ACT-07",
+    name: "Submersible Water Pump",
+    price: 180,
+    category: "Pump",
+  },
+  {
+    id: "ACT-08",
+    name: "Stepper Motor (28BYJ-48)",
+    price: 150,
+    category: "Motor",
+  },
+];
+
+export default function CostEstimator() {
+  const [selectedMCU, setSelectedMCU] = useState<string>("");
+  const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
+  const [selectedComponents, setSelectedComponents] = useState<string[]>([]);
+  const [selectedActuators, setSelectedActuators] = useState<string[]>([]);
+  const [selectedDisplay, setSelectedDisplay] = useState<string>("");
+  const [sensorQuantities, setSensorQuantities] = useState<
+    Record<string, number>
+  >({});
+  const [componentQuantities, setComponentQuantities] = useState<
+    Record<string, number>
+  >({});
+  const [actuatorQuantities, setActuatorQuantities] = useState<
+    Record<string, number>
+  >({});
+
+  // Toggle sensor selection
+  const toggleSensor = (sensorId: string) => {
+    if (selectedSensors.includes(sensorId)) {
+      setSelectedSensors(selectedSensors.filter((id) => id !== sensorId));
+      const newQuantities = { ...sensorQuantities };
+      delete newQuantities[sensorId];
+      setSensorQuantities(newQuantities);
+    } else {
+      setSelectedSensors([...selectedSensors, sensorId]);
+      setSensorQuantities({ ...sensorQuantities, [sensorId]: 1 });
+    }
+  };
+
+  // Toggle component selection
+  const toggleComponent = (componentId: string) => {
+    if (selectedComponents.includes(componentId)) {
+      setSelectedComponents(
+        selectedComponents.filter((id) => id !== componentId)
+      );
+      const newQuantities = { ...componentQuantities };
+      delete newQuantities[componentId];
+      setComponentQuantities(newQuantities);
+    } else {
+      setSelectedComponents([...selectedComponents, componentId]);
+      setComponentQuantities({ ...componentQuantities, [componentId]: 1 });
+    }
+  };
+
+  // Toggle actuator selection
+  const toggleActuator = (actuatorId: string) => {
+    if (selectedActuators.includes(actuatorId)) {
+      setSelectedActuators(selectedActuators.filter((id) => id !== actuatorId));
+      const newQuantities = { ...actuatorQuantities };
+      delete newQuantities[actuatorId];
+      setActuatorQuantities(newQuantities);
+    } else {
+      setSelectedActuators([...selectedActuators, actuatorId]);
+      setActuatorQuantities({ ...actuatorQuantities, [actuatorId]: 1 });
+    }
+  };
+
+  // Update quantity
+  const updateQuantity = (
+    id: string,
+    delta: number,
+    type: "sensor" | "component" | "actuator"
+  ) => {
+    if (type === "sensor") {
+      setSensorQuantities({
+        ...sensorQuantities,
+        [id]: Math.max(1, (sensorQuantities[id] || 1) + delta),
+      });
+    } else if (type === "component") {
+      setComponentQuantities({
+        ...componentQuantities,
+        [id]: Math.max(1, (componentQuantities[id] || 1) + delta),
+      });
+    } else {
+      setActuatorQuantities({
+        ...actuatorQuantities,
+        [id]: Math.max(1, (actuatorQuantities[id] || 1) + delta),
+      });
+    }
+  };
+
+  // Calculate totals
+  const mcuCost = useMemo(() => {
+    const mcu = mcuOptions.find((m) => m.id === selectedMCU);
+    return mcu ? mcu.price : 0;
+  }, [selectedMCU]);
+
+  const sensorsCost = useMemo(() => {
+    return selectedSensors.reduce((total, sensorId) => {
+      const sensor = productsData.find((s) => s.id === sensorId);
+      const quantity = sensorQuantities[sensorId] || 1;
+      return total + (sensor ? sensor.price * quantity : 0);
+    }, 0);
+  }, [selectedSensors, sensorQuantities]);
+
+  const componentsCost = useMemo(() => {
+    return selectedComponents.reduce((total, compId) => {
+      const component = powerComponents.find((c) => c.id === compId);
+      const quantity = componentQuantities[compId] || 1;
+      return total + (component ? component.price * quantity : 0);
+    }, 0);
+  }, [selectedComponents, componentQuantities]);
+
+  const actuatorsCost = useMemo(() => {
+    return selectedActuators.reduce((total, actId) => {
+      const actuator = actuatorOptions.find((a) => a.id === actId);
+      const quantity = actuatorQuantities[actId] || 1;
+      return total + (actuator ? actuator.price * quantity : 0);
+    }, 0);
+  }, [selectedActuators, actuatorQuantities]);
+
+  const displayCost = useMemo(() => {
+    const display = displayOptions.find((d) => d.id === selectedDisplay);
+    return display ? display.price : 0;
+  }, [selectedDisplay]);
+
+  const totalCost =
+    mcuCost + sensorsCost + componentsCost + actuatorsCost + displayCost;
+
+  // Reset all
+  const resetAll = () => {
+    setSelectedMCU("");
+    setSelectedSensors([]);
+    setSelectedComponents([]);
+    setSelectedActuators([]);
+    setSelectedDisplay("");
+    setSensorQuantities({});
+    setComponentQuantities({});
+    setActuatorQuantities({});
+  };
+
+  // Export estimate
+  const exportEstimate = () => {
+    const mcu = mcuOptions.find((m) => m.id === selectedMCU);
+    const display = displayOptions.find((d) => d.id === selectedDisplay);
+
+    let estimate = `PROJECT COST ESTIMATE - Circuit Crafters\nDate: ${new Date().toLocaleDateString()}\n${"=".repeat(
+      50
+    )}\n\n`;
+
+    if (mcu) {
+      estimate += `1. MICROCONTROLLER\n   ${mcu.name} - ₹${mcu.price}\n\n`;
+    }
+
+    if (selectedSensors.length > 0) {
+      estimate += `2. SENSORS (${selectedSensors.length})\n`;
+      selectedSensors.forEach((sensorId) => {
+        const sensor = productsData.find((s) => s.id === sensorId);
+        const qty = sensorQuantities[sensorId] || 1;
+        if (sensor) {
+          estimate += `   ${sensor.name} x${qty} - ₹${sensor.price * qty}\n`;
+        }
+      });
+      estimate += `\n`;
+    }
+
+    if (selectedComponents.length > 0) {
+      estimate += `3. COMPONENTS & POWER (${selectedComponents.length})\n`;
+      selectedComponents.forEach((compId) => {
+        const comp = powerComponents.find((c) => c.id === compId);
+        const qty = componentQuantities[compId] || 1;
+        if (comp) {
+          estimate += `   ${comp.name} x${qty} - ₹${comp.price * qty}\n`;
+        }
+      });
+      estimate += `\n`;
+    }
+
+    if (selectedActuators.length > 0) {
+      estimate += `4. ACTUATORS (${selectedActuators.length})\n`;
+      selectedActuators.forEach((actId) => {
+        const act = actuatorOptions.find((a) => a.id === actId);
+        const qty = actuatorQuantities[actId] || 1;
+        if (act) {
+          estimate += `   ${act.name} x${qty} - ₹${act.price * qty}\n`;
+        }
+      });
+      estimate += `\n`;
+    }
+
+    if (display) {
+      estimate += `5. DISPLAY\n   ${display.name} - ₹${display.price}\n\n`;
+    }
+
+    estimate += `${"=".repeat(
+      50
+    )}\nTOTAL ESTIMATED COST: ₹${totalCost.toLocaleString(
+      "en-IN"
+    )}\n${"=".repeat(
+      50
+    )}\n\nNote: This is an estimate only. Actual costs may vary.\nContact us for a detailed quote.`;
+
+    const blob = new Blob([estimate], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `estimate-${Date.now()}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Group sensors by category
+  const sensorsByCategory = useMemo(() => {
+    const grouped: Record<string, typeof productsData> = {};
+    productsData.forEach((sensor) => {
+      if (!grouped[sensor.category]) {
+        grouped[sensor.category] = [];
+      }
+      grouped[sensor.category].push(sensor);
+    });
+    return grouped;
+  }, []);
+
+  // Group components by category
+  const componentsByCategory = useMemo(() => {
+    const grouped: Record<string, typeof powerComponents> = {};
+    powerComponents.forEach((comp) => {
+      if (!grouped[comp.category]) {
+        grouped[comp.category] = [];
+      }
+      grouped[comp.category].push(comp);
+    });
+    return grouped;
+  }, []);
+
+  // Group actuators by category
+  const actuatorsByCategory = useMemo(() => {
+    const grouped: Record<string, typeof actuatorOptions> = {};
+    actuatorOptions.forEach((act) => {
+      if (!grouped[act.category]) {
+        grouped[act.category] = [];
+      }
+      grouped[act.category].push(act);
+    });
+    return grouped;
+  }, []);
+
+  return (
+    <>
+      <Navigation />
+      <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 pt-40 pb-8 px-4">
+        <div className="container mx-auto max-w-6xl">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold mb-8 bg-gradient-to-r from-accent to-purple-600 bg-clip-text text-transparent">
+              IoT Project Cost Estimator
+            </h1>
+            <p className="text-muted-foreground text-lg">
+              Build your project step-by-step and get instant cost estimates
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-3 gap-6">
+            {/* Left Column - Selection Cards */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Card 1: Choose MCU */}
+              <Card className="border-2 border-accent/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Cpu className="w-5 h-5 text-accent" />
+                    1. Choose Your MCU
+                  </CardTitle>
+                  <CardDescription>
+                    Select the microcontroller for your project
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Select value={selectedMCU} onValueChange={setSelectedMCU}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a microcontroller..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mcuOptions.map((mcu) => (
+                        <SelectItem key={mcu.id} value={mcu.id}>
+                          <div className="flex items-center justify-between w-full">
+                            <span>{mcu.name}</span>
+                            <Badge variant="secondary" className="ml-4">
+                              ₹{mcu.price}
+                            </Badge>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </CardContent>
+              </Card>
+
+              {/* Card 2: Choose Sensors */}
+              <Card className="border-2 border-accent/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Gauge className="w-5 h-5 text-accent" />
+                    2. Choose Sensors
+                  </CardTitle>
+                  <CardDescription>
+                    Select multiple sensors (optional - {selectedSensors.length}{" "}
+                    selected)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                  {Object.entries(sensorsByCategory).map(
+                    ([category, sensors]) => (
+                      <div key={category} className="space-y-2">
+                        <h4 className="font-semibold text-sm text-muted-foreground flex items-center gap-2 sticky top-0 bg-background py-1">
+                          <ChevronDown className="w-4 h-4" />
+                          {category}
+                        </h4>
+                        <div className="grid gap-2 pl-6">
+                          {sensors.map((sensor) => (
+                            <div
+                              key={sensor.id}
+                              className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
+                                selectedSensors.includes(sensor.id)
+                                  ? "border-accent bg-accent/5"
+                                  : "border-border hover:border-accent/50"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <Checkbox
+                                  checked={selectedSensors.includes(sensor.id)}
+                                  onCheckedChange={() =>
+                                    toggleSensor(sensor.id)
+                                  }
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium truncate">
+                                    {sensor.name}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {sensor.id}
+                                  </p>
+                                </div>
+                                <Badge variant="outline" className="shrink-0">
+                                  ₹{sensor.price}
+                                </Badge>
+                              </div>
+                              {selectedSensors.includes(sensor.id) && (
+                                <div className="flex items-center gap-2 ml-4 shrink-0">
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    onClick={() =>
+                                      updateQuantity(sensor.id, -1, "sensor")
+                                    }
+                                  >
+                                    -
+                                  </Button>
+                                  <span className="w-8 text-center text-sm font-medium">
+                                    {sensorQuantities[sensor.id] || 1}
+                                  </span>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    onClick={() =>
+                                      updateQuantity(sensor.id, 1, "sensor")
+                                    }
+                                  >
+                                    +
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Card 3: Components & Power */}
+              <Card className="border-2 border-accent/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-accent" />
+                    3. Components & Power
+                  </CardTitle>
+                  <CardDescription>
+                    Add power supplies and other components (
+                    {selectedComponents.length} selected)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {Object.entries(componentsByCategory).map(
+                    ([category, components]) => (
+                      <div key={category} className="space-y-2">
+                        <h4 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
+                          <ChevronDown className="w-4 h-4" />
+                          {category}
+                        </h4>
+                        <div className="grid gap-2 pl-6">
+                          {components.map((component) => (
+                            <div
+                              key={component.id}
+                              className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
+                                selectedComponents.includes(component.id)
+                                  ? "border-accent bg-accent/5"
+                                  : "border-border hover:border-accent/50"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <Checkbox
+                                  checked={selectedComponents.includes(
+                                    component.id
+                                  )}
+                                  onCheckedChange={() =>
+                                    toggleComponent(component.id)
+                                  }
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium truncate">
+                                    {component.name}
+                                  </p>
+                                </div>
+                                <Badge variant="outline" className="shrink-0">
+                                  ₹{component.price}
+                                </Badge>
+                              </div>
+                              {selectedComponents.includes(component.id) && (
+                                <div className="flex items-center gap-2 ml-4 shrink-0">
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    onClick={() =>
+                                      updateQuantity(
+                                        component.id,
+                                        -1,
+                                        "component"
+                                      )
+                                    }
+                                  >
+                                    -
+                                  </Button>
+                                  <span className="w-8 text-center text-sm font-medium">
+                                    {componentQuantities[component.id] || 1}
+                                  </span>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    onClick={() =>
+                                      updateQuantity(
+                                        component.id,
+                                        1,
+                                        "component"
+                                      )
+                                    }
+                                  >
+                                    +
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Card 4: Choose Actuators */}
+              <Card className="border-2 border-accent/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Settings2 className="w-5 h-5 text-accent" />
+                    4. Choose Actuators
+                  </CardTitle>
+                  <CardDescription>
+                    Add motors, servos, and pumps ({selectedActuators.length}{" "}
+                    selected)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {Object.entries(actuatorsByCategory).map(
+                    ([category, actuators]) => (
+                      <div key={category} className="space-y-2">
+                        <h4 className="font-semibold text-sm text-muted-foreground flex items-center gap-2">
+                          <ChevronDown className="w-4 h-4" />
+                          {category}
+                        </h4>
+                        <div className="grid gap-2 pl-6">
+                          {actuators.map((actuator) => (
+                            <div
+                              key={actuator.id}
+                              className={`flex items-center justify-between p-3 rounded-lg border transition-colors ${
+                                selectedActuators.includes(actuator.id)
+                                  ? "border-accent bg-accent/5"
+                                  : "border-border hover:border-accent/50"
+                              }`}
+                            >
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <Checkbox
+                                  checked={selectedActuators.includes(
+                                    actuator.id
+                                  )}
+                                  onCheckedChange={() =>
+                                    toggleActuator(actuator.id)
+                                  }
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium truncate">
+                                    {actuator.name}
+                                  </p>
+                                </div>
+                                <Badge variant="outline" className="shrink-0">
+                                  ₹{actuator.price}
+                                </Badge>
+                              </div>
+                              {selectedActuators.includes(actuator.id) && (
+                                <div className="flex items-center gap-2 ml-4 shrink-0">
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    onClick={() =>
+                                      updateQuantity(
+                                        actuator.id,
+                                        -1,
+                                        "actuator"
+                                      )
+                                    }
+                                  >
+                                    -
+                                  </Button>
+                                  <span className="w-8 text-center text-sm font-medium">
+                                    {actuatorQuantities[actuator.id] || 1}
+                                  </span>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-7 w-7"
+                                    onClick={() =>
+                                      updateQuantity(actuator.id, 1, "actuator")
+                                    }
+                                  >
+                                    +
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Card 5: Choose Display */}
+              <Card className="border-2 border-accent/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Monitor className="w-5 h-5 text-accent" />
+                    5. Choose Display
+                  </CardTitle>
+                  <CardDescription>
+                    Select a display for your project (optional)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Select
+                    value={selectedDisplay}
+                    onValueChange={setSelectedDisplay}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a display (optional)..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {displayOptions.map((display) => (
+                        <SelectItem key={display.id} value={display.id}>
+                          <div className="flex items-center justify-between w-full">
+                            <span>{display.name}</span>
+                            <Badge
+                              variant={
+                                display.price === 0 ? "outline" : "secondary"
+                              }
+                              className="ml-4"
+                            >
+                              {display.price === 0
+                                ? "Free"
+                                : `₹${display.price}`}
+                            </Badge>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column - Cost Summary (Card 6) */}
+            <div className="lg:col-span-1">
+              <Card className="sticky top-4 border-2 border-accent">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calculator className="w-5 h-5 text-accent" />
+                    6. Cost Estimate
+                  </CardTitle>
+                  <CardDescription>Your project breakdown</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* MCU Cost */}
+                  {selectedMCU && (
+                    <div className="pb-2 border-b">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">
+                          Microcontroller:
+                        </span>
+                        <span className="font-medium">₹{mcuCost}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {mcuOptions.find((m) => m.id === selectedMCU)?.name}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Sensors Cost */}
+                  {selectedSensors.length > 0 && (
+                    <div className="pb-2 border-b">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">
+                          Sensors ({selectedSensors.length}):
+                        </span>
+                        <span className="font-medium">₹{sensorsCost}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        {selectedSensors.slice(0, 3).map((sensorId) => {
+                          const sensor = productsData.find(
+                            (s) => s.id === sensorId
+                          );
+                          const qty = sensorQuantities[sensorId] || 1;
+                          return (
+                            <div
+                              key={sensorId}
+                              className="flex justify-between"
+                            >
+                              <span className="truncate mr-2">
+                                {sensor?.name} x{qty}
+                              </span>
+                              <span>₹{sensor ? sensor.price * qty : 0}</span>
+                            </div>
+                          );
+                        })}
+                        {selectedSensors.length > 3 && (
+                          <p className="text-xs italic">
+                            +{selectedSensors.length - 3} more...
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Components Cost */}
+                  {selectedComponents.length > 0 && (
+                    <div className="pb-2 border-b">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">
+                          Components ({selectedComponents.length}):
+                        </span>
+                        <span className="font-medium">₹{componentsCost}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        {selectedComponents.slice(0, 3).map((compId) => {
+                          const comp = powerComponents.find(
+                            (c) => c.id === compId
+                          );
+                          const qty = componentQuantities[compId] || 1;
+                          return (
+                            <div key={compId} className="flex justify-between">
+                              <span className="truncate mr-2">
+                                {comp?.name} x{qty}
+                              </span>
+                              <span>₹{comp ? comp.price * qty : 0}</span>
+                            </div>
+                          );
+                        })}
+                        {selectedComponents.length > 3 && (
+                          <p className="text-xs italic">
+                            +{selectedComponents.length - 3} more...
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Actuators Cost */}
+                  {selectedActuators.length > 0 && (
+                    <div className="pb-2 border-b">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">
+                          Actuators ({selectedActuators.length}):
+                        </span>
+                        <span className="font-medium">₹{actuatorsCost}</span>
+                      </div>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        {selectedActuators.slice(0, 3).map((actId) => {
+                          const act = actuatorOptions.find(
+                            (a) => a.id === actId
+                          );
+                          const qty = actuatorQuantities[actId] || 1;
+                          return (
+                            <div key={actId} className="flex justify-between">
+                              <span className="truncate mr-2">
+                                {act?.name} x{qty}
+                              </span>
+                              <span>₹{act ? act.price * qty : 0}</span>
+                            </div>
+                          );
+                        })}
+                        {selectedActuators.length > 3 && (
+                          <p className="text-xs italic">
+                            +{selectedActuators.length - 3} more...
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Display Cost */}
+                  {selectedDisplay && displayCost > 0 && (
+                    <div className="pb-2 border-b">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">Display:</span>
+                        <span className="font-medium">₹{displayCost}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {
+                          displayOptions.find((d) => d.id === selectedDisplay)
+                            ?.name
+                        }
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Total */}
+                  <div className="pt-4 border-t-2 border-accent">
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="text-lg font-bold">Total Estimate:</span>
+                      <span className="text-2xl font-bold text-accent">
+                        ₹{totalCost.toLocaleString("en-IN")}
+                      </span>
+                    </div>
+
+                    {totalCost === 0 && (
+                      <p className="text-xs text-muted-foreground text-center mb-4">
+                        Start by selecting components above
+                      </p>
+                    )}
+
+                    {totalCost > 0 && (
+                      <div className="space-y-2">
+                        <Button
+                          onClick={exportEstimate}
+                          className="w-full"
+                          variant="default"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Download Estimate
+                        </Button>
+                        <Button
+                          onClick={resetAll}
+                          className="w-full"
+                          variant="outline"
+                        >
+                          <RotateCcw className="w-4 h-4 mr-2" />
+                          Start Over
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="pt-4 text-xs text-muted-foreground text-center border-t">
+                    <p>
+                      This is an estimate only. Contact us for a detailed quote
+                      and availability.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+      <Footer />
+      <StickyContactBar />
+    </>
+  );
+}
