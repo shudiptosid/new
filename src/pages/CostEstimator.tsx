@@ -478,15 +478,20 @@ export default function CostEstimator() {
                                     {sensor.id}
                                   </p>
                                 </div>
-                                <Badge variant="outline" className="shrink-0 text-xs font-semibold">
+                                <Badge
+                                  variant="outline"
+                                  className="shrink-0 text-xs font-semibold"
+                                >
                                   ₹{sensor.price}
                                 </Badge>
                               </div>
-                              
+
                               {/* Bottom row: Quantity controls (only when selected) */}
                               {selectedSensors.includes(sensor.id) && (
                                 <div className="flex items-center gap-1.5 sm:gap-2 mt-2 ml-6 sm:ml-8">
-                                  <span className="text-[10px] sm:text-xs text-muted-foreground mr-1">Qty:</span>
+                                  <span className="text-[10px] sm:text-xs text-muted-foreground mr-1">
+                                    Qty:
+                                  </span>
                                   <Button
                                     variant="outline"
                                     size="icon"
@@ -567,15 +572,20 @@ export default function CostEstimator() {
                                     {component.name}
                                   </p>
                                 </div>
-                                <Badge variant="outline" className="shrink-0 text-xs font-semibold">
+                                <Badge
+                                  variant="outline"
+                                  className="shrink-0 text-xs font-semibold"
+                                >
                                   ₹{component.price}
                                 </Badge>
                               </div>
-                              
+
                               {/* Bottom row: Quantity controls (only when selected) */}
                               {selectedComponents.includes(component.id) && (
                                 <div className="flex items-center gap-1.5 sm:gap-2 mt-2 ml-6 sm:ml-8">
-                                  <span className="text-[10px] sm:text-xs text-muted-foreground mr-1">Qty:</span>
+                                  <span className="text-[10px] sm:text-xs text-muted-foreground mr-1">
+                                    Qty:
+                                  </span>
                                   <Button
                                     variant="outline"
                                     size="icon"
@@ -664,15 +674,20 @@ export default function CostEstimator() {
                                     {actuator.name}
                                   </p>
                                 </div>
-                                <Badge variant="outline" className="shrink-0 text-xs font-semibold">
+                                <Badge
+                                  variant="outline"
+                                  className="shrink-0 text-xs font-semibold"
+                                >
                                   ₹{actuator.price}
                                 </Badge>
                               </div>
-                              
+
                               {/* Bottom row: Quantity controls (only when selected) */}
                               {selectedActuators.includes(actuator.id) && (
                                 <div className="flex items-center gap-1.5 sm:gap-2 mt-2 ml-6 sm:ml-8">
-                                  <span className="text-[10px] sm:text-xs text-muted-foreground mr-1">Qty:</span>
+                                  <span className="text-[10px] sm:text-xs text-muted-foreground mr-1">
+                                    Qty:
+                                  </span>
                                   <Button
                                     variant="outline"
                                     size="icon"
@@ -762,7 +777,9 @@ export default function CostEstimator() {
                     <Calculator className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
                     6. Cost Estimate
                   </CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">Your project breakdown</CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">
+                    Your project breakdown
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3 sm:space-y-4">
                   {/* MCU Cost */}
@@ -901,7 +918,9 @@ export default function CostEstimator() {
                   {/* Total */}
                   <div className="pt-3 sm:pt-4 border-t-2 border-accent">
                     <div className="flex justify-between items-center mb-3 sm:mb-4">
-                      <span className="text-sm sm:text-base md:text-lg font-bold">Total Estimate:</span>
+                      <span className="text-sm sm:text-base md:text-lg font-bold">
+                        Total Estimate:
+                      </span>
                       <span className="text-lg sm:text-xl md:text-2xl font-bold text-accent">
                         ₹{totalCost.toLocaleString("en-IN")}
                       </span>
