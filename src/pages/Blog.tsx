@@ -5,8 +5,12 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Clock, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 const Blog = () => {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+
   const posts = [
     {
       slug: "power-consumption",
@@ -26,7 +30,7 @@ const Blog = () => {
         "Master RTOS for IoT with FreeRTOS & Zephyr. Learn task scheduling, inter-task communication, code examples, and build production-ready embedded systems.",
       date: "2025-10-08",
       readTime: "16 min read",
-      category: "IoT",
+      category: "RTOS",
       featured: true,
       available: true,
     },
@@ -120,6 +124,17 @@ const Blog = () => {
       featured: true,
       available: true,
     },
+    {
+      slug: "esp-usb-drivers",
+      title: "ESP32/ESP8266 USB Driver Installation: Fix Port Detection Issues",
+      excerpt:
+        "Solve ESP32 and ESP8266 port detection problems on Windows, macOS, and Linux. Learn driver installation for CP2102, CH340, and FTDI chips with step-by-step troubleshooting.",
+      date: "2025-10-16",
+      readTime: "12 min read",
+      category: "Development",
+      featured: true,
+      available: true,
+    },
   ];
 
   const categories = [
@@ -134,8 +149,21 @@ const Blog = () => {
     "Development",
     "AI/ML",
   ];
-  const featuredPosts = posts.filter((post) => post.featured);
-  const regularPosts = posts.filter((post) => !post.featured);
+
+  // Filter posts based on selected category and search query
+  const filteredPosts = posts.filter((post) => {
+    const matchesCategory =
+      selectedCategory === "All" || post.category === selectedCategory;
+    const matchesSearch =
+      searchQuery === "" ||
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.category.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  const featuredPosts = filteredPosts.filter((post) => post.featured);
+  const regularPosts = filteredPosts.filter((post) => !post.featured);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -167,6 +195,8 @@ const Blog = () => {
                 type="text"
                 placeholder="Search articles..."
                 className="pl-10 pr-4 py-3 text-lg"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
@@ -175,12 +205,13 @@ const Blog = () => {
             {categories.map((category) => (
               <Button
                 key={category}
-                variant={category === "All" ? "default" : "outline"}
+                variant={category === selectedCategory ? "default" : "outline"}
                 className={
-                  category === "All"
+                  category === selectedCategory
                     ? "bg-accent hover:bg-accent/90"
                     : "hover:bg-accent hover:text-accent-foreground"
                 }
+                onClick={() => setSelectedCategory(category)}
               >
                 {category}
               </Button>
@@ -192,156 +223,207 @@ const Blog = () => {
       {/* Featured Posts */}
       <section className="py-20 flex-grow">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-foreground mb-8">
-            Featured Articles
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-            {featuredPosts.map((post, index) => (
-              <Card
-                key={index}
-                className={`overflow-hidden transition-all duration-300 group ${
-                  post.available
-                    ? "hover:shadow-strong cursor-pointer"
-                    : "opacity-70"
-                }`}
+          {filteredPosts.length === 0 ? (
+            <div className="text-center py-20">
+              <h2 className="text-3xl font-bold text-foreground mb-4">
+                No Articles Found
+              </h2>
+              <p className="text-muted-foreground text-lg mb-6">
+                {searchQuery
+                  ? `No articles match "${searchQuery}"`
+                  : `No articles in ${selectedCategory} category yet`}
+              </p>
+              <Button
+                onClick={() => {
+                  setSelectedCategory("All");
+                  setSearchQuery("");
+                }}
+                className="bg-accent hover:bg-accent/90"
               >
-                <div className="p-8">
-                  <div className="mb-4 flex justify-between items-center">
-                    <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
-                      {post.category}
-                    </span>
-                    {!post.available && (
-                      <span className="text-sm text-muted-foreground">
-                        Coming Soon
+                Clear Filters
+              </Button>
+            </div>
+          ) : (
+            <>
+              {featuredPosts.length > 0 && (
+                <>
+                  <div className="flex items-center justify-between mb-8">
+                    <h2 className="text-3xl font-bold text-foreground">
+                      Featured Articles
+                    </h2>
+                    {selectedCategory !== "All" && (
+                      <span className="text-muted-foreground">
+                        {featuredPosts.length}{" "}
+                        {featuredPosts.length === 1 ? "article" : "articles"}
                       </span>
                     )}
                   </div>
-
-                  <h3 className="text-2xl font-semibold mb-4 text-foreground group-hover:text-accent transition-colors leading-tight">
-                    {post.title}
-                  </h3>
-
-                  <p className="text-muted-foreground mb-6 leading-relaxed text-lg">
-                    {post.excerpt}
-                  </p>
-
-                  <div className="flex items-center justify-between text-sm text-muted-foreground mb-6">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      <span>
-                        {new Date(post.date).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      <span>{post.readTime}</span>
-                    </div>
-                  </div>
-
-                  {post.available ? (
-                    <Link to={`/blog/${post.slug}`}>
-                      <Button
-                        variant="ghost"
-                        className="p-0 h-auto text-accent hover:text-accent hover:bg-transparent font-medium text-lg group/btn"
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+                    {featuredPosts.map((post, index) => (
+                      <Card
+                        key={index}
+                        className={`overflow-hidden transition-all duration-300 group ${
+                          post.available
+                            ? "hover:shadow-strong cursor-pointer"
+                            : "opacity-70"
+                        }`}
                       >
-                        <span className="group-hover/btn:underline">
-                          Read Article
-                        </span>
-                        <ArrowRight className="ml-2 w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Button
-                      variant="ghost"
-                      className="p-0 h-auto text-muted-foreground font-medium text-lg cursor-not-allowed"
-                      disabled
-                    >
-                      Coming Soon
-                      <ArrowRight className="ml-2 w-5 h-5" />
-                    </Button>
-                  )}
-                </div>
-              </Card>
-            ))}
-          </div>
+                        <div className="p-8">
+                          <div className="mb-4 flex justify-between items-center">
+                            <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
+                              {post.category}
+                            </span>
+                            {!post.available && (
+                              <span className="text-sm text-muted-foreground">
+                                Coming Soon
+                              </span>
+                            )}
+                          </div>
 
-          {/* All Articles */}
-          <h2 className="text-3xl font-bold text-foreground mb-8">
-            All Articles
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {regularPosts.map((post, index) => (
-              <Card
-                key={index}
-                className={`p-6 transition-all duration-300 group ${
-                  post.available
-                    ? "hover:shadow-medium cursor-pointer"
-                    : "opacity-70"
-                }`}
-              >
-                <div className="mb-4 flex justify-between items-center">
-                  <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
-                    {post.category}
-                  </span>
-                  {!post.available && (
-                    <span className="text-sm text-muted-foreground">
-                      Coming Soon
-                    </span>
-                  )}
-                </div>
+                          <h3 className="text-2xl font-semibold mb-4 text-foreground group-hover:text-accent transition-colors leading-tight">
+                            {post.title}
+                          </h3>
 
-                <h3 className="text-xl font-semibold mb-3 text-foreground group-hover:text-accent transition-colors leading-tight">
-                  {post.title}
-                </h3>
+                          <p className="text-muted-foreground mb-6 leading-relaxed text-lg">
+                            {post.excerpt}
+                          </p>
 
-                <p className="text-muted-foreground mb-4 leading-relaxed">
-                  {post.excerpt}
-                </p>
+                          <div className="flex items-center justify-between text-sm text-muted-foreground mb-6">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              <span>
+                                {new Date(post.date).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                  }
+                                )}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-4 h-4" />
+                              <span>{post.readTime}</span>
+                            </div>
+                          </div>
 
-                <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span>
-                      {new Date(post.date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </span>
+                          {post.available ? (
+                            <Link to={`/blog/${post.slug}`}>
+                              <Button
+                                variant="ghost"
+                                className="p-0 h-auto text-accent hover:text-accent hover:bg-transparent font-medium text-lg group/btn"
+                              >
+                                <span className="group-hover/btn:underline">
+                                  Read Article
+                                </span>
+                                <ArrowRight className="ml-2 w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+                              </Button>
+                            </Link>
+                          ) : (
+                            <Button
+                              variant="ghost"
+                              className="p-0 h-auto text-muted-foreground font-medium text-lg cursor-not-allowed"
+                              disabled
+                            >
+                              Coming Soon
+                              <ArrowRight className="ml-2 w-5 h-5" />
+                            </Button>
+                          )}
+                        </div>
+                      </Card>
+                    ))}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    <span>{post.readTime}</span>
-                  </div>
-                </div>
+                </>
+              )}
 
-                {post.available ? (
-                  <Link to={`/blog/${post.slug}`}>
-                    <Button
-                      variant="ghost"
-                      className="p-0 h-auto text-accent hover:text-accent/80 font-medium"
-                    >
-                      Read Article
-                      <ArrowRight className="ml-1 w-4 h-4" />
-                    </Button>
-                  </Link>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    className="p-0 h-auto text-muted-foreground font-medium cursor-not-allowed"
-                    disabled
-                  >
-                    Coming Soon
-                    <ArrowRight className="ml-1 w-4 h-4" />
-                  </Button>
-                )}
-              </Card>
-            ))}
-          </div>
+              {/* All Articles */}
+              {regularPosts.length > 0 && (
+                <>
+                  <div className="flex items-center justify-between mb-8">
+                    <h2 className="text-3xl font-bold text-foreground">
+                      All Articles
+                    </h2>
+                    {selectedCategory !== "All" && (
+                      <span className="text-muted-foreground">
+                        {regularPosts.length}{" "}
+                        {regularPosts.length === 1 ? "article" : "articles"}
+                      </span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {regularPosts.map((post, index) => (
+                      <Card
+                        key={index}
+                        className={`p-6 transition-all duration-300 group ${
+                          post.available
+                            ? "hover:shadow-medium cursor-pointer"
+                            : "opacity-70"
+                        }`}
+                      >
+                        <div className="mb-4 flex justify-between items-center">
+                          <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
+                            {post.category}
+                          </span>
+                          {!post.available && (
+                            <span className="text-sm text-muted-foreground">
+                              Coming Soon
+                            </span>
+                          )}
+                        </div>
+
+                        <h3 className="text-xl font-semibold mb-3 text-foreground group-hover:text-accent transition-colors leading-tight">
+                          {post.title}
+                        </h3>
+
+                        <p className="text-muted-foreground mb-4 leading-relaxed">
+                          {post.excerpt}
+                        </p>
+
+                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4" />
+                            <span>
+                              {new Date(post.date).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-4 h-4" />
+                            <span>{post.readTime}</span>
+                          </div>
+                        </div>
+
+                        {post.available ? (
+                          <Link to={`/blog/${post.slug}`}>
+                            <Button
+                              variant="ghost"
+                              className="p-0 h-auto text-accent hover:text-accent/80 font-medium"
+                            >
+                              Read Article
+                              <ArrowRight className="ml-1 w-4 h-4" />
+                            </Button>
+                          </Link>
+                        ) : (
+                          <Button
+                            variant="ghost"
+                            className="p-0 h-auto text-muted-foreground font-medium cursor-not-allowed"
+                            disabled
+                          >
+                            Coming Soon
+                            <ArrowRight className="ml-1 w-4 h-4" />
+                          </Button>
+                        )}
+                      </Card>
+                    ))}
+                  </div>
+                </>
+              )}
+            </>
+          )}
         </div>
       </section>
 
