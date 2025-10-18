@@ -123,7 +123,7 @@ const articles: Record<string, Article> = {
   "lorawan-networks": {
     title:
       "Building Resilient LoRaWAN Networks: Best Practices for Reliable Long-Range Wireless Sensor Deployments",
-    date: "2024-01-02",
+    date: "2025-09-25",
     readTime: "12 min read",
     category: "Networking",
     seo: {
@@ -504,7 +504,7 @@ Ready to build your resilient LoRaWAN network? Start with a small pilot, follow 
   "debugging-embedded": {
     title:
       "Debugging Embedded Systems: A Complete Guide for Students and Beginners",
-    date: "2024-01-20",
+    date: "2025-10-12",
     readTime: "15 min read",
     category: "Development",
     seo: {
@@ -1171,7 +1171,7 @@ Happy Debugging! 🐛🔍`,
   "power-consumption": {
     title:
       "Optimizing Power Consumption in IoT Devices: Complete Guide for Battery Life Extension",
-    date: "2024-01-15",
+    date: "2025-10-15",
     readTime: "14 min read",
     category: "Power Management",
     seo: {
@@ -1798,7 +1798,7 @@ Happy optimizing! ⚡💚`,
   rtos: {
     title:
       "Real-Time Operating Systems (RTOS) for IoT: Complete Guide for Students and Developers",
-    date: "2024-01-20",
+    date: "2025-10-08",
     readTime: "16 min read",
     category: "IoT",
     seo: {
@@ -2643,7 +2643,7 @@ Happy real-time coding! ⚡🚀`,
   "edge-ai": {
     title:
       "Edge AI on Microcontrollers: Complete TensorFlow Lite Micro Guide for IoT",
-    date: "2023-12-10",
+    date: "2025-09-22",
     readTime: "18 min read",
     category: "AI/ML",
     seo: {
@@ -3680,6 +3680,6587 @@ float buffer[1000000];  // 4 MB
 💡 **See Edge AI in action!** Check our **[IoT Projects Section](/projects)** for complete implementations with source code.
 
 **The future is Edge AI—bring intelligence to every device!** 🚀🧠✨`,
+    ],
+  },
+  "mqtt-protocol": {
+    title: "MQTT Protocol Deep Dive: Complete Guide for IoT Developers",
+    date: "2025-10-05",
+    readTime: "16 min read",
+    category: "Protocols",
+    seo: {
+      metaTitle: "MQTT Protocol Tutorial: Complete IoT Messaging Guide 2024",
+      metaDescription:
+        "Master MQTT protocol for IoT. Learn Quality of Service levels, retained messages, last will testament, brokers (Mosquitto, HiveMQ), and build production-ready ESP32 applications.",
+      keywords: [
+        "MQTT protocol",
+        "MQTT tutorial",
+        "IoT messaging",
+        "MQTT broker",
+        "Mosquitto",
+        "HiveMQ",
+        "MQTT QoS",
+        "ESP32 MQTT",
+        "publish subscribe",
+        "MQTT retained messages",
+        "last will testament",
+        "MQTT security",
+        "IoT communication protocol",
+        "MQTT Arduino",
+        "message queue telemetry",
+      ],
+      featuredImage: "/blog/mqtt-protocol.jpg",
+    },
+    content: [
+      `# Introduction
+
+MQTT (Message Queuing Telemetry Transport) has become the de facto standard for IoT messaging, powering billions of connected devices worldwide. From smart home systems to industrial automation, from wearable devices to autonomous vehicles, MQTT provides the lightweight, reliable communication backbone that modern IoT applications demand.
+
+Developed in 1999 by Andy Stanford-Clark of IBM and Arlen Nipper of Arcom (now Cirrus Link), MQTT was designed specifically for constrained environments where bandwidth is limited, network reliability is uncertain, and power consumption is critical. Today, it is an [OASIS standard](https://www.oasis-open.org/committees/tc_home.php?wg_abbrev=mqtt) and [ISO/IEC 20922](https://www.iso.org/standard/69466.html) specification.
+
+In this comprehensive guide, we will explore MQTT architecture, Quality of Service levels, security considerations, broker selection, and implement production-ready examples using ESP32 and Arduino. Whether you are building a simple home automation project or a large-scale industrial IoT system, this article will provide the knowledge you need to leverage MQTT effectively.`,
+
+      `## Understanding MQTT Architecture
+
+### The Publish-Subscribe Pattern
+
+Unlike traditional client-server architectures where clients communicate directly with each other, MQTT uses a **publish-subscribe (pub-sub)** pattern with a central **broker** that routes messages between publishers and subscribers.
+
+**Key Components:**
+
+**1. MQTT Broker**
+The central hub that receives all messages from publishers and routes them to appropriate subscribers. Popular brokers include:
+- [Mosquitto](https://mosquitto.org/) - Lightweight, open-source
+- [HiveMQ](https://www.hivemq.com/) - Enterprise-grade, scalable
+- [EMQ X](https://www.emqx.io/) - High-performance, distributed
+- [AWS IoT Core](https://aws.amazon.com/iot-core/) - Managed cloud service
+- [Azure IoT Hub](https://azure.microsoft.com/en-us/services/iot-hub/) - Microsoft cloud platform
+
+**2. Publishers (Clients)**
+Devices or applications that send messages to topics. A temperature sensor publishing readings would be a publisher.
+
+**3. Subscribers (Clients)**
+Devices or applications that receive messages from topics they have subscribed to. A dashboard displaying sensor data would be a subscriber.
+
+**4. Topics**
+Hierarchical strings that act as message routing addresses. Examples:
+\`\`\`
+home/livingroom/temperature
+factory/machine1/vibration/sensor1
+vehicle/truck42/gps/latitude
+\`\`\`
+
+### Architecture Comparison
+
+| Architecture | MQTT Pub-Sub | HTTP Request-Response | WebSockets |
+|--------------|--------------|----------------------|------------|
+| **Communication** | Asynchronous | Synchronous | Bidirectional |
+| **Connection** | Persistent | Per-request | Persistent |
+| **Overhead** | Low (2 bytes min) | High (headers) | Medium |
+| **Power Efficiency** | Excellent | Poor | Good |
+| **Scalability** | Excellent | Limited | Good |
+| **Best For** | IoT sensors | Web APIs | Real-time chat |
+
+**Why MQTT Wins for IoT:**
+- Minimal packet overhead (2-byte header minimum)
+- Persistent connections reduce handshake overhead
+- Built-in Quality of Service guarantees
+- Last Will and Testament for connection monitoring
+- Retained messages for latest state storage
+- Efficient bandwidth usage (critical for cellular/satellite)`,
+
+      `## MQTT Protocol Fundamentals
+
+### Topic Structure and Wildcards
+
+Topics use forward slashes as separators and support wildcards for flexible subscriptions.
+
+**Topic Examples:**
+\`\`\`
+sensors/temperature
+sensors/humidity
+sensors/pressure
+home/bedroom/light/status
+home/bedroom/light/brightness
+industrial/machine/motor/rpm
+industrial/machine/motor/temperature
+\`\`\`
+
+**Wildcard Operators:**
+
+**1. Single-Level Wildcard (+)**
+Matches exactly one level in the topic hierarchy.
+\`\`\`
+sensors/+          # Matches: sensors/temperature, sensors/humidity
+                   # Does NOT match: sensors/room1/temperature
+
+home/+/light       # Matches: home/bedroom/light, home/kitchen/light
+                   # Does NOT match: home/light, home/bedroom/light/status
+\`\`\`
+
+**2. Multi-Level Wildcard (#)**
+Matches any number of levels. Must be placed at the end of the topic.
+\`\`\`
+sensors/#          # Matches: sensors/temperature, sensors/room1/temperature
+                   # Matches: sensors/room1/floor2/temperature
+
+home/bedroom/#     # Matches: home/bedroom/light, home/bedroom/light/status
+                   # Matches: home/bedroom/sensor/temperature/reading1
+\`\`\`
+
+**Best Practices:**
+- Use meaningful, hierarchical topic names
+- Start general and get specific (left to right)
+- Avoid starting topics with forward slash
+- Keep topic names concise but descriptive
+- Use consistent naming conventions across your system
+
+**Reserved Topics:**
+Topics starting with **$** are reserved for system use:
+\`\`\`
+$SYS/broker/clients/connected    # Broker statistics
+$SYS/broker/messages/received    # Message counters
+\`\`\``,
+
+      `## Quality of Service (QoS) Levels
+
+MQTT provides three Quality of Service levels that define message delivery guarantees between client and broker.
+
+### QoS 0: At Most Once (Fire and Forget)
+
+**Behavior:**
+- Message sent once without acknowledgment
+- No retry mechanism
+- Fastest but least reliable
+- Messages may be lost if connection drops
+
+**Use Cases:**
+- High-frequency sensor data where occasional loss is acceptable
+- Ambient temperature readings (losing one reading is not critical)
+- Non-critical telemetry
+
+**Example Code:**
+\`\`\`cpp
+client.publish("sensors/temperature", "23.5", false);  // QoS 0 (default)
+\`\`\`
+
+**Packet Flow:**
+\`\`\`
+Publisher → PUBLISH → Broker → PUBLISH → Subscriber
+(No acknowledgment)
+\`\`\`
+
+### QoS 1: At Least Once
+
+**Behavior:**
+- Message delivery acknowledged with PUBACK
+- Sender retransmits if no acknowledgment received
+- Guarantees delivery but may deliver duplicates
+- Receiver must handle duplicate messages
+
+**Use Cases:**
+- Important sensor readings
+- Device status updates
+- Alerts and notifications
+
+**Example Code:**
+\`\`\`cpp
+client.publish("alerts/motion", "detected", 1);  // QoS 1
+\`\`\`
+
+**Packet Flow:**
+\`\`\`
+Publisher → PUBLISH → Broker → PUBACK → Publisher
+                    ↓
+              PUBLISH → Subscriber → PUBACK → Broker
+\`\`\`
+
+### QoS 2: Exactly Once
+
+**Behavior:**
+- Four-step handshake ensures exactly one delivery
+- No duplicates, highest reliability
+- Highest overhead and latency
+- Most resource-intensive
+
+**Use Cases:**
+- Financial transactions
+- Critical control commands (open valve, activate emergency stop)
+- Billing and accounting data
+- Any scenario where duplicates would cause problems
+
+**Example Code:**
+\`\`\`cpp
+client.publish("control/emergency_stop", "activate", 2);  // QoS 2
+\`\`\`
+
+**Packet Flow:**
+\`\`\`
+Publisher → PUBLISH → Broker → PUBREC → Publisher
+                              ↓
+Publisher ← PUBCOMP ← Broker ← PUBREL ← Publisher
+
+(Similar flow between Broker and Subscriber)
+\`\`\`
+
+### QoS Comparison Table
+
+| Feature | QoS 0 | QoS 1 | QoS 2 |
+|---------|-------|-------|-------|
+| **Delivery Guarantee** | At most once | At least once | Exactly once |
+| **Acknowledgment** | None | PUBACK | PUBREC/PUBREL/PUBCOMP |
+| **Bandwidth Usage** | Minimal | Low | Higher |
+| **Battery Impact** | Minimal | Low | Significant |
+| **Duplicates Possible** | No (lost instead) | Yes | No |
+| **Use Case** | Non-critical data | Important data | Critical commands |
+
+**Recommendation:**
+- Default to **QoS 1** for most IoT applications
+- Use **QoS 0** for high-frequency telemetry where occasional loss is acceptable
+- Reserve **QoS 2** only for truly critical operations
+
+**Learn More:** [MQTT QoS Official Specification](https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718099)`,
+
+      `## Advanced MQTT Features
+
+### Retained Messages
+
+Retained messages store the last published message on a topic at the broker. When a new subscriber subscribes to that topic, it immediately receives the retained message.
+
+**Use Case:** Device status, configuration, last known sensor value
+
+**Example:**
+\`\`\`cpp
+// Publisher: Set device status (retained)
+client.publish("devices/sensor1/status", "online", true);  // retained = true
+
+// Subscriber connects hours later
+client.subscribe("devices/+/status");
+// Immediately receives: "devices/sensor1/status: online"
+\`\`\`
+
+**Clear Retained Message:**
+\`\`\`cpp
+// Publish empty message with retain flag
+client.publish("devices/sensor1/status", "", true);
+\`\`\`
+
+**Best Practices:**
+- Use for device availability status
+- Store configuration values
+- Avoid retaining large payloads
+- Clear retained messages when no longer needed
+
+### Last Will and Testament (LWT)
+
+LWT allows a client to specify a message that the broker will publish if the client disconnects unexpectedly (without sending DISCONNECT).
+
+**Use Case:** Detect device offline events, connection monitoring
+
+**Configuration:**
+\`\`\`cpp
+// Set Last Will Testament during connection
+client.setServer(mqtt_server, 1883);
+client.setCallback(callback);
+
+// Configure LWT
+client.connect("ESP32Client", 
+               "devices/esp32/status",    // LWT Topic
+               1,                         // QoS
+               true,                      // Retain
+               "offline");                // LWT Message
+
+// After successful connection, publish online status
+if (client.connected()) {
+  client.publish("devices/esp32/status", "online", true);
+}
+\`\`\`
+
+**How It Works:**
+1. Client connects with LWT configured
+2. Broker stores LWT message
+3. Client publishes "online" status
+4. If client disconnects gracefully: No LWT published
+5. If client loses connection unexpectedly: Broker publishes "offline" LWT
+
+**Real-World Example:**
+\`\`\`cpp
+// Smart home device with LWT
+void setup() {
+  // LWT: Notify if device crashes or loses power
+  client.connect("SmartLight_Living", 
+                 "home/livingroom/light/availability",
+                 1, true, "offline");
+  
+  if (client.connected()) {
+    // Announce we're online
+    client.publish("home/livingroom/light/availability", "online", true);
+    
+    // Subscribe to control commands
+    client.subscribe("home/livingroom/light/set");
+  }
+}
+
+void loop() {
+  if (!client.connected()) {
+    reconnect();
+  }
+  client.loop();
+}
+\`\`\`
+
+### Clean Session vs Persistent Session
+
+**Clean Session = true:**
+- Broker discards all session state when client disconnects
+- Subscriptions not preserved
+- Queued messages (QoS > 0) discarded
+- Lower resource usage
+
+**Clean Session = false (Persistent):**
+- Broker maintains session state across disconnections
+- Subscriptions preserved
+- Queued messages stored for offline clients
+- Higher resource usage but better reliability
+
+**Example:**
+\`\`\`cpp
+// Persistent session (remember subscriptions)
+client.connect("DeviceID", "user", "pass", "lwt/topic", 0, false, "offline", false);
+//                                                                            ↑
+//                                                                    cleanSession = false
+
+// Clean session (start fresh each time)
+client.connect("DeviceID", "user", "pass", "lwt/topic", 0, false, "offline", true);
+//                                                                            ↑
+//                                                                    cleanSession = true
+\`\`\`
+
+**When to Use Persistent Sessions:**
+- Mobile apps that reconnect frequently
+- Devices with intermittent connectivity
+- When missing messages is unacceptable
+
+**When to Use Clean Sessions:**
+- Test clients and debugging
+- Devices with stable connections
+- When only current data matters
+
+**Learn More:** [MQTT Clean Session Explained](https://www.hivemq.com/blog/mqtt-essentials-part-7-persistent-session-queuing-messages/)`,
+
+      `## Hands-On: ESP32 MQTT Implementation
+
+Let's build a complete temperature monitoring system using ESP32, DHT22 sensor, and MQTT.
+
+### Hardware Required
+
+- [ESP32 Development Board](https://www.espressif.com/en/products/devkits)
+- [DHT22 Temperature/Humidity Sensor](https://www.adafruit.com/product/385)
+- Resistors, breadboard, jumper wires
+
+### Software Setup
+
+**Install Libraries (Arduino IDE):**
+\`\`\`
+1. PubSubClient by Nick O'Leary
+2. DHT sensor library by Adafruit
+3. Adafruit Unified Sensor
+\`\`\`
+
+### Complete ESP32 MQTT Publisher Code
+
+\`\`\`cpp
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <DHT.h>
+
+// WiFi credentials
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+// MQTT Broker settings
+const char* mqtt_server = "broker.hivemq.com";  // Public broker for testing
+const int mqtt_port = 1883;
+const char* mqtt_user = "";  // Leave empty for public brokers
+const char* mqtt_password = "";
+
+// MQTT Topics
+const char* temp_topic = "home/livingroom/temperature";
+const char* humid_topic = "home/livingroom/humidity";
+const char* status_topic = "home/sensor1/status";
+
+// DHT22 Sensor
+#define DHTPIN 4
+#define DHTTYPE DHT22
+DHT dht(DHTPIN, DHTTYPE);
+
+// MQTT Client
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+// Timing
+unsigned long lastMsg = 0;
+const long interval = 5000;  // Publish every 5 seconds
+
+void setup_wifi() {
+  delay(10);
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void reconnect() {
+  while (!client.connected()) {
+    Serial.print("Attempting MQTT connection...");
+    
+    // Create unique client ID
+    String clientId = "ESP32Client-";
+    clientId += String(random(0xffff), HEX);
+    
+    // Connect with Last Will Testament
+    if (client.connect(clientId.c_str(), 
+                       status_topic,      // LWT topic
+                       1,                 // QoS
+                       true,              // Retain
+                       "offline")) {      // LWT message
+      Serial.println("connected");
+      
+      // Publish online status
+      client.publish(status_topic, "online", true);
+      
+      // Subscribe to control topics if needed
+      client.subscribe("home/livingroom/control");
+      
+    } else {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      delay(5000);
+    }
+  }
+}
+
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  
+  String message;
+  for (int i = 0; i < length; i++) {
+    message += (char)payload[i];
+  }
+  Serial.println(message);
+  
+  // Handle control commands
+  if (String(topic) == "home/livingroom/control") {
+    if (message == "reset") {
+      Serial.println("Reset command received");
+      ESP.restart();
+    }
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  
+  // Initialize DHT sensor
+  dht.begin();
+  
+  // Connect to WiFi
+  setup_wifi();
+  
+  // Configure MQTT
+  client.setServer(mqtt_server, mqtt_port);
+  client.setCallback(callback);
+}
+
+void loop() {
+  if (!client.connected()) {
+    reconnect();
+  }
+  client.loop();
+
+  unsigned long now = millis();
+  if (now - lastMsg > interval) {
+    lastMsg = now;
+
+    // Read sensor data
+    float temperature = dht.readTemperature();
+    float humidity = dht.readHumidity();
+
+    // Check if readings are valid
+    if (isnan(temperature) || isnan(humidity)) {
+      Serial.println("Failed to read from DHT sensor!");
+      return;
+    }
+
+    // Convert to strings
+    char tempString[8];
+    char humString[8];
+    dtostrf(temperature, 6, 2, tempString);
+    dtostrf(humidity, 6, 2, humString);
+
+    // Publish temperature (QoS 1, retained)
+    Serial.print("Publishing temperature: ");
+    Serial.println(tempString);
+    client.publish(temp_topic, tempString, true);
+
+    // Publish humidity (QoS 1, retained)
+    Serial.print("Publishing humidity: ");
+    Serial.println(humString);
+    client.publish(humid_topic, humString, true);
+  }
+}
+\`\`\`
+
+### MQTT Subscriber (Python Dashboard)
+
+\`\`\`python
+import paho.mqtt.client as mqtt
+import time
+
+# MQTT Settings
+broker = "broker.hivemq.com"
+port = 1883
+topics = [
+    ("home/livingroom/temperature", 1),
+    ("home/livingroom/humidity", 1),
+    ("home/sensor1/status", 1)
+]
+
+def on_connect(client, userdata, flags, rc):
+    print(f"Connected with result code {rc}")
+    # Subscribe to multiple topics
+    client.subscribe(topics)
+    print("Subscribed to topics")
+
+def on_message(client, userdata, msg):
+    print(f"{msg.topic}: {msg.payload.decode()}")
+    
+    # Store data to database, display on dashboard, etc.
+    if msg.topic == "home/livingroom/temperature":
+        temp = float(msg.payload.decode())
+        print(f"  Temperature: {temp}°C")
+    elif msg.topic == "home/livingroom/humidity":
+        humidity = float(msg.payload.decode())
+        print(f"  Humidity: {humidity}%")
+    elif msg.topic == "home/sensor1/status":
+        status = msg.payload.decode()
+        print(f"  Sensor Status: {status}")
+
+# Create MQTT client
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_message = on_message
+
+# Connect to broker
+print("Connecting to broker...")
+client.connect(broker, port, 60)
+
+# Blocking call that processes network traffic and dispatches callbacks
+client.loop_forever()
+\`\`\`
+
+**Learn More:**
+- [PubSubClient Documentation](https://pubsubclient.knolleary.net/)
+- [ESP32 MQTT Tutorial](https://randomnerdtutorials.com/esp32-mqtt-publish-subscribe-arduino-ide/)
+- [Paho MQTT Python](https://pypi.org/project/paho-mqtt/)`,
+
+      `## MQTT Broker Selection and Setup
+
+### Running Mosquitto Locally
+
+**Installation (Ubuntu/Debian):**
+\`\`\`bash
+sudo apt update
+sudo apt install mosquitto mosquitto-clients
+sudo systemctl enable mosquitto
+sudo systemctl start mosquitto
+\`\`\`
+
+**Installation (Windows):**
+Download from [Mosquitto Downloads](https://mosquitto.org/download/)
+
+**Installation (macOS):**
+\`\`\`bash
+brew install mosquitto
+brew services start mosquitto
+\`\`\`
+
+**Test Broker:**
+\`\`\`bash
+# Terminal 1: Subscribe
+mosquitto_sub -h localhost -t test/topic
+
+# Terminal 2: Publish
+mosquitto_pub -h localhost -t test/topic -m "Hello MQTT"
+\`\`\`
+
+### Mosquitto Configuration
+
+**Basic Configuration (/etc/mosquitto/mosquitto.conf):**
+\`\`\`
+# Listen on all interfaces
+listener 1883 0.0.0.0
+
+# Allow anonymous connections (testing only!)
+allow_anonymous true
+
+# Persistence
+persistence true
+persistence_location /var/lib/mosquitto/
+
+# Logging
+log_dest file /var/log/mosquitto/mosquitto.log
+log_type all
+\`\`\`
+
+**With Authentication:**
+\`\`\`bash
+# Create password file
+sudo mosquitto_passwd -c /etc/mosquitto/passwd username
+
+# Edit configuration
+listener 1883
+allow_anonymous false
+password_file /etc/mosquitto/passwd
+
+# Restart broker
+sudo systemctl restart mosquitto
+\`\`\`
+
+### Cloud MQTT Brokers
+
+| Broker | Free Tier | Features | Best For |
+|--------|-----------|----------|----------|
+| [HiveMQ Cloud](https://www.hivemq.com/mqtt-cloud-broker/) | 100 connections | Managed, dashboard | Production |
+| [CloudMQTT](https://www.cloudmqtt.com/) | 5 connections | Simple setup | Testing |
+| [AWS IoT Core](https://aws.amazon.com/iot-core/) | 250K minutes/month | Enterprise features | AWS ecosystem |
+| [Azure IoT Hub](https://azure.microsoft.com/services/iot-hub/) | 8K messages/day | Device management | Azure ecosystem |
+| [Eclipse IoT](https://mqtt.eclipseprojects.io/) | Public broker | No registration | Quick testing |
+
+**Public Test Brokers:**
+\`\`\`
+broker.hivemq.com:1883
+test.mosquitto.org:1883
+mqtt.eclipseprojects.io:1883
+\`\`\`
+
+**Warning:** Never use public brokers for production! They offer no security, reliability guarantees, or data privacy.
+
+### Broker Performance Considerations
+
+**Factors Affecting Performance:**
+- Concurrent connections
+- Message throughput (messages per second)
+- Message size
+- QoS levels used
+- Persistent vs clean sessions
+- Retained message count
+
+**Benchmark Results (Typical):**
+
+| Broker | Max Connections | Throughput (msg/s) | Latency |
+|--------|----------------|-------------------|---------|
+| **Mosquitto** | 100K+ | 100K+ | <10ms |
+| **HiveMQ** | 1M+ | 1M+ | <5ms |
+| **EMQ X** | 10M+ | 5M+ | <10ms |
+| **VerneMQ** | 1M+ | 500K+ | <15ms |
+
+**Learn More:**
+- [Mosquitto Documentation](https://mosquitto.org/documentation/)
+- [HiveMQ Broker Setup](https://www.hivemq.com/docs/hivemq/latest/user-guide/introduction.html)`,
+
+      `## MQTT Security Best Practices
+
+### Transport Layer Security (TLS/SSL)
+
+**Never send credentials over unencrypted connections in production.**
+
+**Enable TLS on Mosquitto:**
+\`\`\`
+# Generate certificates (Let's Encrypt or self-signed)
+listener 8883
+certfile /etc/mosquitto/certs/server.crt
+cafile /etc/mosquitto/certs/ca.crt
+keyfile /etc/mosquitto/certs/server.key
+tls_version tlsv1.2
+\`\`\`
+
+**ESP32 with TLS:**
+\`\`\`cpp
+#include <WiFiClientSecure.h>
+
+WiFiClientSecure espClient;
+PubSubClient client(espClient);
+
+void setup() {
+  // Set CA certificate
+  espClient.setCACert(ca_cert);
+  
+  // Connect to secure broker
+  client.setServer("secure.broker.com", 8883);
+}
+\`\`\`
+
+### Authentication Methods
+
+**1. Username/Password**
+\`\`\`cpp
+client.connect("ClientID", "username", "password");
+\`\`\`
+
+**2. Client Certificates (Mutual TLS)**
+\`\`\`cpp
+espClient.setCACert(ca_cert);
+espClient.setCertificate(client_cert);
+espClient.setPrivateKey(client_key);
+\`\`\`
+
+**3. Token-Based (OAuth, JWT)**
+Used by cloud platforms like AWS IoT Core
+
+### Access Control Lists (ACL)
+
+**Mosquitto ACL Configuration:**
+\`\`\`
+# /etc/mosquitto/acl
+
+# User 'sensor1' can only publish to its own topics
+user sensor1
+topic write devices/sensor1/#
+
+# User 'dashboard' can read all sensor data
+user dashboard
+topic read devices/#
+
+# Admin has full access
+user admin
+topic readwrite #
+\`\`\`
+
+**Enable ACL:**
+\`\`\`
+acl_file /etc/mosquitto/acl
+\`\`\`
+
+### Security Checklist
+
+**Production Security Requirements:**
+- [ ] Use TLS/SSL for all connections
+- [ ] Disable anonymous authentication
+- [ ] Implement strong passwords (12+ characters)
+- [ ] Use ACLs to restrict topic access
+- [ ] Enable audit logging
+- [ ] Use client certificates for sensitive devices
+- [ ] Regularly update broker software
+- [ ] Isolate broker on secure network
+- [ ] Implement rate limiting
+- [ ] Monitor for suspicious activity
+
+**Learn More:**
+- [MQTT Security Fundamentals](https://www.hivemq.com/blog/mqtt-security-fundamentals/)
+- [Mosquitto TLS Configuration](https://mosquitto.org/man/mosquitto-tls-7.html)`,
+
+      `## Performance Optimization
+
+### Reduce Message Overhead
+
+**Optimize Topic Names:**
+\`\`\`cpp
+// Verbose (41 bytes)
+client.publish("home/kitchen/temperature/sensor/reading", "23.5");
+
+// Optimized (25 bytes)
+client.publish("h/k/t", "23.5");
+\`\`\`
+
+**Use Binary Payloads:**
+\`\`\`cpp
+// JSON (19 bytes)
+client.publish("sensor/data", "{"t":23.5,"h":65}");
+
+// Binary (8 bytes)
+uint8_t data[8];
+memcpy(data, &temperature, 4);
+memcpy(data + 4, &humidity, 4);
+client.publish("sensor/data", data, 8);
+\`\`\`
+
+### Connection Management
+
+**Persistent Connections:**
+\`\`\`cpp
+// Bad: Reconnect for every message
+void loop() {
+  client.connect("ID");
+  client.publish("topic", "data");
+  client.disconnect();  // Expensive!
+  delay(1000);
+}
+
+// Good: Maintain persistent connection
+void loop() {
+  if (!client.connected()) {
+    reconnect();  // Only reconnect if disconnected
+  }
+  client.loop();  // Process incoming messages
+  
+  // Publish when needed
+  if (shouldPublish) {
+    client.publish("topic", "data");
+  }
+  
+  delay(100);
+}
+\`\`\`
+
+**Keep-Alive Tuning:**
+\`\`\`cpp
+// Default keep-alive: 15 seconds
+client.setKeepAlive(60);  // Increase to 60 seconds
+
+// Reduces ping overhead for stable connections
+// But increases detection time for dead connections
+\`\`\`
+
+### Batching and Buffering
+
+**Batch Multiple Readings:**
+\`\`\`cpp
+// Inefficient: Publish every reading immediately
+void loop() {
+  float temp = readSensor();
+  client.publish("temp", String(temp).c_str());
+  delay(100);  // 10 messages/second
+}
+
+// Efficient: Batch readings
+#define BATCH_SIZE 10
+float readings[BATCH_SIZE];
+int count = 0;
+
+void loop() {
+  readings[count++] = readSensor();
+  
+  if (count >= BATCH_SIZE) {
+    String batch = createBatchJSON(readings, count);
+    client.publish("temp/batch", batch.c_str());
+    count = 0;
+  }
+  delay(100);  // 1 message/second (10x reduction)
+}
+\`\`\`
+
+### QoS Selection Strategy
+
+**Match QoS to Requirements:**
+\`\`\`cpp
+// High-frequency, non-critical (QoS 0)
+client.publish("telemetry/ambient", data, false);  // QoS 0
+
+// Important status updates (QoS 1)
+client.publish("device/status", "active", 1);
+
+// Critical commands (QoS 2)
+client.publish("control/emergency", "shutdown", 2);
+\`\`\`
+
+**Learn More:**
+- [MQTT Performance Best Practices](https://www.hivemq.com/blog/mqtt-performance-best-practices/)`,
+
+      `## Real-World Use Cases
+
+### Smart Home Automation
+
+**Architecture:**
+\`\`\`
+Devices (Lights, Sensors) → MQTT Broker → Home Assistant/Node-RED
+                                ↓
+                          Mobile App (MQTT.fx)
+\`\`\`
+
+**Topics Structure:**
+\`\`\`
+home/livingroom/light/state         # on/off
+home/livingroom/light/brightness    # 0-100
+home/bedroom/sensor/temperature     # 23.5
+home/kitchen/motion/detected        # true/false
+\`\`\`
+
+**Integration:** Works seamlessly with [Home Assistant](https://www.home-assistant.io/integrations/mqtt/), [OpenHAB](https://www.openhab.org/addons/bindings/mqtt/), [Node-RED](https://nodered.org/)
+
+### Industrial IoT Monitoring
+
+**Use Case:** Factory equipment monitoring with 1000+ sensors
+
+**Benefits:**
+- Centralized data collection from heterogeneous devices
+- Real-time alerts for anomalies
+- Historical data storage for predictive maintenance
+- Low bandwidth usage even with cellular backhaul
+
+**Example Topics:**
+\`\`\`
+factory/floor1/machine42/motor/rpm
+factory/floor1/machine42/motor/temperature
+factory/floor1/machine42/motor/vibration
+factory/floor1/machine42/status
+\`\`\`
+
+### Fleet Vehicle Tracking
+
+**Use Case:** GPS tracking for 500 delivery vehicles
+
+**Architecture:**
+- Vehicles publish GPS coordinates every 30 seconds
+- Central server subscribes to all vehicle topics
+- Dashboard displays real-time locations
+- Alerts triggered for geofence violations
+
+**Bandwidth Calculation:**
+\`\`\`
+Per Message: ~50 bytes (topic + payload)
+Frequency: 30 seconds
+Vehicles: 500
+
+Bandwidth = (50 bytes * 500 vehicles) / 30 seconds
+         = 833 bytes/second
+         = 6.6 Kbps (minimal!)
+\`\`\`
+
+### Agricultural IoT
+
+**Use Case:** Soil moisture monitoring across 100-acre farm
+
+**Benefits:**
+- Low power consumption (LoRa + MQTT over cellular gateway)
+- Sensors run for years on batteries
+- Automated irrigation control
+- Cloud-based analytics and forecasting
+
+**Learn More:**
+- [Home Assistant MQTT](https://www.home-assistant.io/integrations/mqtt/)
+- [Industrial MQTT Use Cases](https://www.hivemq.com/use-cases/)`,
+
+      `## Troubleshooting Common Issues
+
+### Connection Problems
+
+**Issue: Cannot Connect to Broker**
+
+**Checklist:**
+\`\`\`cpp
+// 1. Verify broker is running
+// Linux: sudo systemctl status mosquitto
+// Windows: Check Services
+
+// 2. Check firewall rules
+// Allow port 1883 (unencrypted) or 8883 (TLS)
+
+// 3. Test with mosquitto_sub
+// mosquitto_sub -h broker.address -t test/#
+
+// 4. Enable debug output
+client.setServer(mqtt_server, 1883);
+Serial.print("Connecting to MQTT broker...");
+if (client.connect("TestClient")) {
+  Serial.println("Connected!");
+} else {
+  Serial.print("Failed, rc=");
+  Serial.println(client.state());
+  // rc values:
+  // -4 = timeout
+  // -3 = connection lost
+  // -2 = connect failed
+  // -1 = disconnected
+}
+\`\`\`
+
+### Message Delivery Issues
+
+**Issue: Messages Not Received**
+
+**Debugging Steps:**
+\`\`\`cpp
+// 1. Verify subscription
+Serial.println("Subscribing to topic...");
+if (client.subscribe("test/topic", 1)) {
+  Serial.println("Subscription successful");
+} else {
+  Serial.println("Subscription failed");
+}
+
+// 2. Check callback function
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.println("Callback triggered!");  // Add debug output
+  // Process message
+}
+
+// 3. Call client.loop() regularly
+void loop() {
+  if (!client.connected()) {
+    reconnect();
+  }
+  client.loop();  // CRITICAL: Must be called frequently
+}
+
+// 4. Verify QoS levels match expectations
+\`\`\`
+
+### Memory Issues (ESP32/Arduino)
+
+**Issue: Crashes or Disconnections**
+
+**Solutions:**
+\`\`\`cpp
+// 1. Increase buffer size
+client.setBufferSize(512);  // Default is 256 bytes
+
+// 2. Monitor free heap
+Serial.print("Free heap: ");
+Serial.println(ESP.getFreeHeap());
+
+// 3. Avoid String concatenation (heap fragmentation)
+// Bad:
+String topic = "devices/" + deviceId + "/sensor";
+
+// Good:
+char topic[50];
+snprintf(topic, 50, "devices/%s/sensor", deviceId);
+
+// 4. Use watchdog timer
+esp_task_wdt_init(30, true);  // 30 second timeout
+esp_task_wdt_add(NULL);
+\`\`\`
+
+**Learn More:**
+- [MQTT Troubleshooting Guide](https://www.hivemq.com/blog/mqtt-client-library-encyclopedia-pubsubclient/)
+- [ESP32 MQTT Debugging](https://randomnerdtutorials.com/solved-reconnect-esp32-to-wifi/)`,
+
+      `## MQTT vs Alternative Protocols
+
+### When to Choose MQTT
+
+**MQTT Strengths:**
+- Lightweight and efficient
+- Designed for constrained networks
+- Built-in QoS guarantees
+- Excellent for many-to-many communication
+- Mature ecosystem and wide support
+
+**MQTT Limitations:**
+- Requires broker infrastructure
+- Not ideal for request-response patterns
+- Limited security in basic implementations
+- Broker becomes single point of failure
+
+### Protocol Comparison
+
+| Protocol | Best Use Case | Overhead | Pattern |
+|----------|--------------|----------|---------|
+| **MQTT** | IoT telemetry, sensors | Minimal | Pub-Sub |
+| **HTTP/REST** | Web APIs, request-response | High | Client-Server |
+| **CoAP** | Constrained networks, UDP | Very Low | Request-Response |
+| **WebSocket** | Real-time web apps | Medium | Bidirectional |
+| **AMQP** | Enterprise messaging | High | Message Queue |
+| **LoRaWAN** | Long-range, low-power | Minimal | Star Network |
+
+**When to Use Alternatives:**
+
+**Use HTTP/REST when:**
+- Simple request-response needed
+- Existing HTTP infrastructure
+- Infrequent communication
+- Web browser clients
+
+**Use CoAP when:**
+- UDP acceptable (lossy networks okay)
+- Extremely constrained devices
+- Multicast messaging needed
+
+**Use WebSockets when:**
+- Browser-based real-time applications
+- Bidirectional communication needed
+- HTTP infrastructure required
+
+**Hybrid Approach:**
+Many production systems use MQTT for device-to-server communication and REST APIs for user-facing applications.
+
+**Learn More:**
+- [MQTT vs CoAP Comparison](https://www.hivemq.com/blog/mqtt-vs-coap/)
+- [IoT Protocol Comparison](https://www.eclipse.org/community/eclipse_newsletter/2016/february/article2.php)`,
+
+      `## Conclusion and Best Practices
+
+MQTT has become the standard protocol for IoT communication due to its lightweight nature, reliability guarantees, and efficient pub-sub architecture. Whether you are building a smart home system, industrial monitoring solution, or fleet management platform, MQTT provides the robust foundation your IoT application needs.
+
+### Key Takeaways
+
+**Core Concepts:**
+- MQTT uses publish-subscribe pattern with central broker
+- Topics provide hierarchical message routing
+- Three QoS levels offer flexible reliability guarantees
+- Retained messages and LWT enable robust device management
+
+**Implementation Guidelines:**
+- Start with QoS 1 for most applications
+- Use persistent sessions for unreliable networks
+- Implement Last Will Testament for connection monitoring
+- Structure topics hierarchically and consistently
+- Always use TLS/SSL in production
+
+**Performance Optimization:**
+- Maintain persistent connections
+- Batch messages when possible
+- Choose appropriate QoS levels
+- Optimize topic names and payload sizes
+- Monitor broker performance and scale accordingly
+
+**Security Requirements:**
+- Enable TLS encryption
+- Implement authentication (username/password or certificates)
+- Use ACLs to restrict topic access
+- Regularly update broker software
+- Monitor and audit connection logs
+
+### Next Steps
+
+**For Beginners:**
+1. Set up local Mosquitto broker
+2. Build simple ESP32 publisher/subscriber
+3. Experiment with QoS levels and retained messages
+4. Integrate with [Node-RED](https://nodered.org/) dashboard
+
+**For Production Deployments:**
+1. Choose managed broker service or deploy clustered brokers
+2. Implement TLS/SSL and authentication
+3. Design topic hierarchy for scalability
+4. Set up monitoring and alerting
+5. Plan for broker redundancy and failover
+6. Document security policies and procedures
+
+**Resources:**
+
+**Official Documentation:**
+- [MQTT Version 3.1.1 Specification](https://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html)
+- [MQTT Version 5.0 Specification](https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html)
+- [Mosquitto Documentation](https://mosquitto.org/documentation/)
+- [HiveMQ Resources](https://www.hivemq.com/resources/)
+
+**Learning Resources:**
+- [MQTT Essentials Series](https://www.hivemq.com/mqtt-essentials/)
+- [Paho MQTT Clients](https://www.eclipse.org/paho/)
+- [MQTT.org Community](https://mqtt.org/)
+
+**Tools:**
+- [MQTT Explorer](http://mqtt-explorer.com/) - Desktop client for testing
+- [MQTT.fx](https://mqttfx.jensd.de/) - Feature-rich MQTT client
+- [Mosquitto CLI](https://mosquitto.org/man/mosquitto_pub-1.html) - Command-line tools
+
+**Community:**
+- [Reddit r/mqtt](https://www.reddit.com/r/mqtt/)
+- [Stack Overflow MQTT Tag](https://stackoverflow.com/questions/tagged/mqtt)
+- [Eclipse Paho Mailing List](https://dev.eclipse.org/mailman/listinfo/paho-dev)
+
+### Related Articles
+
+Explore our other IoT protocol guides:
+- [LoRaWAN Networks](/blog/lorawan-networks) - Long-range wireless communication
+- [Power Optimization](/blog/power-consumption) - Battery life strategies
+- [RTOS Guide](/blog/rtos) - Real-time operating systems
+- [Edge AI](/blog/edge-ai) - Machine learning on microcontrollers
+
+**Need help with your IoT project?** Visit our [Services Page](/services) for MQTT consulting and development kits.
+
+**See MQTT in action!** Check our [IoT Projects Section](/projects) for complete implementation examples with source code.
+
+MQTT provides the reliable, efficient messaging backbone that modern IoT applications demand. Start building today and join millions of developers leveraging MQTT for connected device solutions.`,
+    ],
+  },
+  "iot-security": {
+    title: "IoT Security Best Practices: Complete Guide for Embedded Systems",
+    date: "2025-10-18",
+    readTime: "18 min read",
+    category: "Security",
+    seo: {
+      metaTitle: "IoT Security Best Practices: Embedded Systems Guide 2024",
+      metaDescription:
+        "Master IoT security for ESP32, Arduino, STM32. Learn secure boot, encryption (TLS/AES), secure OTA updates, hardware security modules, and build production-ready secure devices.",
+      keywords: [
+        "IoT security",
+        "embedded security",
+        "secure boot",
+        "ESP32 security",
+        "TLS encryption",
+        "hardware security",
+        "secure OTA updates",
+        "IoT vulnerabilities",
+        "device authentication",
+        "encrypted firmware",
+        "security best practices",
+        "ATECC608 crypto",
+        "IoT attack vectors",
+        "secure embedded systems",
+        "cybersecurity IoT",
+      ],
+      featuredImage: "/blog/iot-security.jpg",
+    },
+    content: [
+      `# Introduction
+
+The Internet of Things has revolutionized how we interact with technology, connecting billions of devices worldwide. However, this massive connectivity has created an equally massive attack surface. From smart home devices being hijacked into botnets to industrial sensors being exploited for corporate espionage, IoT security breaches have become alarmingly common.
+
+According to [Kaspersky's IoT Threat Report](https://www.kaspersky.com/about/press-releases/2023_kaspersky-detects-over-100-million-attacks-on-iot-devices-in-the-first-half-of-2023), over 100 million attacks on IoT devices were detected in just the first half of 2023. The infamous [Mirai botnet](https://www.cloudflare.com/learning/ddos/glossary/mirai-botnet/) compromised over 600,000 devices by exploiting default credentials. In 2016, it launched one of the largest DDoS attacks in history, taking down major websites including Twitter, Netflix, and Reddit.
+
+IoT security is not optional—it is fundamental. Whether you are building a smart home device, industrial sensor, or medical wearable, implementing robust security measures protects not just your device, but the entire network it connects to and the users who depend on it.
+
+In this comprehensive guide, we will explore IoT threat landscapes, security principles, hardware and software protection mechanisms, secure communication protocols, and provide production-ready implementation examples for ESP32, STM32, and Arduino platforms.`,
+
+      `## Understanding the IoT Threat Landscape
+
+### Common IoT Attack Vectors
+
+**1. Default and Weak Credentials**
+
+The most prevalent vulnerability in IoT devices. Attackers scan the internet for devices with factory-default usernames and passwords.
+
+**Real-World Impact:**
+- Mirai botnet exploited 60+ default credential combinations
+- Compromised devices include security cameras, routers, DVRs
+- Used to launch massive DDoS attacks
+
+**Prevention:**
+\`\`\`cpp
+// Bad: Hardcoded default credentials
+const char* wifi_password = "admin123";
+
+// Good: Force user to set credentials on first boot
+void setup() {
+  if (!credentialsConfigured()) {
+    startConfigurationMode();
+    Serial.println("Please set credentials via web interface");
+    while(!credentialsConfigured()) {
+      handleConfigServer();
+    }
+  }
+}
+\`\`\`
+
+**2. Unencrypted Communication**
+
+Data transmitted in plaintext can be intercepted and modified.
+
+**Vulnerabilities:**
+- Credentials sent over HTTP
+- MQTT without TLS
+- Telnet access enabled
+- Unencrypted firmware updates
+
+**Example Attack:**
+\`\`\`
+Attacker intercepts WiFi traffic:
+Device → Router: {"user":"admin","pass":"secret123"}
+Attacker now has credentials!
+\`\`\`
+
+**3. Insecure Firmware Updates**
+
+Unsigned or unencrypted OTA updates allow malicious firmware installation.
+
+**Attack Scenario:**
+1. Attacker performs man-in-the-middle attack
+2. Intercepts firmware update request
+3. Injects malicious firmware
+4. Device installs compromised code
+5. Attacker gains full control
+
+**4. Physical Access Attacks**
+
+Attackers with physical access can:
+- Extract firmware via JTAG/SWD debug ports
+- Read secrets from unencrypted flash memory
+- Clone devices
+- Reverse engineer proprietary algorithms
+
+**5. Injection Attacks**
+
+SQL injection, command injection, buffer overflows:
+
+\`\`\`cpp
+// Vulnerable code
+void processCommand(String cmd) {
+  system(cmd.c_str());  // Command injection!
+}
+
+// Attacker sends: "ls; rm -rf /"
+\`\`\`
+
+**6. Side-Channel Attacks**
+
+Advanced attacks that analyze:
+- Power consumption patterns (to extract encryption keys)
+- Timing variations (to infer secret data)
+- Electromagnetic emissions
+- Acoustic signatures
+
+### IoT-Specific Vulnerabilities
+
+| Vulnerability | Risk Level | Common In |
+|---------------|------------|-----------|
+| **Default Credentials** | Critical | 80% of devices |
+| **Unencrypted Communication** | High | 60% of devices |
+| **No Secure Boot** | High | 70% of devices |
+| **Hardcoded Secrets** | Critical | 50% of devices |
+| **Debug Ports Enabled** | Medium | 40% of devices |
+| **Insecure Web Interfaces** | High | 55% of devices |
+| **Buffer Overflows** | High | 30% of devices |
+| **Outdated Components** | Medium | 65% of devices |
+
+**Learn More:**
+- [OWASP IoT Top 10](https://owasp.org/www-project-internet-of-things/)
+- [NIST IoT Security Guidelines](https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program)`,
+
+      `## Fundamental Security Principles
+
+### Defense in Depth
+
+Implement multiple layers of security so that if one layer is compromised, others still protect the system.
+
+**Security Layers:**
+
+**1. Hardware Layer**
+- Secure element chips (ATECC608, SE050)
+- Hardware random number generators
+- Memory protection units (MPU)
+- Debug port protection
+
+**2. Firmware Layer**
+- Secure boot and chain of trust
+- Code signing and verification
+- Encrypted firmware storage
+- Anti-rollback protection
+
+**3. Communication Layer**
+- TLS/DTLS encryption
+- Certificate-based authentication
+- Encrypted protocols (HTTPS, MQTTS)
+- VPN tunneling
+
+**4. Application Layer**
+- Input validation and sanitization
+- Least privilege principle
+- Strong authentication
+- Audit logging
+
+**5. Cloud/Backend Layer**
+- API authentication (OAuth, JWT)
+- Rate limiting
+- Anomaly detection
+- Security monitoring
+
+### The CIA Triad for IoT
+
+**Confidentiality**
+Data should only be accessible to authorized parties.
+
+**Implementation:**
+- Encrypt data at rest and in transit
+- Use access control mechanisms
+- Secure key storage
+
+**Integrity**
+Data should not be altered without detection.
+
+**Implementation:**
+- Digital signatures
+- HMAC (Hash-based Message Authentication Code)
+- Secure checksums
+
+**Availability**
+System should remain operational and accessible.
+
+**Implementation:**
+- Watchdog timers
+- Fault tolerance
+- DDoS protection
+- Redundancy
+
+### Principle of Least Privilege
+
+Grant minimum permissions necessary for operation.
+
+**Example:**
+\`\`\`cpp
+// Bad: Single admin account
+if (authenticated) {
+  // Full system access
+}
+
+// Good: Role-based access control
+enum UserRole { VIEWER, OPERATOR, ADMIN };
+
+void handleRequest(UserRole role, Action action) {
+  switch(role) {
+    case VIEWER:
+      if (action == READ) processRequest();
+      else deny();
+      break;
+    case OPERATOR:
+      if (action == READ || action == CONTROL) processRequest();
+      else deny();
+      break;
+    case ADMIN:
+      processRequest();  // Full access
+      break;
+  }
+}
+\`\`\`
+
+**Learn More:**
+- [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)`,
+
+      `## Hardware Security Mechanisms
+
+### Secure Boot Implementation
+
+Secure boot ensures only trusted firmware executes on the device by verifying digital signatures at boot time.
+
+**How It Works:**
+\`\`\`
+1. ROM Bootloader (immutable, in ROM)
+   ↓ Verifies signature
+2. Secondary Bootloader (in Flash)
+   ↓ Verifies signature
+3. Application Firmware
+   ↓ Runs if verified
+4. Device Operational
+\`\`\`
+
+**ESP32 Secure Boot:**
+
+\`\`\`cpp
+// Enable secure boot in menuconfig
+// Security features → Enable secure boot
+
+// Generate signing key
+espsecure.py generate_signing_key secure_boot_signing_key.pem
+
+// Sign firmware
+espsecure.py sign_data --keyfile secure_boot_signing_key.pem \
+  --output bootloader-signed.bin bootloader.bin
+
+// Flash signed bootloader and enable secure boot
+espefuse.py burn_key secure_boot secure_boot_signing_key.pem
+espefuse.py burn_efuse ABS_DONE_0
+\`\`\`
+
+**Important:** Secure boot keys are burned into eFuses. This is **irreversible**. Test thoroughly before production.
+
+**STM32 Secure Boot:**
+
+\`\`\`c
+// Using STM32 secure boot with RDP (Readout Protection)
+// Set readout protection level 1 or 2
+// Configure secure memory regions
+
+// In STM32CubeProgrammer:
+// 1. Set RDP Level 1 (prevents flash readout)
+// 2. Enable write protection on bootloader
+// 3. Configure MPU (Memory Protection Unit)
+\`\`\`
+
+### Hardware Security Modules
+
+Dedicated chips that securely store cryptographic keys and perform crypto operations.
+
+**Popular Options:**
+
+**1. Microchip ATECC608A**
+- I2C interface
+- Secure key storage (256-bit keys)
+- Hardware SHA-256, ECDSA
+- $0.60 per unit
+
+\`\`\`cpp
+#include <ArduinoECCX08.h>
+
+void setup() {
+  if (!ECCX08.begin()) {
+    Serial.println("Failed to initialize ATECC608!");
+    while(1);
+  }
+  
+  // Generate random number (true RNG)
+  byte random[32];
+  ECCX08.random(random, sizeof(random));
+  
+  // Perform ECDSA signature
+  byte signature[64];
+  byte message[32] = "Important message";
+  ECCX08.ecSign(0, message, signature);
+  
+  Serial.println("Secure signature generated!");
+}
+\`\`\`
+
+**2. NXP SE050**
+- I2C interface
+- ECC, RSA, AES support
+- Secure element with Common Criteria EAL 6+
+- $1.50 per unit
+
+**3. TPM 2.0 (Trusted Platform Module)**
+- Full cryptographic coprocessor
+- Used in industrial and enterprise devices
+- $5-15 per unit
+
+**Benefits:**
+- Keys never leave secure element
+- Tamper detection
+- Side-channel attack resistance
+- Hardware random number generation
+- Accelerated crypto operations
+
+**Learn More:**
+- [Microchip ATECC608A](https://www.microchip.com/en-us/product/ATECC608A)
+- [NXP EdgeLock SE050](https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se050-plug-trust-secure-element-family:SE050)`,
+
+      `## Encryption and Secure Communication
+
+### Transport Layer Security (TLS)
+
+TLS encrypts communication between devices and servers, preventing eavesdropping and tampering.
+
+**ESP32 with TLS (HTTPS):**
+
+\`\`\`cpp
+#include <WiFiClientSecure.h>
+
+const char* ca_cert = R"EOF(
+-----BEGIN CERTIFICATE-----
+MIIDdzCCAl+gAwIBAgIEAgAAuTANBgkqhkiG9w0BAQUFADBaMQswCQYDVQQGEwJJ
+[... certificate content ...]
+-----END CERTIFICATE-----
+)EOF";
+
+WiFiClientSecure client;
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  
+  // Set CA certificate
+  client.setCACert(ca_cert);
+  
+  // Optional: Verify server hostname
+  client.setInsecure();  // For testing only!
+  // Production: client.setCACert(ca_cert);
+}
+
+void sendSecureRequest() {
+  if (client.connect("api.example.com", 443)) {
+    Serial.println("Connected securely!");
+    
+    client.println("GET /api/data HTTP/1.1");
+    client.println("Host: api.example.com");
+    client.println("Connection: close");
+    client.println();
+    
+    // Read response
+    while (client.connected()) {
+      String line = client.readStringUntil('\\n');
+      Serial.println(line);
+    }
+  }
+  client.stop();
+}
+\`\`\`
+
+**MQTT with TLS (MQTTS):**
+
+\`\`\`cpp
+#include <WiFiClientSecure.h>
+#include <PubSubClient.h>
+
+WiFiClientSecure espClient;
+PubSubClient client(espClient);
+
+void setup() {
+  espClient.setCACert(ca_cert);
+  espClient.setCertificate(client_cert);  // Client certificate
+  espClient.setPrivateKey(client_key);    // Client private key
+  
+  client.setServer("secure.broker.com", 8883);
+  
+  if (client.connect("SecureClient")) {
+    Serial.println("Connected to MQTTS broker!");
+    client.publish("secure/topic", "encrypted message");
+  }
+}
+\`\`\`
+
+### Symmetric Encryption (AES)
+
+Fast encryption for data at rest and local communication.
+
+**AES-128 Example (ESP32 Hardware Acceleration):**
+
+\`\`\`cpp
+#include "mbedtls/aes.h"
+
+void encryptData(uint8_t* input, uint8_t* output, 
+                 uint8_t* key, uint8_t* iv) {
+  mbedtls_aes_context aes;
+  mbedtls_aes_init(&aes);
+  
+  // Set encryption key (128-bit)
+  mbedtls_aes_setkey_enc(&aes, key, 128);
+  
+  // Encrypt data (CBC mode)
+  mbedtls_aes_crypt_cbc(&aes, MBEDTLS_AES_ENCRYPT, 16,
+                        iv, input, output);
+  
+  mbedtls_aes_free(&aes);
+}
+
+void decryptData(uint8_t* input, uint8_t* output,
+                 uint8_t* key, uint8_t* iv) {
+  mbedtls_aes_context aes;
+  mbedtls_aes_init(&aes);
+  
+  // Set decryption key
+  mbedtls_aes_setkey_dec(&aes, key, 128);
+  
+  // Decrypt data
+  mbedtls_aes_crypt_cbc(&aes, MBEDTLS_AES_DECRYPT, 16,
+                        iv, input, output);
+  
+  mbedtls_aes_free(&aes);
+}
+\`\`\`
+
+**Storing Encrypted Credentials:**
+
+\`\`\`cpp
+#include <Preferences.h>
+#include "mbedtls/aes.h"
+
+Preferences prefs;
+
+void storeEncryptedPassword(String password) {
+  uint8_t key[16] = {0x01, 0x02, ...};  // Device-unique key
+  uint8_t iv[16];
+  esp_fill_random(iv, 16);  // Random IV
+  
+  uint8_t encrypted[32];
+  encryptData((uint8_t*)password.c_str(), encrypted, key, iv);
+  
+  prefs.begin("secure", false);
+  prefs.putBytes("pass", encrypted, 32);
+  prefs.putBytes("iv", iv, 16);
+  prefs.end();
+}
+
+String retrieveDecryptedPassword() {
+  prefs.begin("secure", true);
+  uint8_t encrypted[32];
+  uint8_t iv[16];
+  prefs.getBytes("pass", encrypted, 32);
+  prefs.getBytes("iv", iv, 16);
+  prefs.end();
+  
+  uint8_t key[16] = {0x01, 0x02, ...};
+  uint8_t decrypted[32];
+  decryptData(encrypted, decrypted, key, iv);
+  
+  return String((char*)decrypted);
+}
+\`\`\`
+
+### Message Authentication (HMAC)
+
+Verify message integrity and authenticity.
+
+\`\`\`cpp
+#include "mbedtls/md.h"
+
+void calculateHMAC(uint8_t* message, size_t msgLen,
+                   uint8_t* key, size_t keyLen,
+                   uint8_t* hmac) {
+  mbedtls_md_context_t ctx;
+  mbedtls_md_init(&ctx);
+  
+  mbedtls_md_setup(&ctx, mbedtls_md_info_from_type(MBEDTLS_MD_SHA256), 1);
+  mbedtls_md_hmac_starts(&ctx, key, keyLen);
+  mbedtls_md_hmac_update(&ctx, message, msgLen);
+  mbedtls_md_hmac_finish(&ctx, hmac);
+  
+  mbedtls_md_free(&ctx);
+}
+
+bool verifyHMAC(uint8_t* message, size_t msgLen,
+                uint8_t* receivedHMAC, uint8_t* key, size_t keyLen) {
+  uint8_t calculatedHMAC[32];
+  calculateHMAC(message, msgLen, key, keyLen, calculatedHMAC);
+  
+  return memcmp(receivedHMAC, calculatedHMAC, 32) == 0;
+}
+\`\`\`
+
+**Learn More:**
+- [ESP32 Cryptography Documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/protocols/esp_tls.html)
+- [mbedTLS Library](https://tls.mbed.org/)`,
+
+      `## Secure OTA Updates
+
+Over-The-Air firmware updates are convenient but create a major attack vector if not properly secured.
+
+### OTA Security Requirements
+
+**1. Firmware Signing**
+All firmware must be cryptographically signed by the manufacturer.
+
+**2. Signature Verification**
+Device verifies signature before installing update.
+
+**3. Encrypted Transfer**
+Firmware downloaded over TLS/HTTPS.
+
+**4. Anti-Rollback**
+Prevent installing older vulnerable firmware.
+
+**5. Atomic Updates**
+Update either completes fully or rolls back (no partial updates).
+
+### ESP32 Secure OTA Implementation
+
+\`\`\`cpp
+#include <HTTPUpdate.h>
+#include <WiFiClientSecure.h>
+
+const char* firmware_url = "https://example.com/firmware.bin";
+const char* ca_cert = "...";  // Server CA certificate
+const char* firmware_version = "1.2.3";
+
+void performSecureOTA() {
+  WiFiClientSecure client;
+  client.setCACert(ca_cert);
+  
+  HTTPUpdate httpUpdate;
+  
+  // Set minimum expected firmware version (anti-rollback)
+  httpUpdate.rebootOnUpdate(false);  // Manual reboot for safety
+  
+  Serial.println("Starting OTA update...");
+  
+  t_httpUpdate_return ret = httpUpdate.update(client, firmware_url);
+  
+  switch(ret) {
+    case HTTP_UPDATE_FAILED:
+      Serial.printf("Update failed: %s\\n", 
+                    httpUpdate.getLastErrorString().c_str());
+      break;
+      
+    case HTTP_UPDATE_NO_UPDATES:
+      Serial.println("No new updates available");
+      break;
+      
+    case HTTP_UPDATE_OK:
+      Serial.println("Update successful! Rebooting...");
+      delay(1000);
+      ESP.restart();
+      break;
+  }
+}
+
+// Verify firmware signature (using ESP32 secure boot)
+void setup() {
+  // Check if firmware is signed
+  const esp_partition_t* partition = esp_ota_get_running_partition();
+  esp_app_desc_t app_desc;
+  esp_ota_get_partition_description(partition, &app_desc);
+  
+  Serial.printf("Running firmware version: %s\\n", app_desc.version);
+  Serial.printf("Secure version: %d\\n", app_desc.secure_version);
+  
+  // Only allow updates from trusted server
+  if (WiFi.status() == WL_CONNECTED) {
+    performSecureOTA();
+  }
+}
+\`\`\`
+
+### Firmware Version Management
+
+\`\`\`cpp
+#define FIRMWARE_VERSION "1.2.3"
+#define FIRMWARE_BUILD 12345
+
+struct FirmwareInfo {
+  char version[16];
+  uint32_t build;
+  uint32_t timestamp;
+  uint8_t signature[64];
+};
+
+bool shouldUpdate(FirmwareInfo* newFirmware) {
+  // Check version number
+  if (strcmp(newFirmware->version, FIRMWARE_VERSION) <= 0) {
+    Serial.println("New firmware is not newer");
+    return false;
+  }
+  
+  // Verify signature
+  if (!verifyFirmwareSignature(newFirmware)) {
+    Serial.println("Invalid firmware signature!");
+    return false;
+  }
+  
+  // Check rollback protection
+  if (newFirmware->build < FIRMWARE_BUILD) {
+    Serial.println("Rollback attempt detected!");
+    return false;
+  }
+  
+  return true;
+}
+\`\`\`
+
+### OTA Update Server (Python)
+
+\`\`\`python
+from flask import Flask, send_file, request
+import hashlib
+import hmac
+
+app = Flask(__name__)
+SECRET_KEY = b'your-secret-key'
+
+@app.route('/firmware/<device_id>', methods=['GET'])
+def get_firmware(device_id):
+    # Authenticate device
+    token = request.headers.get('Authorization')
+    if not verify_device_token(device_id, token):
+        return "Unauthorized", 401
+    
+    # Get current firmware version from device
+    current_version = request.headers.get('X-Firmware-Version')
+    
+    # Check if update available
+    latest_version = get_latest_firmware_version()
+    if current_version >= latest_version:
+        return "No update available", 304
+    
+    # Log update request
+    log_update_request(device_id, current_version, latest_version)
+    
+    # Return firmware file
+    return send_file('firmware.bin', mimetype='application/octet-stream')
+
+def verify_device_token(device_id, token):
+    expected = hmac.new(SECRET_KEY, device_id.encode(), hashlib.sha256).hexdigest()
+    return hmac.compare_digest(token, expected)
+
+if __name__ == '__main__':
+    app.run(ssl_context='adhoc')  # Use proper certificates in production
+\`\`\`
+
+**Learn More:**
+- [ESP32 OTA Updates](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html)
+- [Secure Firmware Update Best Practices](https://www.nist.gov/publications/cybersecurity-iot-patch-management)`,
+
+      `## Authentication and Access Control
+
+### Device Authentication Methods
+
+**1. Pre-Shared Keys (PSK)**
+
+Simple but requires secure key distribution.
+
+\`\`\`cpp
+const char* device_key = "unique-device-secret-key";
+
+bool authenticateToServer() {
+  // Generate HMAC token
+  String timestamp = String(millis());
+  String message = deviceID + ":" + timestamp;
+  
+  uint8_t hmac[32];
+  calculateHMAC((uint8_t*)message.c_str(), message.length(),
+                (uint8_t*)device_key, strlen(device_key), hmac);
+  
+  String token = base64Encode(hmac, 32);
+  
+  // Send authentication request
+  HTTPClient http;
+  http.begin("https://api.example.com/auth");
+  http.addHeader("X-Device-ID", deviceID);
+  http.addHeader("X-Timestamp", timestamp);
+  http.addHeader("X-Auth-Token", token);
+  
+  int httpCode = http.POST("");
+  return (httpCode == 200);
+}
+\`\`\`
+
+**2. Certificate-Based Authentication (mTLS)**
+
+Most secure, uses public key cryptography.
+
+\`\`\`cpp
+WiFiClientSecure client;
+
+void setup() {
+  // Set CA certificate (to verify server)
+  client.setCACert(ca_cert);
+  
+  // Set client certificate (to prove identity)
+  client.setCertificate(client_cert);
+  
+  // Set private key
+  client.setPrivateKey(client_key);
+  
+  if (client.connect("api.example.com", 443)) {
+    Serial.println("Mutually authenticated!");
+  }
+}
+\`\`\`
+
+**3. OAuth 2.0 / JWT Tokens**
+
+Token-based authentication for cloud services.
+
+\`\`\`cpp
+String accessToken;
+unsigned long tokenExpiry;
+
+bool getAccessToken() {
+  HTTPClient http;
+  http.begin("https://oauth.example.com/token");
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  
+  String payload = "grant_type=client_credentials"
+                   "&client_id=" + String(CLIENT_ID) +
+                   "&client_secret=" + String(CLIENT_SECRET);
+  
+  int httpCode = http.POST(payload);
+  
+  if (httpCode == 200) {
+    String response = http.getString();
+    // Parse JSON response
+    accessToken = extractToken(response);
+    tokenExpiry = millis() + 3600000;  // 1 hour
+    return true;
+  }
+  return false;
+}
+
+void makeAuthenticatedRequest() {
+  // Refresh token if expired
+  if (millis() > tokenExpiry) {
+    getAccessToken();
+  }
+  
+  HTTPClient http;
+  http.begin("https://api.example.com/data");
+  http.addHeader("Authorization", "Bearer " + accessToken);
+  
+  int httpCode = http.GET();
+  // Process response...
+}
+\`\`\`
+
+### Role-Based Access Control (RBAC)
+
+\`\`\`cpp
+enum UserRole {
+  ROLE_VIEWER = 1,
+  ROLE_OPERATOR = 2,
+  ROLE_ADMIN = 4
+};
+
+enum Permission {
+  PERM_READ = 1,
+  PERM_CONTROL = 2,
+  PERM_CONFIGURE = 4,
+  PERM_UPDATE = 8
+};
+
+const uint8_t rolePermissions[] = {
+  PERM_READ,                                    // VIEWER
+  PERM_READ | PERM_CONTROL,                     // OPERATOR
+  PERM_READ | PERM_CONTROL | PERM_CONFIGURE | PERM_UPDATE  // ADMIN
+};
+
+bool hasPermission(UserRole role, Permission perm) {
+  return (rolePermissions[role] & perm) != 0;
+}
+
+void handleRequest(UserRole role, String action) {
+  if (action == "read" && hasPermission(role, PERM_READ)) {
+    // Allow read operation
+  } else if (action == "control" && hasPermission(role, PERM_CONTROL)) {
+    // Allow control operation
+  } else if (action == "configure" && hasPermission(role, PERM_CONFIGURE)) {
+    // Allow configuration
+  } else {
+    Serial.println("Permission denied!");
+  }
+}
+\`\`\`
+
+**Learn More:**
+- [OAuth 2.0 Specification](https://oauth.net/2/)
+- [JWT Introduction](https://jwt.io/introduction)`,
+
+      `## Input Validation and Sanitization
+
+Prevent injection attacks by validating all external inputs.
+
+### Buffer Overflow Prevention
+
+\`\`\`cpp
+// Vulnerable code
+void processData(char* input) {
+  char buffer[32];
+  strcpy(buffer, input);  // Buffer overflow if input > 32 bytes!
+}
+
+// Secure code
+void processDataSecure(const char* input, size_t inputLen) {
+  char buffer[32];
+  
+  if (inputLen >= sizeof(buffer)) {
+    Serial.println("Input too large!");
+    return;
+  }
+  
+  strncpy(buffer, input, sizeof(buffer) - 1);
+  buffer[sizeof(buffer) - 1] = '\\0';  // Ensure null termination
+}
+\`\`\`
+
+### Input Validation
+
+\`\`\`cpp
+bool validateTemperature(float temp) {
+  // Reject unrealistic values
+  if (temp < -50.0 || temp > 150.0) {
+    Serial.println("Invalid temperature range!");
+    return false;
+  }
+  return true;
+}
+
+bool validateMQTTTopic(const char* topic) {
+  size_t len = strlen(topic);
+  
+  // Check length
+  if (len == 0 || len > 256) return false;
+  
+  // Check for valid characters
+  for (size_t i = 0; i < len; i++) {
+    char c = topic[i];
+    if (!isalnum(c) && c != '/' && c != '_' && c != '-') {
+      Serial.println("Invalid topic character!");
+      return false;
+    }
+  }
+  
+  return true;
+}
+
+bool validateJSON(const char* json) {
+  // Use a proper JSON parser (ArduinoJson)
+  StaticJsonDocument<256> doc;
+  DeserializationError error = deserializeJson(doc, json);
+  
+  if (error) {
+    Serial.print("JSON parsing failed: ");
+    Serial.println(error.c_str());
+    return false;
+  }
+  
+  return true;
+}
+\`\`\`
+
+### Command Injection Prevention
+
+\`\`\`cpp
+// Vulnerable: Never do this!
+void executeCommand(String cmd) {
+  system(cmd.c_str());  // Attacker can run arbitrary commands!
+}
+
+// Secure: Whitelist allowed commands
+void executeCommandSecure(String cmd) {
+  if (cmd == "status") {
+    checkDeviceStatus();
+  } else if (cmd == "restart") {
+    ESP.restart();
+  } else if (cmd == "info") {
+    printSystemInfo();
+  } else {
+    Serial.println("Unknown command!");
+  }
+}
+\`\`\`
+
+### SQL Injection Prevention (IoT Gateways)
+
+\`\`\`cpp
+// For devices that interact with databases
+
+// Vulnerable
+String query = "SELECT * FROM sensors WHERE id = '" + sensorId + "'";
+// Attacker sends: "1' OR '1'='1"
+
+// Secure: Use parameterized queries
+void querySensor(int sensorId) {
+  // Using prepared statements (depends on database library)
+  stmt = db.prepare("SELECT * FROM sensors WHERE id = ?");
+  stmt.bind(1, sensorId);
+  stmt.execute();
+}
+\`\`\`
+
+**Learn More:**
+- [OWASP Input Validation Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html)`,
+
+      `## Security Monitoring and Incident Response
+
+### Audit Logging
+
+Log security-relevant events for forensics and monitoring.
+
+\`\`\`cpp
+#include <time.h>
+
+enum LogLevel {
+  LOG_INFO,
+  LOG_WARNING,
+  LOG_SECURITY,
+  LOG_CRITICAL
+};
+
+void securityLog(LogLevel level, const char* event, const char* details) {
+  time_t now = time(nullptr);
+  struct tm timeinfo;
+  localtime_r(&now, &timeinfo);
+  
+  char timestamp[64];
+  strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", &timeinfo);
+  
+  Serial.printf("[%s] [%s] %s: %s\\n",
+                timestamp,
+                getLevelString(level),
+                event,
+                details);
+  
+  // Also send to remote logging server
+  if (WiFi.status() == WL_CONNECTED) {
+    sendLogToServer(level, event, details);
+  }
+}
+
+void monitorSecurityEvents() {
+  // Log authentication attempts
+  securityLog(LOG_SECURITY, "AUTH_ATTEMPT", "User: admin, IP: 192.168.1.100");
+  
+  // Log failed authentication
+  securityLog(LOG_WARNING, "AUTH_FAILED", "Invalid credentials");
+  
+  // Log firmware updates
+  securityLog(LOG_INFO, "OTA_UPDATE", "Version 1.2.3 installed");
+  
+  // Log suspicious activity
+  securityLog(LOG_CRITICAL, "INTRUSION_DETECTED", "Multiple failed auth attempts");
+}
+\`\`\`
+
+### Intrusion Detection
+
+\`\`\`cpp
+#define MAX_AUTH_ATTEMPTS 3
+#define LOCKOUT_DURATION 300000  // 5 minutes
+
+struct SecurityMonitor {
+  uint8_t failedAuthAttempts;
+  unsigned long lockoutUntil;
+  unsigned long lastActivity;
+};
+
+SecurityMonitor secMonitor = {0};
+
+bool checkAuthentication(String password) {
+  // Check if locked out
+  if (millis() < secMonitor.lockoutUntil) {
+    Serial.println("Account locked! Try again later.");
+    securityLog(LOG_SECURITY, "AUTH_BLOCKED", "Lockout active");
+    return false;
+  }
+  
+  // Verify password
+  if (password == CORRECT_PASSWORD) {
+    secMonitor.failedAuthAttempts = 0;
+    securityLog(LOG_INFO, "AUTH_SUCCESS", "User authenticated");
+    return true;
+  }
+  
+  // Failed attempt
+  secMonitor.failedAuthAttempts++;
+  securityLog(LOG_WARNING, "AUTH_FAILED", 
+              "Attempt " + String(secMonitor.failedAuthAttempts));
+  
+  // Lock account after max attempts
+  if (secMonitor.failedAuthAttempts >= MAX_AUTH_ATTEMPTS) {
+    secMonitor.lockoutUntil = millis() + LOCKOUT_DURATION;
+    securityLog(LOG_CRITICAL, "ACCOUNT_LOCKED", 
+                "Too many failed attempts");
+  }
+  
+  return false;
+}
+\`\`\`
+
+### Watchdog and Failsafe Mechanisms
+
+\`\`\`cpp
+#include <esp_task_wdt.h>
+
+#define WDT_TIMEOUT 30  // 30 seconds
+
+void setup() {
+  // Initialize watchdog timer
+  esp_task_wdt_init(WDT_TIMEOUT, true);
+  esp_task_wdt_add(NULL);
+  
+  Serial.println("Watchdog enabled");
+}
+
+void loop() {
+  // Feed the watchdog (reset timer)
+  esp_task_wdt_reset();
+  
+  // Perform normal operations
+  performSecureOperations();
+  
+  // If code hangs or infinite loop, watchdog will reset device
+}
+
+void performSecureOperations() {
+  // Check for anomalies
+  if (detectAbnormalBehavior()) {
+    securityLog(LOG_CRITICAL, "ANOMALY_DETECTED", "Initiating safe mode");
+    enterSafeMode();
+  }
+  
+  // Regular operations...
+}
+\`\`\`
+
+**Learn More:**
+- [NIST Incident Response Guide](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-61r2.pdf)`,
+
+      `## Production Security Checklist
+
+### Pre-Deployment Checklist
+
+**Firmware Security:**
+- [ ] Secure boot enabled and tested
+- [ ] Firmware signed with private key
+- [ ] Anti-rollback protection implemented
+- [ ] Debug ports disabled in production
+- [ ] Sensitive data encrypted in flash
+- [ ] No hardcoded credentials in code
+- [ ] Watchdog timer enabled
+
+**Communication Security:**
+- [ ] TLS/SSL enabled for all network communication
+- [ ] Certificate validation enabled (no setInsecure())
+- [ ] MQTT uses TLS (port 8883, not 1883)
+- [ ] Strong cipher suites configured
+- [ ] Certificate expiration monitoring
+- [ ] mTLS for device authentication
+
+**Authentication & Authorization:**
+- [ ] Default credentials changed/disabled
+- [ ] Strong password requirements enforced
+- [ ] Multi-factor authentication considered
+- [ ] Role-based access control implemented
+- [ ] Session timeout configured
+- [ ] Account lockout after failed attempts
+
+**Input Validation:**
+- [ ] All external inputs validated
+- [ ] Buffer overflow protections in place
+- [ ] SQL injection prevention (if applicable)
+- [ ] Command injection prevention
+- [ ] JSON parsing with error handling
+
+**OTA Updates:**
+- [ ] Firmware signature verification
+- [ ] Encrypted firmware download (HTTPS)
+- [ ] Version verification (no rollback)
+- [ ] Atomic updates (all or nothing)
+- [ ] Update server authentication
+
+**Physical Security:**
+- [ ] Debug interfaces disabled/protected
+- [ ] JTAG/SWD access restricted
+- [ ] Flash encryption enabled
+- [ ] Tamper detection mechanisms
+- [ ] Secure element for key storage
+
+**Monitoring & Response:**
+- [ ] Security event logging enabled
+- [ ] Log aggregation to remote server
+- [ ] Anomaly detection mechanisms
+- [ ] Incident response plan documented
+- [ ] Security update procedures defined
+
+### Post-Deployment Monitoring
+
+\`\`\`cpp
+void performSecurityAudit() {
+  // Check firmware integrity
+  if (!verifyFirmwareChecksum()) {
+    securityLog(LOG_CRITICAL, "INTEGRITY_FAIL", "Firmware tampered!");
+    enterSafeMode();
+  }
+  
+  // Monitor memory usage (potential buffer overflow indicator)
+  size_t freeHeap = ESP.getFreeHeap();
+  if (freeHeap < 10000) {
+    securityLog(LOG_WARNING, "LOW_MEMORY", String(freeHeap) + " bytes");
+  }
+  
+  // Check for unauthorized configuration changes
+  if (configurationChanged()) {
+    securityLog(LOG_SECURITY, "CONFIG_CHANGE", "Unexpected modification");
+  }
+  
+  // Monitor connection patterns
+  if (unusualNetworkActivity()) {
+    securityLog(LOG_WARNING, "NETWORK_ANOMALY", "Suspicious traffic pattern");
+  }
+}
+\`\`\`
+
+**Learn More:**
+- [OWASP IoT Security Testing Guide](https://owasp.org/www-project-iot-security-testing-guide/)`,
+
+      `## Real-World Security Case Studies
+
+### Case Study 1: Mirai Botnet (2016)
+
+**Attack Vector:**
+- Scanned internet for IoT devices with Telnet/SSH open
+- Tried 60+ default username/password combinations
+- Infected 600,000+ devices (cameras, routers, DVRs)
+
+**Impact:**
+- Largest DDoS attack in history at the time
+- Took down major websites (Twitter, Netflix, Reddit)
+- Demonstrated massive IoT security vulnerabilities
+
+**Lessons Learned:**
+- Never ship devices with default credentials
+- Disable unnecessary services (Telnet)
+- Implement strong authentication
+- Regular security updates essential
+
+### Case Study 2: Stuxnet (2010)
+
+**Attack Vector:**
+- Targeted industrial control systems (Siemens PLCs)
+- Spread via USB drives (air-gapped networks)
+- Exploited zero-day vulnerabilities
+- Modified PLC code to damage centrifuges
+
+**Impact:**
+- Destroyed 1000+ uranium enrichment centrifuges
+- First known cyber-physical attack
+- Demonstrated cyber-weapon capabilities
+
+**Lessons Learned:**
+- Air-gapped networks not immune
+- Physical security matters (USB ports)
+- Code signing and integrity verification critical
+- Defense in depth essential
+
+### Case Study 3: Jeep Cherokee Hack (2015)
+
+**Attack Vector:**
+- Exploited vulnerability in Uconnect infotainment system
+- Remote access via cellular connection
+- Gained control of steering, brakes, transmission
+
+**Impact:**
+- 1.4 million vehicles recalled
+- Demonstrated automotive IoT risks
+- Regulatory attention on vehicle cybersecurity
+
+**Lessons Learned:**
+- Isolate critical systems from entertainment systems
+- Secure all network interfaces
+- Regular security testing essential
+- OTA update capability critical for patching
+
+### Case Study 4: Verkada Camera Breach (2021)
+
+**Attack Vector:**
+- Exposed admin credentials found online
+- Accessed internal systems
+- Viewed 150,000+ security camera feeds
+
+**Impact:**
+- Hospitals, schools, prisons compromised
+- Privacy violations
+- Reputational damage
+
+**Lessons Learned:**
+- Don't expose admin interfaces publicly
+- Implement strong access controls
+- Monitor for credential leaks
+- Regular security audits
+
+**Learn More:**
+- [Mirai Botnet Analysis](https://www.cloudflare.com/learning/ddos/glossary/mirai-botnet/)
+- [Stuxnet Documentary](https://en.wikipedia.org/wiki/Stuxnet)
+- [NHTSA Vehicle Cybersecurity](https://www.nhtsa.gov/technology-innovation/vehicle-cybersecurity)`,
+
+      `## Security Testing and Validation
+
+### Penetration Testing Tools
+
+**1. Nmap - Network Scanning**
+\`\`\`bash
+# Scan for open ports
+nmap -sV 192.168.1.100
+
+# Scan entire subnet
+nmap -sV 192.168.1.0/24
+
+# Check for vulnerabilities
+nmap --script vuln 192.168.1.100
+\`\`\`
+
+**2. Wireshark - Traffic Analysis**
+- Capture network packets
+- Analyze unencrypted traffic
+- Detect protocol vulnerabilities
+- Verify TLS encryption
+
+**3. Burp Suite - Web Interface Testing**
+- Test device web interfaces
+- API security testing
+- SSL/TLS configuration validation
+- Cookie and session security
+
+**4. Hardware Tools**
+- [Bus Pirate](http://dangerousprototypes.com/docs/Bus_Pirate) - UART/SPI/I2C analysis
+- [JTAGulator](http://www.grandideastudio.com/jtagulator/) - JTAG pin identification
+- [Flipper Zero](https://flipperzero.one/) - RFID/NFC/radio testing
+- Logic analyzers for protocol analysis
+
+### Fuzzing and Stress Testing
+
+\`\`\`python
+import socket
+import random
+import string
+
+def fuzz_mqtt_broker(host, port):
+    """Send malformed MQTT packets to test robustness"""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((host, port))
+    
+    for i in range(1000):
+        # Generate random data
+        payload = ''.join(random.choices(string.printable, k=random.randint(1, 1024)))
+        
+        try:
+            sock.send(payload.encode())
+            response = sock.recv(1024)
+            print(f"Test {i}: Sent {len(payload)} bytes, received {len(response)}")
+        except Exception as e:
+            print(f"Test {i}: Exception - {e}")
+            break
+    
+    sock.close()
+
+# Test web interface
+def fuzz_web_interface(url):
+    import requests
+    
+    payloads = [
+        "' OR '1'='1",  # SQL injection
+        "<script>alert('XSS')</script>",  # XSS
+        "../../../../etc/passwd",  # Path traversal
+        "A" * 10000,  # Buffer overflow attempt
+    ]
+    
+    for payload in payloads:
+        try:
+            r = requests.post(url, data={"input": payload})
+            print(f"Payload: {payload[:30]}... Status: {r.status_code}")
+        except Exception as e:
+            print(f"Error: {e}")
+\`\`\`
+
+### Security Compliance Standards
+
+**Industry Standards:**
+- [IEC 62443](https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards) - Industrial automation security
+- [ETSI EN 303 645](https://www.etsi.org/deliver/etsi_en/303600_303699/303645/02.01.01_60/en_303645v020101p.pdf) - Consumer IoT security
+- [NIST Cybersecurity Framework](https://www.nist.gov/cyberframework)
+- [ISO/IEC 27001](https://www.iso.org/isoiec-27001-information-security.html) - Information security management
+
+**Regulatory Requirements:**
+- GDPR (Europe) - Data protection
+- CCPA (California) - Consumer privacy
+- HIPAA (US Healthcare) - Medical device security
+- FDA Cybersecurity (Medical Devices)
+
+**Learn More:**
+- [OWASP Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
+- [Kali Linux IoT Testing](https://www.kali.org/)`,
+
+      `## Conclusion and Best Practices
+
+IoT security is not a one-time implementation but an ongoing process that requires vigilance, updates, and continuous improvement. As IoT devices become more prevalent in critical infrastructure, healthcare, transportation, and homes, the importance of robust security measures cannot be overstated.
+
+### Key Takeaways
+
+**Fundamental Principles:**
+- Implement defense in depth with multiple security layers
+- Follow the principle of least privilege
+- Never trust user input - validate everything
+- Encrypt sensitive data at rest and in transit
+- Plan for security incidents and have response procedures
+
+**Technical Implementation:**
+- Enable secure boot and firmware signing
+- Use hardware security modules for key storage
+- Implement TLS/SSL for all network communication
+- Deploy secure OTA update mechanisms
+- Validate and sanitize all inputs
+- Monitor and log security events
+
+**Development Practices:**
+- Security by design, not as an afterthought
+- Regular security audits and penetration testing
+- Keep dependencies updated
+- Follow secure coding guidelines
+- Document security architecture and procedures
+
+**Production Deployment:**
+- Disable debug ports and interfaces
+- Change all default credentials
+- Implement strong authentication
+- Monitor devices for anomalies
+- Have incident response plan ready
+- Provide security updates throughout device lifecycle
+
+### The Security Mindset
+
+Building secure IoT devices requires thinking like an attacker:
+- What are the attack vectors?
+- What is the most valuable target?
+- How can the system be compromised?
+- What happens if a layer fails?
+- How quickly can we detect and respond?
+
+### Continuous Improvement
+
+Security is a journey, not a destination:
+
+**Month 1-3: Foundation**
+- Implement basic security measures
+- Enable TLS/SSL
+- Change default credentials
+- Basic input validation
+
+**Month 4-6: Hardening**
+- Implement secure boot
+- Add hardware security module
+- Deploy secure OTA updates
+- Set up security monitoring
+
+**Month 7-12: Advanced**
+- Penetration testing
+- Security audit by third party
+- Incident response drills
+- Compliance certification
+
+**Ongoing:**
+- Monitor for vulnerabilities
+- Apply security updates promptly
+- Review and update security policies
+- Stay informed about new threats
+
+### Resources
+
+**Official Guidelines:**
+- [NIST IoT Security Guidelines](https://www.nist.gov/itl/applied-cybersecurity/nist-cybersecurity-iot-program)
+- [OWASP IoT Security Project](https://owasp.org/www-project-internet-of-things/)
+- [IoT Security Foundation](https://www.iotsecurityfoundation.org/)
+
+**Learning Resources:**
+- [Practical IoT Hacking (Book)](https://nostarch.com/practical-iot-hacking)
+- [Hardware Hacking Handbook](https://nostarch.com/hardwarehacking)
+- [Cybersecurity for IoT (Coursera)](https://www.coursera.org/learn/iot-cybersecurity)
+
+**Tools:**
+- [Shodan](https://www.shodan.io/) - IoT device search engine
+- [Censys](https://censys.io/) - Internet-wide scanning
+- [Nmap](https://nmap.org/) - Network security scanner
+- [Wireshark](https://www.wireshark.org/) - Protocol analyzer
+
+**Communities:**
+- [IoT Security Foundation](https://www.iotsecurityfoundation.org/)
+- [IoT Security Wiki](https://www.iotsecuritywiki.com/)
+- [Reddit r/IoTSecurity](https://www.reddit.com/r/IoTSecurity/)
+
+### Related Articles
+
+Expand your IoT knowledge with our other guides:
+- [MQTT Protocol Security](/blog/mqtt-protocol) - Secure messaging implementation
+- [Power Consumption Optimization](/blog/power-consumption) - Battery security considerations
+- [Debugging Embedded Systems](/blog/debugging-embedded) - Secure debugging practices
+
+**Need security consultation?** Visit our [Services Page](/services) for IoT security audits and secure design consultation.
+
+**Explore secure implementations!** Check our [IoT Projects Section](/projects) for complete security examples with source code.
+
+Security is everyone's responsibility. Build secure IoT devices to protect users, data, and critical infrastructure. The future of IoT depends on our commitment to security today.`,
+    ],
+  },
+  "ble-basics": {
+    title:
+      "BLE (Bluetooth Low Energy) Basics: Complete Guide for IoT Developers",
+    date: "2025-10-02",
+    readTime: "16 min read",
+    category: "Connectivity",
+    seo: {
+      metaTitle:
+        "BLE Bluetooth Low Energy Guide: ESP32, Arduino, GATT Tutorial 2024",
+      metaDescription:
+        "Master Bluetooth Low Energy for IoT projects. Learn BLE fundamentals, GATT services, characteristics, ESP32 implementation, beacons, and mobile app integration with code examples.",
+      keywords: [
+        "BLE Bluetooth Low Energy",
+        "ESP32 BLE tutorial",
+        "GATT services characteristics",
+        "BLE Arduino programming",
+        "Bluetooth LE IoT",
+        "BLE beacons iBeacon",
+        "Nordic UART service",
+        "BLE mobile app",
+        "ESP32 BLE server client",
+        "Bluetooth 5.0 features",
+        "BLE advertising scanning",
+        "nRF Connect BLE",
+        "BLE security pairing",
+        "Bluetooth mesh networking",
+        "BLE power consumption",
+      ],
+      featuredImage: "/blog/ble-basics.jpg",
+    },
+    content: [
+      `Bluetooth Low Energy (BLE) has revolutionized wireless connectivity for IoT devices, enabling billions of wearables, sensors, and smart home devices to communicate efficiently with smartphones and gateways. Unlike Classic Bluetooth, BLE is designed from the ground up for ultra-low power consumption, making it ideal for battery-powered devices.
+
+In this comprehensive guide, you'll learn BLE fundamentals, GATT architecture, ESP32 implementation, advertising strategies, and how to build production-ready BLE applications that work seamlessly with mobile apps.`,
+
+      `## Why BLE for IoT Applications?
+
+BLE offers unique advantages for IoT projects:
+
+**Power Efficiency:**
+- 10-100x lower power than Classic Bluetooth
+- Coin cell batteries last months or years
+- Sleep current under 1μA for many chips
+- Connection events completed in milliseconds
+
+**Smartphone Integration:**
+- Native support in all modern smartphones
+- No additional hardware required
+- Rich mobile app ecosystems (iOS/Android)
+- Seamless user experience
+
+**Cost Effectiveness:**
+- Integrated into most modern microcontrollers
+- ESP32, nRF52, STM32WB have built-in BLE
+- Low licensing costs compared to alternatives
+- Mature development tools and libraries
+
+**Protocol Features:**
+- 128-bit AES encryption standard
+- Flexible data models (GATT)
+- Configurable connection parameters
+- Long-range mode (Bluetooth 5.0: up to 1km)
+
+**Use Cases:**
+- Fitness trackers and wearables
+- Smart home sensors (temperature, door locks)
+- Beacons for proximity marketing
+- Medical devices (glucose meters, heart rate monitors)
+- Asset tracking tags
+- Wireless debugging interfaces
+
+Learn more about [Bluetooth specifications at Bluetooth SIG](https://www.bluetooth.com/specifications/specs/).`,
+
+      `## BLE Architecture Overview
+
+### GAP (Generic Access Profile)
+
+GAP controls how devices advertise, discover, and connect:
+
+**Device Roles:**
+1. **Broadcaster:** Sends advertising packets only (no connections)
+2. **Observer:** Scans for advertising packets only
+3. **Peripheral:** Advertises and accepts connections (sensor, wearable)
+4. **Central:** Scans and initiates connections (smartphone, gateway)
+
+**Advertising Types:**
+\`\`\`
+ADV_IND (Connectable, scannable)
+ADV_DIRECT_IND (Connectable directed)
+ADV_NONCONN_IND (Non-connectable broadcast)
+ADV_SCAN_IND (Scannable only)
+\`\`\`
+
+**Connection Parameters:**
+| Parameter | Range | Description |
+|-----------|-------|-------------|
+| Connection Interval | 7.5ms - 4s | Time between connection events |
+| Slave Latency | 0 - 499 | Events peripheral can skip |
+| Supervision Timeout | 100ms - 32s | Max time without data before disconnect |
+
+Explore [GAP specifications](https://www.bluetooth.com/specifications/assigned-numbers/) for detailed information.`,
+
+      `### GATT (Generic Attribute Profile)
+
+GATT defines the data structure for BLE communication:
+
+**Hierarchy:**
+\`\`\`
+Profile
+  └─ Service (16-bit or 128-bit UUID)
+       ├─ Characteristic (Properties: Read/Write/Notify)
+       │    ├─ Value (actual data)
+       │    └─ Descriptors (metadata)
+       └─ Characteristic
+            └─ Value
+\`\`\`
+
+**Characteristic Properties:**
+- **Read:** Client can read value
+- **Write:** Client can write value (with response)
+- **Write Without Response:** Client can write (no acknowledgment)
+- **Notify:** Server pushes updates to client
+- **Indicate:** Server pushes updates with acknowledgment
+
+**Standard Services:**
+| UUID | Service | Use Case |
+|------|---------|----------|
+| 0x180A | Device Information | Manufacturer, model, serial |
+| 0x180F | Battery Service | Battery level percentage |
+| 0x181A | Environmental Sensing | Temperature, humidity sensors |
+| 0x180D | Heart Rate | Fitness devices |
+| 0x1816 | Cycling Speed/Cadence | Bike sensors |
+
+View [all assigned GATT services](https://www.bluetooth.com/specifications/gatt/services/).`,
+
+      `## ESP32 BLE Server Implementation
+
+### Basic BLE Server Setup
+
+Here's a complete ESP32 BLE server with custom service:
+
+\`\`\`cpp
+#include <BLEDevice.h>
+#include <BLEServer.h>
+#include <BLEUtils.h>
+#include <BLE2902.h>
+
+// UUIDs for service and characteristics
+#define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define CHAR_UUID_READ      "beb5483e-36e1-4688-b7f5-ea07361b26a8"
+#define CHAR_UUID_WRITE     "beb5483e-36e1-4688-b7f5-ea07361b26a9"
+#define CHAR_UUID_NOTIFY    "beb5483e-36e1-4688-b7f5-ea07361b26aa"
+
+BLEServer* pServer = nullptr;
+BLECharacteristic* pCharNotify = nullptr;
+bool deviceConnected = false;
+uint32_t notifyValue = 0;
+
+// Server callbacks
+class MyServerCallbacks: public BLEServerCallbacks {
+  void onConnect(BLEServer* pServer) {
+    deviceConnected = true;
+    Serial.println("Client connected");
+  }
+
+  void onDisconnect(BLEServer* pServer) {
+    deviceConnected = false;
+    Serial.println("Client disconnected");
+    // Restart advertising
+    BLEDevice::startAdvertising();
+  }
+};
+
+// Characteristic callbacks
+class MyCallbacks: public BLECharacteristicCallbacks {
+  void onWrite(BLECharacteristic *pCharacteristic) {
+    std::string value = pCharacteristic->getValue();
+    
+    if (value.length() > 0) {
+      Serial.print("Received: ");
+      for (int i = 0; i < value.length(); i++)
+        Serial.print(value[i]);
+      Serial.println();
+      
+      // Echo back to notify characteristic
+      pCharNotify->setValue((uint8_t*)value.c_str(), value.length());
+      pCharNotify->notify();
+    }
+  }
+};
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Starting BLE Server...");
+
+  // Initialize BLE
+  BLEDevice::init("ESP32-BLE-Server");
+  
+  // Create BLE Server
+  pServer = BLEDevice::createServer();
+  pServer->setCallbacks(new MyServerCallbacks());
+
+  // Create BLE Service
+  BLEService *pService = pServer->createService(SERVICE_UUID);
+
+  // Create Read Characteristic
+  BLECharacteristic *pCharRead = pService->createCharacteristic(
+    CHAR_UUID_READ,
+    BLECharacteristic::PROPERTY_READ
+  );
+  pCharRead->setValue("Hello from ESP32");
+
+  // Create Write Characteristic
+  BLECharacteristic *pCharWrite = pService->createCharacteristic(
+    CHAR_UUID_WRITE,
+    BLECharacteristic::PROPERTY_WRITE
+  );
+  pCharWrite->setCallbacks(new MyCallbacks());
+
+  // Create Notify Characteristic
+  pCharNotify = pService->createCharacteristic(
+    CHAR_UUID_NOTIFY,
+    BLECharacteristic::PROPERTY_NOTIFY
+  );
+  // Add descriptor for notifications
+  pCharNotify->addDescriptor(new BLE2902());
+
+  // Start service
+  pService->start();
+
+  // Start advertising
+  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->addServiceUUID(SERVICE_UUID);
+  pAdvertising->setScanResponse(true);
+  pAdvertising->setMinPreferred(0x06);  // iPhone connection issue
+  pAdvertising->setMinPreferred(0x12);
+  BLEDevice::startAdvertising();
+  
+  Serial.println("BLE Server ready. Waiting for connections...");
+}
+
+void loop() {
+  if (deviceConnected) {
+    // Send periodic notifications
+    notifyValue++;
+    pCharNotify->setValue(notifyValue);
+    pCharNotify->notify();
+    Serial.printf("Sent notification: %d\\n", notifyValue);
+    delay(1000);
+  }
+}
+\`\`\`
+
+**Key Concepts:**
+- **UUIDs:** Unique identifiers for services/characteristics (generate at [uuidgenerator.net](https://www.uuidgenerator.net/))
+- **Callbacks:** Handle connection events and characteristic operations
+- **BLE2902:** Client Characteristic Configuration Descriptor (enables notifications)
+- **Advertising:** Makes device discoverable to BLE scanners
+
+Learn more about [ESP32 BLE API](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/bluetooth/esp_ble_gatt.html).`,
+
+      `### ESP32 BLE Client Implementation
+
+BLE client scans for devices and connects to peripherals:
+
+\`\`\`cpp
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEScan.h>
+#include <BLEAdvertisedDevice.h>
+
+#define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
+#define CHAR_UUID_NOTIFY    "beb5483e-36e1-4688-b7f5-ea07361b26aa"
+
+static BLERemoteCharacteristic* pRemoteCharacteristic;
+static BLEAdvertisedDevice* myDevice;
+static boolean doConnect = false;
+static boolean connected = false;
+
+// Notification callback
+static void notifyCallback(
+  BLERemoteCharacteristic* pChar,
+  uint8_t* pData,
+  size_t length,
+  bool isNotify) {
+  
+  Serial.print("Notification received: ");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)pData[i]);
+  }
+  Serial.println();
+}
+
+// Device found callback
+class MyAdvertisedDeviceCallbacks: public BLEAdvertisedDeviceCallbacks {
+  void onResult(BLEAdvertisedDevice advertisedDevice) {
+    Serial.printf("Found device: %s\\n", 
+                  advertisedDevice.toString().c_str());
+
+    // Check if device has our service
+    if (advertisedDevice.haveServiceUUID() && 
+        advertisedDevice.isAdvertisingService(BLEUUID(SERVICE_UUID))) {
+      
+      BLEDevice::getScan()->stop();
+      myDevice = new BLEAdvertisedDevice(advertisedDevice);
+      doConnect = true;
+      Serial.println("Found our target device!");
+    }
+  }
+};
+
+// Connect to server
+bool connectToServer() {
+  Serial.printf("Connecting to %s\\n", 
+                myDevice->getAddress().toString().c_str());
+  
+  BLEClient* pClient = BLEDevice::createClient();
+  Serial.println(" - Created client");
+
+  // Connect
+  pClient->connect(myDevice);
+  Serial.println(" - Connected to server");
+
+  // Get service
+  BLERemoteService* pRemoteService = pClient->getService(SERVICE_UUID);
+  if (pRemoteService == nullptr) {
+    Serial.println("Failed to find service");
+    pClient->disconnect();
+    return false;
+  }
+  Serial.println(" - Found service");
+
+  // Get characteristic
+  pRemoteCharacteristic = pRemoteService->getCharacteristic(CHAR_UUID_NOTIFY);
+  if (pRemoteCharacteristic == nullptr) {
+    Serial.println("Failed to find characteristic");
+    pClient->disconnect();
+    return false;
+  }
+  Serial.println(" - Found characteristic");
+
+  // Register for notifications
+  if(pRemoteCharacteristic->canNotify()) {
+    pRemoteCharacteristic->registerForNotify(notifyCallback);
+    Serial.println(" - Registered for notifications");
+  }
+
+  connected = true;
+  return true;
+}
+
+void setup() {
+  Serial.begin(115200);
+  Serial.println("Starting BLE Client...");
+
+  BLEDevice::init("ESP32-BLE-Client");
+
+  // Start scanning
+  BLEScan* pBLEScan = BLEDevice::getScan();
+  pBLEScan->setAdvertisedDeviceCallbacks(new MyAdvertisedDeviceCallbacks());
+  pBLEScan->setInterval(1349);
+  pBLEScan->setWindow(449);
+  pBLEScan->setActiveScan(true);
+  pBLEScan->start(5, false);
+}
+
+void loop() {
+  if (doConnect) {
+    if (connectToServer()) {
+      Serial.println("Connected successfully!");
+    } else {
+      Serial.println("Connection failed");
+    }
+    doConnect = false;
+  }
+
+  if (connected) {
+    // Send write commands
+    String msg = "Hello from client";
+    pRemoteCharacteristic->writeValue(msg.c_str(), msg.length());
+    delay(2000);
+  } else {
+    // Restart scanning
+    BLEDevice::getScan()->start(0);
+  }
+  
+  delay(1000);
+}
+\`\`\`
+
+**Client Features:**
+- **Scanning:** Discovers nearby BLE devices
+- **Service Discovery:** Finds specific services by UUID
+- **Characteristic Access:** Read, write, subscribe to notifications
+- **Connection Management:** Auto-reconnect on disconnect
+
+Explore [BLE client examples](https://github.com/nkolban/ESP32_BLE_Arduino) for more use cases.`,
+
+      `## Arduino BLE Library
+
+For Arduino Nano 33 BLE and other ARM boards:
+
+\`\`\`cpp
+#include <ArduinoBLE.h>
+
+BLEService sensorService("19B10000-E8F2-537E-4F6C-D104768A1214");
+
+// Temperature characteristic
+BLEFloatCharacteristic tempChar("19B10001-E8F2-537E-4F6C-D104768A1214",
+                                BLERead | BLENotify);
+
+void setup() {
+  Serial.begin(115200);
+  while (!Serial);
+
+  if (!BLE.begin()) {
+    Serial.println("Starting BLE failed!");
+    while (1);
+  }
+
+  // Set advertised name and service
+  BLE.setLocalName("Arduino Sensor");
+  BLE.setAdvertisedService(sensorService);
+
+  // Add characteristics to service
+  sensorService.addCharacteristic(tempChar);
+
+  // Add service
+  BLE.addService(sensorService);
+
+  // Set initial value
+  tempChar.writeValue(20.0);
+
+  // Start advertising
+  BLE.advertise();
+  Serial.println("BLE Peripheral ready");
+}
+
+void loop() {
+  BLEDevice central = BLE.central();
+
+  if (central) {
+    Serial.print("Connected to: ");
+    Serial.println(central.address());
+
+    while (central.connected()) {
+      // Read sensor (simulated)
+      float temperature = 20.0 + random(-50, 50) / 10.0;
+      
+      // Update characteristic
+      tempChar.writeValue(temperature);
+      Serial.printf("Temperature: %.1f°C\\n", temperature);
+      
+      delay(1000);
+    }
+    
+    Serial.println("Disconnected");
+  }
+}
+\`\`\`
+
+Learn more about [ArduinoBLE library](https://www.arduino.cc/en/Reference/ArduinoBLE).`,
+
+      `## BLE Advertising Strategies
+
+### Advertising Packet Structure
+
+BLE advertising packets are limited to 31 bytes:
+
+\`\`\`
+[Flags: 3 bytes]
+[Complete Local Name: up to 28 bytes]
+OR
+[Service UUIDs: 16 bytes for one 128-bit UUID]
+[Manufacturer Data: remaining bytes]
+\`\`\`
+
+**Advertising Data Types:**
+| Type | Code | Description |
+|------|------|-------------|
+| Flags | 0x01 | LE General/Limited Discoverable |
+| Service UUIDs (16-bit) | 0x03 | List of services |
+| Service UUIDs (128-bit) | 0x07 | Custom service UUIDs |
+| Complete Local Name | 0x09 | Device name |
+| Manufacturer Data | 0xFF | Custom data |
+| TX Power Level | 0x0A | Transmit power |
+
+### Custom Advertising Data
+
+\`\`\`cpp
+#include <BLEDevice.h>
+#include <BLEUtils.h>
+#include <BLEServer.h>
+
+void setup() {
+  BLEDevice::init("ESP32-Beacon");
+  
+  BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
+  BLEAdvertisementData advertisementData;
+  
+  // Set flags
+  advertisementData.setFlags(0x06); // BR_EDR_NOT_SUPPORTED | GENERAL_DISC_MODE
+  
+  // Add service UUID
+  advertisementData.setCompleteServices(BLEUUID("4fafc201-1fb5-459e-8fcc-c5c9c331914b"));
+  
+  // Add manufacturer data
+  uint8_t mfgData[4] = {0x01, 0x02, 0x03, 0x04};
+  std::string mfgStr((char*)mfgData, 4);
+  advertisementData.setManufacturerData(mfgStr);
+  
+  pAdvertising->setAdvertisementData(advertisementData);
+  
+  // Scan response data
+  BLEAdvertisementData scanResponseData;
+  scanResponseData.setName("ESP32-Sensor");
+  pAdvertising->setScanResponseData(scanResponseData);
+  
+  // Start advertising
+  pAdvertising->start();
+}
+
+void loop() {
+  delay(1000);
+}
+\`\`\`
+
+**Advertising Intervals:**
+- Fast advertising: 20-30ms (quick discovery, high power)
+- Standard: 100ms (balanced)
+- Slow: 1000ms+ (beacons, low power)
+
+Reference: [Bluetooth Core Specification](https://www.bluetooth.com/specifications/specs/core-specification-5-3/).`,
+
+      `## BLE Beacons
+
+### iBeacon Implementation
+
+Apple's iBeacon standard for proximity detection:
+
+\`\`\`cpp
+#include <BLEDevice.h>
+#include <BLEBeacon.h>
+
+#define BEACON_UUID "8ec76ea3-6668-48da-9866-75be8bc86f4d"
+
+void setup() {
+  BLEDevice::init("ESP32-iBeacon");
+  
+  BLEBeacon beacon = BLEBeacon();
+  beacon.setManufacturerId(0x004C); // Apple Company ID
+  beacon.setProximityUUID(BLEUUID(BEACON_UUID));
+  beacon.setMajor(1);
+  beacon.setMinor(2);
+  beacon.setSignalPower(-59); // TX power at 1m
+  
+  BLEAdvertisementData advertisementData;
+  advertisementData.setFlags(0x06);
+  
+  std::string beaconData = beacon.getData();
+  advertisementData.setManufacturerData(beaconData);
+  
+  BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->setAdvertisementData(advertisementData);
+  pAdvertising->start();
+  
+  Serial.println("iBeacon started");
+}
+
+void loop() {
+  delay(1000);
+}
+\`\`\`
+
+**iBeacon Use Cases:**
+- Indoor navigation
+- Proximity marketing (retail stores)
+- Asset tracking
+- Attendance systems
+
+Learn about [iBeacon specifications](https://developer.apple.com/ibeacon/).`,
+
+      `### Eddystone Beacons
+
+Google's open beacon format:
+
+\`\`\`cpp
+#include <BLEDevice.h>
+
+void setupEddystoneURL() {
+  BLEDevice::init("Eddystone");
+  
+  BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
+  BLEAdvertisementData advertisementData;
+  
+  // Eddystone-URL packet
+  uint8_t eddystoneData[] = {
+    0x03,  // Length
+    0x03,  // Service UUID List
+    0xAA, 0xFE,  // Eddystone UUID
+    0x10,  // Length
+    0x16,  // Service Data
+    0xAA, 0xFE,  // Eddystone UUID
+    0x10,  // Frame Type (URL)
+    0x00,  // TX Power
+    0x03,  // URL Scheme (https://)
+    'g', 'o', 'o', '.', 'g', 'l', '/', 'X', 'Y', 'Z'  // Short URL
+  };
+  
+  advertisementData.addData(std::string((char*)eddystoneData, sizeof(eddystoneData)));
+  pAdvertising->setAdvertisementData(advertisementData);
+  pAdvertising->start();
+}
+\`\`\`
+
+**Eddystone Frame Types:**
+- **UID:** Unique beacon identifier
+- **URL:** Broadcasts a web link
+- **TLM:** Telemetry (battery, temperature)
+- **EID:** Encrypted identifier
+
+Explore [Eddystone protocol](https://github.com/google/eddystone).`,
+
+      `## Nordic UART Service (NUS)
+
+NUS provides a simple serial-like interface over BLE:
+
+\`\`\`cpp
+#define SERVICE_UUID_NUS    "6E400001-B5A3-F393-E0A9-E50E24DCCA9E"
+#define CHAR_UUID_RX        "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
+#define CHAR_UUID_TX        "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
+
+BLECharacteristic *pCharTX;
+String rxValue = "";
+
+class MyCallbacks: public BLECharacteristicCallbacks {
+  void onWrite(BLECharacteristic *pCharacteristic) {
+    std::string value = pCharacteristic->getValue();
+    
+    if (value.length() > 0) {
+      rxValue = "";
+      for (int i = 0; i < value.length(); i++)
+        rxValue += value[i];
+      
+      Serial.println("RX: " + rxValue);
+      
+      // Process commands
+      if (rxValue == "LED_ON") {
+        digitalWrite(LED_PIN, HIGH);
+        pCharTX->setValue("LED turned ON");
+        pCharTX->notify();
+      } else if (rxValue == "LED_OFF") {
+        digitalWrite(LED_PIN, LOW);
+        pCharTX->setValue("LED turned OFF");
+        pCharTX->notify();
+      }
+    }
+  }
+};
+
+void setup() {
+  BLEDevice::init("ESP32-UART");
+  BLEServer *pServer = BLEDevice::createServer();
+  BLEService *pService = pServer->createService(SERVICE_UUID_NUS);
+
+  // TX Characteristic (device sends to phone)
+  pCharTX = pService->createCharacteristic(
+    CHAR_UUID_TX,
+    BLECharacteristic::PROPERTY_NOTIFY
+  );
+  pCharTX->addDescriptor(new BLE2902());
+
+  // RX Characteristic (phone sends to device)
+  BLECharacteristic *pCharRX = pService->createCharacteristic(
+    CHAR_UUID_RX,
+    BLECharacteristic::PROPERTY_WRITE
+  );
+  pCharRX->setCallbacks(new MyCallbacks());
+
+  pService->start();
+  pServer->getAdvertising()->start();
+}
+\`\`\`
+
+**NUS Applications:**
+- Wireless debugging/logging
+- AT command interfaces
+- Simple data transfer
+- Compatible with Nordic nRF UART apps
+
+Download [nRF Connect app](https://www.nordicsemi.com/Products/Development-tools/nrf-connect-for-mobile) for testing.`,
+
+      `## BLE Security
+
+### Pairing and Bonding
+
+BLE provides several security levels:
+
+\`\`\`cpp
+#include <BLEDevice.h>
+
+void setup() {
+  BLEDevice::init("Secure BLE");
+  
+  // Set security
+  BLESecurity *pSecurity = new BLESecurity();
+  
+  // Security Mode: SC (Secure Connections)
+  pSecurity->setAuthenticationMode(ESP_LE_AUTH_REQ_SC_MITM_BOND);
+  
+  // Enable encryption
+  pSecurity->setCapability(ESP_IO_CAP_OUT);
+  pSecurity->setKeySize(16);
+  
+  // Set passkey (if using fixed passkey)
+  uint32_t passkey = 123456;
+  esp_ble_gap_set_security_param(ESP_BLE_SM_SET_STATIC_PASSKEY, 
+                                  &passkey, sizeof(uint32_t));
+  
+  // Initialize services...
+}
+\`\`\`
+
+**Security Levels:**
+| Level | Description | Protection |
+|-------|-------------|------------|
+| 1 | No security | None |
+| 2 | Unauthenticated pairing | Encryption |
+| 3 | Authenticated pairing | Encryption + MITM protection |
+| 4 | Authenticated LE Secure Connections | AES-128 encryption |
+
+**Pairing Methods:**
+- **Just Works:** No user interaction (least secure)
+- **Passkey Entry:** 6-digit PIN
+- **Numeric Comparison:** Both devices show same number
+- **Out of Band (OOB):** NFC or QR code
+
+Learn about [BLE security](https://www.bluetooth.com/blog/bluetooth-pairing-part-1-pairing-feature-exchange/).`,
+
+      `### Privacy and Random Addresses
+
+Prevent device tracking with random addresses:
+
+\`\`\`cpp
+void setup() {
+  BLEDevice::init("Private BLE");
+  
+  // Enable random resolvable private address
+  esp_ble_gap_config_local_privacy(true);
+  
+  BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
+  
+  // Change address periodically (every 15 minutes)
+  pAdvertising->start();
+}
+\`\`\`
+
+**Address Types:**
+- **Public:** Fixed MAC address (trackable)
+- **Random Static:** Random but constant during power cycle
+- **Random Private Resolvable:** Changes periodically, resolvable by bonded devices
+- **Random Private Non-resolvable:** Changes periodically, not resolvable
+
+Reference: [Bluetooth Privacy](https://www.bluetooth.com/blog/bluetooth-technology-protecting-your-privacy/).`,
+
+      `## Connection Parameters Optimization
+
+### Tuning for Performance vs Power
+
+\`\`\`cpp
+BLEClient* pClient = BLEDevice::createClient();
+pClient->connect(myDevice);
+
+// Update connection parameters
+// Parameters: min_interval, max_interval, latency, timeout
+// Intervals in 1.25ms units (12 = 15ms, 24 = 30ms)
+pClient->updateConnParams(12, 24, 0, 100);
+
+// For low latency (gaming, audio):
+pClient->updateConnParams(6, 6, 0, 100);    // 7.5ms interval
+
+// For low power (sensors):
+pClient->updateConnParams(800, 800, 4, 1000); // 1s interval, 4 latency
+\`\`\`
+
+**Parameter Guidelines:**
+| Use Case | Interval | Latency | Description |
+|----------|----------|---------|-------------|
+| Audio | 7.5-15ms | 0 | Low latency |
+| Gaming | 7.5-30ms | 0 | Responsive |
+| Sensors | 100ms-1s | 0-4 | Balanced |
+| Beacon | 1s+ | 4+ | Power saving |
+
+**Throughput Calculation:**
+\`\`\`
+Max Throughput = (MTU - 3) / Connection Interval
+Example: (247 bytes - 3) / 7.5ms = 32.5 KB/s
+\`\`\`
+
+Explore [connection parameters guide](https://punchthrough.com/maximizing-ble-throughput-part-2-use-larger-att-mtu-2/).`,
+
+      `## BLE Data Transfer Optimization
+
+### MTU (Maximum Transmission Unit)
+
+Increase MTU for better throughput:
+
+\`\`\`cpp
+// Server side
+class MyServerCallbacks: public BLEServerCallbacks {
+  void onConnect(BLEServer* pServer, esp_ble_gatts_cb_param_t *param) {
+    // Request MTU size (default is 23, max is 512)
+    pServer->updatePeerMTU(param->connect.conn_id, 512);
+  }
+};
+
+// Client side
+void onConnect(BLEClient* pClient) {
+  // ESP32 supports up to 517 bytes MTU
+  uint16_t mtu = pClient->getMTU();
+  Serial.printf("MTU size: %d\\n", mtu);
+}
+\`\`\`
+
+**MTU Benefits:**
+- Default MTU: 23 bytes (20 bytes payload)
+- Max MTU: 512 bytes (509 bytes payload)
+- **10x throughput improvement with larger MTU**
+
+### Long Writes for Large Data
+
+\`\`\`cpp
+// Enable long writes on characteristic
+BLECharacteristic *pChar = pService->createCharacteristic(
+  CHAR_UUID,
+  BLECharacteristic::PROPERTY_WRITE
+);
+pChar->setAccessPermissions(ESP_GATT_PERM_WRITE);
+
+// Handle long writes
+class MyCallbacks: public BLECharacteristicCallbacks {
+  void onWrite(BLECharacteristic *pCharacteristic) {
+    std::string value = pCharacteristic->getValue();
+    Serial.printf("Received %d bytes\\n", value.length());
+    
+    // Process large data (up to 512 bytes)
+    if (value.length() > 100) {
+      // Handle firmware update, file transfer, etc.
+    }
+  }
+};
+\`\`\`
+
+Learn about [BLE throughput optimization](https://punchthrough.com/maximizing-ble-throughput-on-ios-and-android/).`,
+
+      `## Mobile App Integration
+
+### React Native BLE PLX
+
+\`\`\`javascript
+import { BleManager } from 'react-native-ble-plx';
+
+const manager = new BleManager();
+
+// Scan for devices
+manager.startDeviceScan(null, null, (error, device) => {
+  if (error) {
+    console.log(error);
+    return;
+  }
+  
+  if (device.name === 'ESP32-BLE-Server') {
+    manager.stopDeviceScan();
+    connectToDevice(device);
+  }
+});
+
+// Connect and discover services
+async function connectToDevice(device) {
+  const connected = await device.connect();
+  const services = await connected.discoverAllServicesAndCharacteristics();
+  
+  // Read characteristic
+  const characteristic = await connected.readCharacteristicForService(
+    SERVICE_UUID,
+    CHAR_UUID_READ
+  );
+  console.log('Value:', atob(characteristic.value));
+  
+  // Subscribe to notifications
+  connected.monitorCharacteristicForService(
+    SERVICE_UUID,
+    CHAR_UUID_NOTIFY,
+    (error, char) => {
+      if (char) {
+        console.log('Notification:', atob(char.value));
+      }
+    }
+  );
+  
+  // Write value
+  await connected.writeCharacteristicWithResponseForService(
+    SERVICE_UUID,
+    CHAR_UUID_WRITE,
+    btoa('Hello ESP32')
+  );
+}
+\`\`\`
+
+Learn more about [React Native BLE PLX](https://github.com/dotintent/react-native-ble-plx).`,
+
+      `### Flutter Blue Plus
+
+\`\`\`dart
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+
+// Start scanning
+FlutterBluePlus.startScan(timeout: Duration(seconds: 4));
+
+// Listen to scan results
+var subscription = FlutterBluePlus.scanResults.listen((results) {
+  for (ScanResult result in results) {
+    if (result.device.name == 'ESP32-BLE-Server') {
+      FlutterBluePlus.stopScan();
+      connectToDevice(result.device);
+    }
+  }
+});
+
+// Connect to device
+Future<void> connectToDevice(BluetoothDevice device) async {
+  await device.connect();
+  
+  // Discover services
+  List<BluetoothService> services = await device.discoverServices();
+  
+  for (BluetoothService service in services) {
+    if (service.uuid.toString() == SERVICE_UUID) {
+      for (BluetoothCharacteristic char in service.characteristics) {
+        // Read characteristic
+        if (char.properties.read) {
+          var value = await char.read();
+          print('Value: ${String.fromCharCodes(value)}');
+        }
+        
+        // Enable notifications
+        if (char.properties.notify) {
+          await char.setNotifyValue(true);
+          char.value.listen((value) {
+            print('Notification: ${String.fromCharCodes(value)}');
+          });
+        }
+        
+        // Write to characteristic
+        if (char.properties.write) {
+          await char.write([0x01, 0x02, 0x03]);
+        }
+      }
+    }
+  }
+}
+\`\`\`
+
+Explore [Flutter Blue Plus documentation](https://pub.dev/packages/flutter_blue_plus).`,
+
+      `## BLE Testing and Debugging
+
+### Essential BLE Tools
+
+**1. nRF Connect (iOS/Android)**
+- Scan for BLE devices
+- Explore GATT services and characteristics
+- Read/write/notify operations
+- Connection parameter monitoring
+- Signal strength (RSSI) measurement
+- Download: [nRF Connect](https://www.nordicsemi.com/Products/Development-tools/nrf-connect-for-mobile)
+
+**2. LightBlue (iOS/Android)**
+- User-friendly interface
+- Create virtual peripherals
+- Log BLE packets
+- Export data
+- Download: [LightBlue App](https://punchthrough.com/lightblue/)
+
+**3. Bluetooth Packet Sniffer**
+- Capture BLE packets
+- Analyze protocol issues
+- Nordic nRF52840 Dongle + Wireshark
+- Tutorial: [BLE Sniffing Guide](https://www.novelbits.io/bluetooth-low-energy-ble-complete-guide/)
+
+### Common Issues and Solutions
+
+**Issue: Device Not Discoverable**
+\`\`\`cpp
+// Solution: Check advertising is started
+BLEDevice::startAdvertising();
+Serial.println("Advertising...");
+
+// Verify service UUID is advertised
+pAdvertising->addServiceUUID(SERVICE_UUID);
+\`\`\`
+
+**Issue: Connection Drops**
+\`\`\`cpp
+// Solution: Increase supervision timeout
+pClient->updateConnParams(12, 24, 0, 400); // 4 second timeout
+
+// Handle reconnection
+class MyClientCallbacks : public BLEClientCallbacks {
+  void onDisconnect(BLEClient* pClient) {
+    Serial.println("Reconnecting...");
+    pClient->connect(pServerAddress);
+  }
+};
+\`\`\`
+
+**Issue: Slow Data Transfer**
+\`\`\`cpp
+// Solution: Request larger MTU
+pServer->updatePeerMTU(conn_id, 512);
+
+// Use write without response for bulk data
+BLECharacteristic::PROPERTY_WRITE_NR
+\`\`\``,
+
+      `## Advanced BLE Features
+
+### BLE Mesh Networking
+
+BLE Mesh enables many-to-many communication:
+
+\`\`\`cpp
+#include <esp_ble_mesh_defs.h>
+#include <esp_ble_mesh_common_api.h>
+
+// Mesh provisioning (simplified)
+void initBLEMesh() {
+  esp_ble_mesh_register_prov_callback(provisioning_cb);
+  esp_ble_mesh_register_config_server_callback(config_server_cb);
+  
+  // Initialize mesh
+  esp_ble_mesh_init(&provision, &composition);
+  esp_ble_mesh_node_prov_enable(ESP_BLE_MESH_PROV_ADV);
+}
+
+// Send mesh message
+void sendMeshMessage(uint16_t dst_addr, uint8_t* data, uint16_t len) {
+  esp_ble_mesh_msg_ctx_t ctx = {
+    .net_idx = 0,
+    .app_idx = 0,
+    .addr = dst_addr,
+    .send_ttl = 3,
+  };
+  
+  esp_ble_mesh_server_model_send_msg(&model, &ctx, 
+                                      OPCODE_SEND, len, data);
+}
+\`\`\`
+
+**Mesh Use Cases:**
+- Smart lighting systems (100+ lights)
+- Building automation
+- Industrial sensor networks
+- Large-scale asset tracking
+
+Learn more: [Bluetooth Mesh Specification](https://www.bluetooth.com/specifications/specs/mesh-protocol/).`,
+
+      `### Bluetooth 5.0 Long Range
+
+Extended range mode (up to 1km line-of-sight):
+
+\`\`\`cpp
+void setupLongRange() {
+  BLEDevice::init("Long Range BLE");
+  
+  // Set PHY to Coded (long range)
+  esp_ble_gap_set_preferred_default_phy(
+    ESP_BLE_GAP_PHY_OPTIONS_PREF_CODED_TX_MASK |
+    ESP_BLE_GAP_PHY_OPTIONS_PREF_CODED_RX_MASK
+  );
+  
+  // Increase TX power
+  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_DEFAULT, ESP_PWR_LVL_P9);
+  
+  // Start advertising with extended advertising
+  BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
+  pAdvertising->start();
+}
+\`\`\`
+
+**Range Comparison:**
+| PHY | Range | Data Rate | Power |
+|-----|-------|-----------|-------|
+| 1M | ~100m | 1 Mbps | Standard |
+| 2M | ~50m | 2 Mbps | High throughput |
+| Coded S=8 | ~1km | 125 kbps | Long range |
+| Coded S=2 | ~500m | 500 kbps | Extended range |
+
+Reference: [Bluetooth 5.0 Features](https://www.bluetooth.com/blog/exploring-bluetooth5-going-the-distance/).`,
+
+      `## Production Best Practices
+
+### Power Optimization
+
+\`\`\`cpp
+// Use connection intervals wisely
+void optimizePower() {
+  // For periodic sensor data (every 10s)
+  pClient->updateConnParams(8000, 8000, 4, 1000); // 10s interval
+  
+  // Enable slave latency
+  // Device can skip up to 4 connection events
+  // Sleep time = interval × (latency + 1)
+  // Example: 10s × 5 = 50s between wakeups
+}
+
+// Optimize advertising
+void optimizeAdvertising() {
+  BLEAdvertising* pAdvertising = BLEDevice::getAdvertising();
+  
+  // Slow advertising for battery life
+  pAdvertising->setMinInterval(1600); // 1s
+  pAdvertising->setMaxInterval(1600);
+  
+  // Reduce TX power when range is not critical
+  esp_ble_tx_power_set(ESP_BLE_PWR_TYPE_ADV, ESP_PWR_LVL_N12); // -12dBm
+}
+\`\`\`
+
+**Power Consumption Examples:**
+- Advertising (100ms): ~15mA average
+- Connected (1s interval): ~200μA average
+- Deep sleep: <10μA
+- **Battery life with CR2032 (220mAh):** 1-2 years with optimized parameters
+
+### Error Handling
+
+\`\`\`cpp
+class RobustBLEClient {
+  BLEClient* pClient;
+  uint32_t reconnectAttempts = 0;
+  const uint32_t MAX_RECONNECT = 5;
+  
+  bool connectWithRetry(BLEAddress address) {
+    while (reconnectAttempts < MAX_RECONNECT) {
+      try {
+        if (pClient->connect(address)) {
+          reconnectAttempts = 0;
+          return true;
+        }
+      } catch (...) {
+        Serial.println("Connection failed");
+      }
+      
+      reconnectAttempts++;
+      delay(1000 * reconnectAttempts); // Exponential backoff
+    }
+    return false;
+  }
+  
+  void safeWrite(BLERemoteCharacteristic* pChar, String data) {
+    if (!pClient->isConnected()) {
+      Serial.println("Not connected, reconnecting...");
+      connectWithRetry(pServerAddress);
+      return;
+    }
+    
+    try {
+      pChar->writeValue(data.c_str(), data.length());
+    } catch (std::exception& e) {
+      Serial.printf("Write failed: %s\\n", e.what());
+    }
+  }
+};
+\`\`\``,
+
+      `## Real-World BLE Projects
+
+### Smart Temperature Sensor
+
+Complete BLE temperature sensor with ESP32:
+
+\`\`\`cpp
+#include <BLEDevice.h>
+#include <DHT.h>
+
+#define DHT_PIN 4
+#define DHT_TYPE DHT22
+
+DHT dht(DHT_PIN, DHT_TYPE);
+BLECharacteristic* pTempChar;
+BLECharacteristic* pHumChar;
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+  
+  BLEDevice::init("Smart Sensor");
+  BLEServer* pServer = BLEDevice::createServer();
+  
+  // Environmental Sensing Service
+  BLEService* pService = pServer->createService(
+    BLEUUID((uint16_t)0x181A)
+  );
+  
+  // Temperature characteristic (0x2A6E)
+  pTempChar = pService->createCharacteristic(
+    BLEUUID((uint16_t)0x2A6E),
+    BLECharacteristic::PROPERTY_READ |
+    BLECharacteristic::PROPERTY_NOTIFY
+  );
+  pTempChar->addDescriptor(new BLE2902());
+  
+  // Humidity characteristic (0x2A6F)
+  pHumChar = pService->createCharacteristic(
+    BLEUUID((uint16_t)0x2A6F),
+    BLECharacteristic::PROPERTY_READ |
+    BLECharacteristic::PROPERTY_NOTIFY
+  );
+  pHumChar->addDescriptor(new BLE2902());
+  
+  pService->start();
+  
+  BLEAdvertising* pAdvertising = pServer->getAdvertising();
+  pAdvertising->addServiceUUID(BLEUUID((uint16_t)0x181A));
+  pAdvertising->start();
+  
+  Serial.println("BLE Temperature Sensor ready");
+}
+
+void loop() {
+  float temp = dht.readTemperature();
+  float hum = dht.readHumidity();
+  
+  if (!isnan(temp) && !isnan(hum)) {
+    // Temperature in 0.01 degree units (per BLE spec)
+    int16_t tempValue = (int16_t)(temp * 100);
+    pTempChar->setValue((uint8_t*)&tempValue, 2);
+    pTempChar->notify();
+    
+    // Humidity in 0.01% units
+    uint16_t humValue = (uint16_t)(hum * 100);
+    pHumChar->setValue((uint8_t*)&humValue, 2);
+    pHumChar->notify();
+    
+    Serial.printf("Temp: %.1f°C, Humidity: %.1f%%\\n", temp, hum);
+  }
+  
+  delay(5000); // Update every 5 seconds
+}
+\`\`\`
+
+**Features:**
+- Standard Environmental Sensing Service (0x181A)
+- Compatible with generic BLE apps
+- Low power with 5s update interval
+- Proper data format per Bluetooth specification`,
+
+      `## Conclusion
+
+BLE is the ideal wireless technology for IoT applications requiring:
+- Ultra-low power consumption (years on coin cell)
+- Smartphone connectivity without additional hardware
+- Secure encrypted communication
+- Flexible data models with GATT
+- Wide ecosystem support
+
+**Key Takeaways:**
+
+1. **Start Simple:** Begin with basic peripheral/central examples
+2. **Use Standard Services:** Leverage existing GATT services when possible
+3. **Optimize Power:** Tune advertising intervals and connection parameters
+4. **Test Thoroughly:** Use nRF Connect and BLE sniffers
+5. **Handle Errors:** Implement robust reconnection logic
+6. **Security Matters:** Use pairing and encryption for sensitive data
+
+**Next Steps:**
+
+- Implement BLE in your next IoT project
+- Explore BLE Mesh for large-scale networks
+- Integrate with mobile apps (React Native/Flutter)
+- Experiment with beacons for proximity applications
+- Combine BLE with Wi-Fi for gateway solutions
+
+**Ready to build?** Visit our [Services Page](/services) for BLE consulting and custom firmware development.
+
+**Need project ideas?** Check our [IoT Projects Section](/projects) for complete BLE examples with source code.
+
+BLE makes it possible to connect billions of devices. Start building your connected future today!
+
+**Further Resources:**
+- [Bluetooth SIG Official Documentation](https://www.bluetooth.com/specifications/)
+- [ESP32 BLE Examples GitHub](https://github.com/espressif/arduino-esp32/tree/master/libraries/BLE)
+- [Nordic Semiconductor Developer Zone](https://devzone.nordicsemi.com/)
+- [BLE University by Novel Bits](https://www.novelbits.io/bluetooth-low-energy-ble-complete-guide/)
+- [Punch Through BLE Blog](https://punchthrough.com/blog/)
+- [Adafruit BLE Learning Guide](https://learn.adafruit.com/introduction-to-bluetooth-low-energy)`,
+    ],
+  },
+  "ota-updates": {
+    title: "OTA Firmware Updates: Secure Over-the-Air Updates for IoT Devices",
+    date: "2025-09-28",
+    readTime: "17 min read",
+    category: "Development",
+    seo: {
+      metaTitle:
+        "OTA Firmware Updates Guide: ESP32, Arduino, STM32 Secure Updates 2024",
+      metaDescription:
+        "Master secure OTA firmware updates for IoT devices. Learn ESP32 OTA, Arduino OTA, version management, rollback protection, delta updates, and production deployment strategies.",
+      keywords: [
+        "OTA firmware updates",
+        "ESP32 OTA update",
+        "Arduino OTA programming",
+        "secure firmware update",
+        "STM32 bootloader OTA",
+        "rollback protection IoT",
+        "delta firmware updates",
+        "firmware signing verification",
+        "ESP-IDF OTA partition",
+        "remote firmware deployment",
+        "OTA update security",
+        "version management IoT",
+        "MQTT firmware update",
+        "HTTP OTA ESP32",
+        "bootloader secure boot",
+      ],
+      featuredImage: "/blog/ota-updates.jpg",
+    },
+    content: [
+      `Over-the-Air (OTA) firmware updates are essential for modern IoT devices, enabling remote bug fixes, feature additions, and security patches without physical access. However, implementing secure OTA updates requires careful consideration of security, reliability, and recovery mechanisms.
+
+In this comprehensive guide, you'll learn how to implement production-grade OTA updates for ESP32, Arduino, and STM32 platforms with firmware signing, version management, rollback protection, and fail-safe recovery.`,
+
+      `## Why OTA Updates Are Critical
+
+**Business Benefits:**
+- **Reduced Maintenance Costs:** No need for field technician visits
+- **Faster Time-to-Market:** Ship MVP and improve via updates
+- **Extended Device Lifetime:** Add features years after deployment
+- **Security Patching:** Fix vulnerabilities in deployed devices
+- **A/B Testing:** Deploy features to subset of devices
+
+**Technical Advantages:**
+- Update thousands of devices simultaneously
+- Deploy fixes to remote/inaccessible devices
+- Reduce product recalls and RMA costs
+- Implement continuous improvement cycles
+- Monitor update success rates
+
+**Real-World Impact:**
+- Tesla updates vehicle software remotely
+- Smart home devices receive security patches
+- Industrial sensors get new features
+- Medical devices comply with regulations
+
+**Challenges:**
+- Network reliability (Wi-Fi, cellular, LoRa)
+- Security (prevent malicious firmware)
+- Power loss during update (bricking devices)
+- Storage constraints (dual partition schemes)
+- Version compatibility management
+
+Learn about [OTA best practices](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html) from ESP-IDF documentation.`,
+
+      `## OTA Architecture Overview
+
+### Partition Schemes
+
+Most OTA systems use dual-partition architecture:
+
+\`\`\`
+Flash Memory Layout (4MB ESP32):
+┌──────────────────┐ 0x000000
+│   Bootloader     │ (32KB)
+├──────────────────┤ 0x008000
+│ Partition Table  │ (4KB)
+├──────────────────┤ 0x00A000
+│   NVS Storage    │ (24KB)
+├──────────────────┤ 0x010000
+│  OTA Data        │ (8KB) - Tracks active partition
+├──────────────────┤ 0x020000
+│   App Partition  │ (1.5MB) - Factory/OTA_0
+│   (Factory)      │
+├──────────────────┤ 0x1A0000
+│   App Partition  │ (1.5MB) - OTA_1
+│   (OTA_1)        │
+├──────────────────┤ 0x320000
+│   SPIFFS/FATFS   │ (Remaining)
+└──────────────────┘
+\`\`\`
+
+**Partition Types:**
+| Partition | Purpose | Size |
+|-----------|---------|------|
+| Bootloader | First-stage bootloader | 32KB |
+| OTA Data | Stores active partition info | 8KB |
+| Factory | Original firmware (fallback) | 1-2MB |
+| OTA_0 | First update partition | 1-2MB |
+| OTA_1 | Second update partition | 1-2MB |
+| NVS | Non-volatile storage | 16-64KB |
+
+**Update Flow:**
+1. Device boots from active partition (e.g., OTA_0)
+2. New firmware downloads to inactive partition (OTA_1)
+3. Verify downloaded firmware
+4. Mark OTA_1 as active partition
+5. Reboot into new firmware
+6. If boot fails, rollback to OTA_0
+
+Reference: [ESP32 partition tables](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/partition-tables.html).`,
+
+      `## ESP32 OTA Implementation
+
+### Basic Arduino OTA
+
+Simple OTA for development:
+
+\`\`\`cpp
+#include <WiFi.h>
+#include <ArduinoOTA.h>
+
+const char* ssid = "YourWiFi";
+const char* password = "YourPassword";
+
+void setup() {
+  Serial.begin(115200);
+  
+  // Connect to WiFi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\\nWiFi connected");
+  Serial.println(WiFi.localIP());
+
+  // Configure OTA
+  ArduinoOTA.setHostname("esp32-device");
+  ArduinoOTA.setPassword("admin"); // Optional password
+  
+  ArduinoOTA.onStart([]() {
+    String type = (ArduinoOTA.getCommand() == U_FLASH) 
+                  ? "sketch" : "filesystem";
+    Serial.println("Start updating " + type);
+  });
+  
+  ArduinoOTA.onEnd([]() {
+    Serial.println("\\nUpdate complete");
+  });
+  
+  ArduinoOTA.onProgress([](unsigned int progress, unsigned int total) {
+    Serial.printf("Progress: %u%%\\r", (progress * 100) / total);
+  });
+  
+  ArduinoOTA.onError([](ota_error_t error) {
+    Serial.printf("Error[%u]: ", error);
+    if (error == OTA_AUTH_ERROR) Serial.println("Auth Failed");
+    else if (error == OTA_BEGIN_ERROR) Serial.println("Begin Failed");
+    else if (error == OTA_CONNECT_ERROR) Serial.println("Connect Failed");
+    else if (error == OTA_RECEIVE_ERROR) Serial.println("Receive Failed");
+    else if (error == OTA_END_ERROR) Serial.println("End Failed");
+  });
+  
+  ArduinoOTA.begin();
+  Serial.println("OTA Ready");
+}
+
+void loop() {
+  ArduinoOTA.handle();
+  
+  // Your application code here
+  delay(100);
+}
+\`\`\`
+
+**Upload via Arduino IDE:**
+1. Tools → Port → Select network port (esp32-device at 192.168.1.100)
+2. Click Upload
+3. Monitor progress in Serial Monitor
+
+Learn more: [ArduinoOTA Library](https://github.com/esp8266/Arduino/tree/master/libraries/ArduinoOTA).`,
+
+      `### HTTP OTA Update
+
+Production-ready HTTP-based OTA:
+
+\`\`\`cpp
+#include <WiFi.h>
+#include <HTTPUpdate.h>
+#include <WiFiClientSecure.h>
+
+#define FIRMWARE_VERSION "1.0.0"
+#define UPDATE_URL "https://yourserver.com/firmware/latest.bin"
+#define VERSION_URL "https://yourserver.com/firmware/version.json"
+
+// Root CA certificate for HTTPS
+const char* rootCACertificate = R"EOF(
+-----BEGIN CERTIFICATE-----
+MIIDdzCCAl+gAwIBAgIEAgAAuTANBgkqhkiG9w0BAQUFADBaMQswCQYDVQQGEwJJ
+...
+-----END CERTIFICATE-----
+)EOF";
+
+void checkForUpdate() {
+  WiFiClientSecure client;
+  client.setCACert(rootCACertificate);
+  
+  // Check version
+  HTTPClient http;
+  http.begin(client, VERSION_URL);
+  int httpCode = http.GET();
+  
+  if (httpCode == 200) {
+    String payload = http.getString();
+    
+    // Parse JSON (use ArduinoJson library)
+    DynamicJsonDocument doc(1024);
+    deserializeJson(doc, payload);
+    
+    String latestVersion = doc["version"];
+    String firmwareUrl = doc["url"];
+    
+    if (latestVersion != FIRMWARE_VERSION) {
+      Serial.println("New version available: " + latestVersion);
+      performOTAUpdate(firmwareUrl);
+    } else {
+      Serial.println("Firmware up to date");
+    }
+  }
+  http.end();
+}
+
+void performOTAUpdate(String url) {
+  WiFiClientSecure client;
+  client.setCACert(rootCACertificate);
+  
+  Serial.println("Starting OTA update...");
+  
+  httpUpdate.setLedPin(LED_BUILTIN, LOW);
+  httpUpdate.rebootOnUpdate(false); // Manual reboot after validation
+  
+  t_httpUpdate_return ret = httpUpdate.update(client, url);
+  
+  switch (ret) {
+    case HTTP_UPDATE_FAILED:
+      Serial.printf("Update failed: %s\\n", 
+                    httpUpdate.getLastErrorString().c_str());
+      break;
+      
+    case HTTP_UPDATE_NO_UPDATES:
+      Serial.println("No update available");
+      break;
+      
+    case HTTP_UPDATE_OK:
+      Serial.println("Update success! Rebooting...");
+      delay(1000);
+      ESP.restart();
+      break;
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+  WiFi.begin(ssid, password);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+  }
+  
+  Serial.printf("Current firmware version: %s\\n", FIRMWARE_VERSION);
+  checkForUpdate();
+}
+
+void loop() {
+  // Check for updates periodically
+  static unsigned long lastCheck = 0;
+  if (millis() - lastCheck > 3600000) { // Every hour
+    checkForUpdate();
+    lastCheck = millis();
+  }
+}
+\`\`\`
+
+**Server-side version.json:**
+\`\`\`json
+{
+  "version": "1.0.1",
+  "url": "https://yourserver.com/firmware/firmware-v1.0.1.bin",
+  "changelog": "Fixed WiFi reconnection bug",
+  "mandatory": false,
+  "minVersion": "1.0.0"
+}
+\`\`\`
+
+Reference: [ESP32 HTTPUpdate](https://github.com/espressif/arduino-esp32/tree/master/libraries/HTTPUpdate).`,
+
+      `### ESP-IDF Advanced OTA
+
+Low-level ESP-IDF OTA with full control:
+
+\`\`\`c
+#include "esp_ota_ops.h"
+#include "esp_http_client.h"
+#include "esp_https_ota.h"
+
+#define FIRMWARE_URL "https://yourserver.com/firmware.bin"
+
+esp_err_t validate_image_header(esp_app_desc_t *new_app_info) {
+  if (new_app_info == NULL) {
+    return ESP_ERR_INVALID_ARG;
+  }
+
+  const esp_partition_t *running = esp_ota_get_running_partition();
+  esp_app_desc_t running_app_info;
+  
+  if (esp_ota_get_partition_description(running, &running_app_info) == ESP_OK) {
+    ESP_LOGI(TAG, "Running firmware version: %s", running_app_info.version);
+  }
+
+  ESP_LOGI(TAG, "New firmware version: %s", new_app_info->version);
+  
+  // Version comparison logic
+  if (strcmp(new_app_info->version, running_app_info.version) <= 0) {
+    ESP_LOGW(TAG, "New version is not newer");
+    return ESP_FAIL;
+  }
+
+  return ESP_OK;
+}
+
+void perform_ota_update() {
+  ESP_LOGI(TAG, "Starting OTA update");
+
+  esp_http_client_config_t config = {
+    .url = FIRMWARE_URL,
+    .cert_pem = server_cert_pem_start,
+    .timeout_ms = 5000,
+    .keep_alive_enable = true,
+  };
+
+  esp_https_ota_config_t ota_config = {
+    .http_config = &config,
+  };
+
+  esp_https_ota_handle_t https_ota_handle = NULL;
+  esp_err_t err = esp_https_ota_begin(&ota_config, &https_ota_handle);
+  
+  if (err != ESP_OK) {
+    ESP_LOGE(TAG, "OTA begin failed");
+    return;
+  }
+
+  esp_app_desc_t app_desc;
+  err = esp_https_ota_get_img_desc(https_ota_handle, &app_desc);
+  if (err != ESP_OK) {
+    ESP_LOGE(TAG, "Failed to get image description");
+    goto ota_end;
+  }
+
+  err = validate_image_header(&app_desc);
+  if (err != ESP_OK) {
+    ESP_LOGE(TAG, "Image header validation failed");
+    goto ota_end;
+  }
+
+  // Download firmware
+  while (1) {
+    err = esp_https_ota_perform(https_ota_handle);
+    if (err != ESP_ERR_HTTPS_OTA_IN_PROGRESS) {
+      break;
+    }
+    
+    // Print progress
+    int progress = esp_https_ota_get_image_len_read(https_ota_handle);
+    ESP_LOGI(TAG, "Downloaded: %d bytes", progress);
+  }
+
+  if (esp_https_ota_is_complete_data_received(https_ota_handle) != true) {
+    ESP_LOGE(TAG, "Complete data was not received");
+  } else {
+    err = esp_https_ota_finish(https_ota_handle);
+    if (err == ESP_OK) {
+      ESP_LOGI(TAG, "OTA update successful! Rebooting...");
+      vTaskDelay(1000 / portTICK_PERIOD_MS);
+      esp_restart();
+    } else {
+      ESP_LOGE(TAG, "OTA finish failed");
+    }
+  }
+
+ota_end:
+  esp_https_ota_abort(https_ota_handle);
+}
+\`\`\`
+
+Explore: [ESP-IDF OTA API](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html).`,
+
+      `## Firmware Signing and Verification
+
+### Generate Signing Keys
+
+\`\`\`bash
+# Generate RSA private key
+openssl genrsa -out private_key.pem 3072
+
+# Generate public key
+openssl rsa -in private_key.pem -pubout -out public_key.pem
+
+# Sign firmware binary
+openssl dgst -sha256 -sign private_key.pem \\
+  -out firmware.sig firmware.bin
+\`\`\`
+
+### ESP32 Signature Verification
+
+\`\`\`cpp
+#include "mbedtls/pk.h"
+#include "mbedtls/md.h"
+#include "mbedtls/platform.h"
+
+// Embedded public key (in PEM format)
+const char* public_key_pem = R"EOF(
+-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...
+-----END PUBLIC KEY-----
+)EOF";
+
+bool verifyFirmwareSignature(uint8_t* firmware, size_t firmware_len,
+                              uint8_t* signature, size_t sig_len) {
+  mbedtls_pk_context pk;
+  mbedtls_pk_init(&pk);
+  
+  // Parse public key
+  int ret = mbedtls_pk_parse_public_key(&pk, 
+                                         (const unsigned char*)public_key_pem,
+                                         strlen(public_key_pem) + 1);
+  if (ret != 0) {
+    ESP_LOGE(TAG, "Failed to parse public key: %d", ret);
+    mbedtls_pk_free(&pk);
+    return false;
+  }
+
+  // Calculate SHA-256 hash of firmware
+  unsigned char hash[32];
+  mbedtls_md_context_t md_ctx;
+  mbedtls_md_init(&md_ctx);
+  mbedtls_md_setup(&md_ctx, mbedtls_md_info_from_type(MBEDTLS_MD_SHA256), 0);
+  mbedtls_md_starts(&md_ctx);
+  mbedtls_md_update(&md_ctx, firmware, firmware_len);
+  mbedtls_md_finish(&md_ctx, hash);
+  mbedtls_md_free(&md_ctx);
+
+  // Verify signature
+  ret = mbedtls_pk_verify(&pk, MBEDTLS_MD_SHA256,
+                          hash, sizeof(hash),
+                          signature, sig_len);
+  
+  mbedtls_pk_free(&pk);
+  
+  if (ret == 0) {
+    ESP_LOGI(TAG, "Signature verification successful");
+    return true;
+  } else {
+    ESP_LOGE(TAG, "Signature verification failed: %d", ret);
+    return false;
+  }
+}
+
+void secure_ota_update(const char* firmware_url, const char* signature_url) {
+  // Download firmware
+  uint8_t* firmware = download_file(firmware_url, &firmware_len);
+  
+  // Download signature
+  uint8_t* signature = download_file(signature_url, &sig_len);
+  
+  // Verify before flashing
+  if (verifyFirmwareSignature(firmware, firmware_len, signature, sig_len)) {
+    // Safe to flash
+    flash_firmware(firmware, firmware_len);
+  } else {
+    ESP_LOGE(TAG, "Firmware rejected - invalid signature");
+  }
+  
+  free(firmware);
+  free(signature);
+}
+\`\`\`
+
+Learn about [code signing best practices](https://www.ssl.com/guide/code-signing-best-practices/).`,
+
+      `## Version Management
+
+### Semantic Versioning
+
+Implement robust version tracking:
+
+\`\`\`cpp
+#include <string.h>
+
+typedef struct {
+  uint8_t major;
+  uint8_t minor;
+  uint8_t patch;
+  char prerelease[16];
+  uint32_t build;
+} FirmwareVersion;
+
+// Parse version string "1.2.3-beta.4"
+FirmwareVersion parseVersion(const char* version_str) {
+  FirmwareVersion ver = {0};
+  
+  sscanf(version_str, "%hhu.%hhu.%hhu", &ver.major, &ver.minor, &ver.patch);
+  
+  // Parse prerelease
+  const char* dash = strchr(version_str, '-');
+  if (dash) {
+    strncpy(ver.prerelease, dash + 1, sizeof(ver.prerelease) - 1);
+  }
+  
+  return ver;
+}
+
+// Compare versions (-1: a < b, 0: a == b, 1: a > b)
+int compareVersions(FirmwareVersion a, FirmwareVersion b) {
+  if (a.major != b.major) return (a.major > b.major) ? 1 : -1;
+  if (a.minor != b.minor) return (a.minor > b.minor) ? 1 : -1;
+  if (a.patch != b.patch) return (a.patch > b.patch) ? 1 : -1;
+  
+  // Prerelease versions have lower precedence
+  bool a_pre = (strlen(a.prerelease) > 0);
+  bool b_pre = (strlen(b.prerelease) > 0);
+  
+  if (a_pre && !b_pre) return -1;
+  if (!a_pre && b_pre) return 1;
+  
+  return strcmp(a.prerelease, b.prerelease);
+}
+
+bool shouldUpdate(const char* current, const char* available) {
+  FirmwareVersion current_ver = parseVersion(current);
+  FirmwareVersion available_ver = parseVersion(available);
+  
+  return compareVersions(available_ver, current_ver) > 0;
+}
+
+// Usage
+void checkUpdate() {
+  const char* current = "1.2.3";
+  const char* available = "1.2.4";
+  
+  if (shouldUpdate(current, available)) {
+    Serial.println("Update available!");
+    performOTAUpdate();
+  }
+}
+\`\`\`
+
+### Store Version in NVS
+
+\`\`\`cpp
+#include <Preferences.h>
+
+Preferences preferences;
+
+void saveVersion(const char* version) {
+  preferences.begin("firmware", false);
+  preferences.putString("version", version);
+  preferences.putUInt("timestamp", millis());
+  preferences.end();
+}
+
+String getStoredVersion() {
+  preferences.begin("firmware", true);
+  String version = preferences.getString("version", "0.0.0");
+  preferences.end();
+  return version;
+}
+
+void updateVersionHistory(const char* new_version) {
+  preferences.begin("firmware", false);
+  
+  // Store previous version
+  String current = preferences.getString("version", "0.0.0");
+  preferences.putString("previous", current.c_str());
+  
+  // Update to new version
+  preferences.putString("version", new_version);
+  preferences.putUInt("update_count", 
+                      preferences.getUInt("update_count", 0) + 1);
+  preferences.putUInt("last_update", time(nullptr));
+  
+  preferences.end();
+}
+\`\`\`
+
+Reference: [Semantic Versioning Spec](https://semver.org/).`,
+
+      `## Rollback Protection
+
+### Automatic Rollback on Boot Failure
+
+\`\`\`cpp
+#include "esp_ota_ops.h"
+
+#define MAX_BOOT_ATTEMPTS 3
+
+void checkBootValidity() {
+  Preferences prefs;
+  prefs.begin("boot", false);
+  
+  uint8_t boot_count = prefs.getUChar("count", 0);
+  boot_count++;
+  prefs.putUChar("count", boot_count);
+  prefs.end();
+  
+  if (boot_count >= MAX_BOOT_ATTEMPTS) {
+    ESP_LOGE(TAG, "Boot failed %d times, rolling back", boot_count);
+    rollbackToPreviousFirmware();
+  }
+  
+  // If app runs successfully for 60 seconds, mark as valid
+  delay(60000);
+  markBootSuccessful();
+}
+
+void markBootSuccessful() {
+  Preferences prefs;
+  prefs.begin("boot", false);
+  prefs.putUChar("count", 0); // Reset boot counter
+  prefs.end();
+  
+  // Mark OTA partition as valid
+  const esp_partition_t *running = esp_ota_get_running_partition();
+  esp_ota_img_states_t ota_state;
+  
+  if (esp_ota_get_state_partition(running, &ota_state) == ESP_OK) {
+    if (ota_state == ESP_OTA_IMG_PENDING_VERIFY) {
+      esp_ota_mark_app_valid_cancel_rollback();
+      ESP_LOGI(TAG, "Firmware marked as valid");
+    }
+  }
+}
+
+void rollbackToPreviousFirmware() {
+  const esp_partition_t *running = esp_ota_get_running_partition();
+  const esp_partition_t *last_valid = esp_ota_get_last_invalid_partition();
+  
+  if (last_valid != NULL) {
+    ESP_LOGI(TAG, "Rolling back to partition: %s", last_valid->label);
+    esp_ota_set_boot_partition(last_valid);
+    esp_restart();
+  } else {
+    ESP_LOGE(TAG, "No valid partition to rollback to");
+  }
+}
+
+void setup() {
+  checkBootValidity();
+  
+  // Your application setup
+}
+\`\`\`
+
+### Manual Rollback Command
+
+\`\`\`cpp
+void handleRollbackCommand() {
+  Preferences prefs;
+  prefs.begin("firmware", true);
+  String previous = prefs.getString("previous", "");
+  prefs.end();
+  
+  if (previous.length() > 0) {
+    Serial.printf("Rolling back to version: %s\\n", previous.c_str());
+    
+    const esp_partition_t *next_partition = esp_ota_get_next_update_target();
+    esp_ota_set_boot_partition(next_partition);
+    
+    ESP.restart();
+  } else {
+    Serial.println("No previous version available");
+  }
+}
+\`\`\`
+
+Learn about [ESP32 app rollback](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html#app-rollback).`,
+
+      `## Delta Updates
+
+Reduce bandwidth by sending only differences:
+
+\`\`\`python
+# Server-side: Generate delta patch
+import bsdiff4
+
+def generate_delta_patch(old_firmware, new_firmware, output_patch):
+    with open(old_firmware, 'rb') as f_old:
+        old_data = f_old.read()
+    
+    with open(new_firmware, 'rb') as f_new:
+        new_data = f_new.read()
+    
+    # Generate binary diff
+    patch = bsdiff4.diff(old_data, new_data)
+    
+    with open(output_patch, 'wb') as f_patch:
+        f_patch.write(patch)
+    
+    old_size = len(old_data)
+    new_size = len(new_data)
+    patch_size = len(patch)
+    
+    savings = 100 * (1 - patch_size / new_size)
+    print(f"Patch size: {patch_size} bytes ({savings:.1f}% savings)")
+
+# Usage
+generate_delta_patch('firmware-v1.0.0.bin', 
+                     'firmware-v1.0.1.bin',
+                     'patch-v1.0.0-to-v1.0.1.patch')
+\`\`\`
+
+### ESP32 Delta Update Client
+
+\`\`\`cpp
+#include "bsdiff.h" // Port of bsdiff for embedded systems
+
+bool applyDeltaPatch(const char* patch_url) {
+  // Read current firmware
+  const esp_partition_t *running = esp_ota_get_running_partition();
+  uint8_t* old_firmware = (uint8_t*)malloc(running->size);
+  esp_partition_read(running, 0, old_firmware, running->size);
+  
+  // Download patch
+  uint8_t* patch = downloadFile(patch_url, &patch_size);
+  
+  // Apply patch to generate new firmware
+  uint8_t* new_firmware = (uint8_t*)malloc(running->size);
+  int result = bspatch(old_firmware, running->size,
+                       patch, patch_size,
+                       new_firmware, &new_size);
+  
+  if (result == 0) {
+    // Write new firmware to OTA partition
+    const esp_partition_t *update_partition = esp_ota_get_next_update_target();
+    esp_ota_begin(update_partition, new_size, &ota_handle);
+    esp_ota_write(ota_handle, new_firmware, new_size);
+    esp_ota_end(ota_handle);
+    
+    ESP_LOGI(TAG, "Delta update successful");
+    free(old_firmware);
+    free(patch);
+    free(new_firmware);
+    return true;
+  }
+  
+  ESP_LOGE(TAG, "Delta patch failed");
+  free(old_firmware);
+  free(patch);
+  free(new_firmware);
+  return false;
+}
+\`\`\`
+
+**Bandwidth Savings:**
+| Change Type | Full Update | Delta Update | Savings |
+|-------------|-------------|--------------|---------|
+| Bug fix (1 file) | 1.5 MB | 50 KB | 97% |
+| Library update | 1.5 MB | 200 KB | 87% |
+| Feature addition | 1.5 MB | 400 KB | 73% |
+
+Learn about [binary diff algorithms](https://www.daemonology.net/bsdiff/).`,
+
+      `## MQTT-Based OTA Updates
+
+Deploy updates via MQTT broker:
+
+\`\`\`cpp
+#include <PubSubClient.h>
+#include <Update.h>
+
+WiFiClient espClient;
+PubSubClient mqtt(espClient);
+
+#define MQTT_BROKER "broker.hivemq.com"
+#define MQTT_PORT 1883
+#define TOPIC_UPDATE_AVAILABLE "devices/ota/available"
+#define TOPIC_UPDATE_CHUNK "devices/esp32-001/ota/chunk"
+#define TOPIC_UPDATE_STATUS "devices/esp32-001/ota/status"
+
+size_t firmware_total_size = 0;
+size_t firmware_received = 0;
+
+void mqttCallback(char* topic, byte* payload, unsigned int length) {
+  if (strcmp(topic, TOPIC_UPDATE_AVAILABLE) == 0) {
+    // Parse update notification
+    DynamicJsonDocument doc(512);
+    deserializeJson(doc, payload, length);
+    
+    String version = doc["version"];
+    firmware_total_size = doc["size"];
+    
+    if (shouldUpdate(FIRMWARE_VERSION, version.c_str())) {
+      Serial.println("Starting MQTT OTA update");
+      mqtt.subscribe(TOPIC_UPDATE_CHUNK);
+      mqtt.publish(TOPIC_UPDATE_STATUS, "downloading");
+      
+      // Start OTA update
+      if (!Update.begin(firmware_total_size)) {
+        mqtt.publish(TOPIC_UPDATE_STATUS, "error: begin failed");
+      }
+    }
+  }
+  else if (strcmp(topic, TOPIC_UPDATE_CHUNK) == 0) {
+    // Receive firmware chunk
+    if (Update.write(payload, length) != length) {
+      mqtt.publish(TOPIC_UPDATE_STATUS, "error: write failed");
+      Update.abort();
+      return;
+    }
+    
+    firmware_received += length;
+    int progress = (firmware_received * 100) / firmware_total_size;
+    
+    char status[32];
+    sprintf(status, "progress: %d%%", progress);
+    mqtt.publish(TOPIC_UPDATE_STATUS, status);
+    
+    // Check if complete
+    if (firmware_received >= firmware_total_size) {
+      if (Update.end(true)) {
+        mqtt.publish(TOPIC_UPDATE_STATUS, "success");
+        Serial.println("Update complete, rebooting...");
+        delay(1000);
+        ESP.restart();
+      } else {
+        mqtt.publish(TOPIC_UPDATE_STATUS, "error: end failed");
+      }
+    }
+  }
+}
+
+void setup() {
+  mqtt.setServer(MQTT_BROKER, MQTT_PORT);
+  mqtt.setCallback(mqttCallback);
+  mqtt.setBufferSize(4096); // Increase for larger chunks
+  
+  if (mqtt.connect("esp32-device")) {
+    mqtt.subscribe(TOPIC_UPDATE_AVAILABLE);
+    Serial.println("MQTT OTA ready");
+  }
+}
+
+void loop() {
+  mqtt.loop();
+}
+\`\`\`
+
+**Server-side firmware publisher:**
+\`\`\`python
+import paho.mqtt.client as mqtt
+import json
+
+def publish_firmware(broker, firmware_file, version):
+    client = mqtt.Client()
+    client.connect(broker, 1883)
+    
+    # Announce update
+    update_info = {
+        "version": version,
+        "size": os.path.getsize(firmware_file),
+        "url": f"https://server.com/firmware/{version}.bin"
+    }
+    client.publish("devices/ota/available", json.dumps(update_info))
+    
+    # Send firmware in chunks
+    chunk_size = 2048
+    with open(firmware_file, 'rb') as f:
+        while True:
+            chunk = f.read(chunk_size)
+            if not chunk:
+                break
+            client.publish("devices/esp32-001/ota/chunk", chunk)
+            time.sleep(0.1)  # Rate limiting
+    
+    client.disconnect()
+\`\`\`
+
+Reference: [MQTT OTA patterns](https://www.hivemq.com/blog/mqtt-essentials-part-5-mqtt-topics-best-practices/).`,
+
+      `## STM32 Bootloader OTA
+
+### Custom Bootloader Design
+
+\`\`\`c
+// STM32 Flash Memory Layout
+// 0x08000000: Bootloader (32KB)
+// 0x08008000: App Partition 1 (224KB)
+// 0x08040000: App Partition 2 (224KB)
+
+#define FLASH_APP1_ADDR     0x08008000
+#define FLASH_APP2_ADDR     0x08040000
+#define FLASH_BOOT_FLAG     0x0801F800 // Last page of bootloader
+
+typedef struct {
+  uint32_t magic;
+  uint32_t version;
+  uint32_t size;
+  uint32_t crc32;
+  uint32_t active_partition; // 1 or 2
+} BootConfig;
+
+void bootloader_main(void) {
+  BootConfig config;
+  
+  // Read boot configuration
+  memcpy(&config, (void*)FLASH_BOOT_FLAG, sizeof(BootConfig));
+  
+  uint32_t app_addr = (config.active_partition == 1) 
+                      ? FLASH_APP1_ADDR 
+                      : FLASH_APP2_ADDR;
+  
+  // Verify CRC before jumping to app
+  if (verify_crc32(app_addr, config.size, config.crc32)) {
+    jump_to_application(app_addr);
+  } else {
+    // Try alternate partition
+    app_addr = (config.active_partition == 1) 
+               ? FLASH_APP2_ADDR 
+               : FLASH_APP1_ADDR;
+    jump_to_application(app_addr);
+  }
+}
+
+void jump_to_application(uint32_t app_addr) {
+  uint32_t jump_address = *(__IO uint32_t*)(app_addr + 4);
+  pFunction jump = (pFunction)jump_address;
+  
+  // Disable interrupts
+  __disable_irq();
+  
+  // Set vector table
+  SCB->VTOR = app_addr;
+  
+  // Set stack pointer
+  __set_MSP(*(__IO uint32_t*)app_addr);
+  
+  // Jump to application
+  jump();
+}
+\`\`\`
+
+### OTA Update Process
+
+\`\`\`c
+void perform_ota_update(uint8_t* firmware, uint32_t size) {
+  // Determine target partition (opposite of current)
+  BootConfig config;
+  memcpy(&config, (void*)FLASH_BOOT_FLAG, sizeof(BootConfig));
+  
+  uint32_t target = (config.active_partition == 1) 
+                    ? FLASH_APP2_ADDR 
+                    : FLASH_APP1_ADDR;
+  
+  // Unlock flash
+  HAL_FLASH_Unlock();
+  
+  // Erase target partition
+  FLASH_EraseInitTypeDef erase;
+  erase.TypeErase = FLASH_TYPEERASE_PAGES;
+  erase.PageAddress = target;
+  erase.NbPages = 56; // 224KB / 4KB per page
+  
+  uint32_t page_error;
+  HAL_FLASHEx_Erase(&erase, &page_error);
+  
+  // Write firmware
+  for (uint32_t i = 0; i < size; i += 4) {
+    uint32_t data = *(uint32_t*)(firmware + i);
+    HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, target + i, data);
+  }
+  
+  // Calculate CRC
+  uint32_t crc = calculate_crc32(firmware, size);
+  
+  // Update boot config
+  config.active_partition = (config.active_partition == 1) ? 2 : 1;
+  config.size = size;
+  config.crc32 = crc;
+  config.version++;
+  
+  // Write config to flash
+  HAL_FLASH_Unlock();
+  FLASH_EraseInitTypeDef erase_config;
+  erase_config.TypeErase = FLASH_TYPEERASE_PAGES;
+  erase_config.PageAddress = FLASH_BOOT_FLAG;
+  erase_config.NbPages = 1;
+  HAL_FLASHEx_Erase(&erase_config, &page_error);
+  
+  for (uint32_t i = 0; i < sizeof(BootConfig); i += 4) {
+    HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, 
+                      FLASH_BOOT_FLAG + i,
+                      *(uint32_t*)((uint8_t*)&config + i));
+  }
+  
+  HAL_FLASH_Lock();
+  
+  // Reboot
+  NVIC_SystemReset();
+}
+\`\`\`
+
+Learn about [STM32 bootloader development](https://www.st.com/resource/en/application_note/an2606-stm32-microcontroller-system-memory-boot-mode-stmicroelectronics.pdf).`,
+
+      `## Production Deployment Strategies
+
+### Phased Rollout
+
+Deploy to subsets of devices:
+
+\`\`\`python
+# Server-side rollout controller
+class OTARollout:
+    def __init__(self):
+        self.phases = [
+            {"name": "canary", "percentage": 1, "duration_hours": 24},
+            {"name": "pilot", "percentage": 10, "duration_hours": 48},
+            {"name": "general", "percentage": 100, "duration_hours": 168}
+        ]
+        self.current_phase = 0
+        self.success_threshold = 95.0  # 95% success rate required
+    
+    def should_device_update(self, device_id):
+        phase = self.phases[self.current_phase]
+        
+        # Hash-based device selection for consistency
+        device_hash = hash(device_id) % 100
+        
+        return device_hash < phase["percentage"]
+    
+    def check_phase_health(self):
+        success_rate = self.get_update_success_rate()
+        
+        if success_rate < self.success_threshold:
+            self.pause_rollout()
+            self.send_alert("Rollout paused: low success rate")
+        elif self.phase_duration_complete():
+            self.advance_to_next_phase()
+    
+    def advance_to_next_phase(self):
+        if self.current_phase < len(self.phases) - 1:
+            self.current_phase += 1
+            print(f"Advanced to phase: {self.phases[self.current_phase]['name']}")
+\`\`\`
+
+### A/B Testing
+
+\`\`\`cpp
+void selectFirmwareVariant() {
+  // Assign 50% of devices to variant A, 50% to variant B
+  uint8_t mac[6];
+  esp_read_mac(mac, ESP_MAC_WIFI_STA);
+  uint32_t device_id = (mac[4] << 8) | mac[5];
+  
+  bool variant_b = (device_id % 2 == 0);
+  
+  const char* firmware_url = variant_b 
+    ? "https://server.com/firmware-variant-b.bin"
+    : "https://server.com/firmware-variant-a.bin";
+  
+  performOTAUpdate(firmware_url);
+  
+  // Report variant to analytics
+  reportVariant(variant_b ? "B" : "A");
+}
+\`\`\`
+
+### Monitoring and Analytics
+
+\`\`\`cpp
+void reportUpdateStatus(const char* status, const char* error = nullptr) {
+  DynamicJsonDocument doc(512);
+  
+  doc["device_id"] = getDeviceID();
+  doc["mac"] = WiFi.macAddress();
+  doc["current_version"] = FIRMWARE_VERSION;
+  doc["status"] = status;
+  doc["timestamp"] = time(nullptr);
+  doc["rssi"] = WiFi.RSSI();
+  doc["free_heap"] = ESP.getFreeHeap();
+  
+  if (error) {
+    doc["error"] = error;
+  }
+  
+  String json;
+  serializeJson(doc, json);
+  
+  // Send to analytics endpoint
+  HTTPClient http;
+  http.begin("https://analytics.yourserver.com/ota/status");
+  http.addHeader("Content-Type", "application/json");
+  http.POST(json);
+  http.end();
+}
+
+// Usage throughout OTA process
+void performMonitoredOTA() {
+  reportUpdateStatus("started");
+  
+  if (downloadFirmware()) {
+    reportUpdateStatus("downloaded");
+    
+    if (verifyFirmware()) {
+      reportUpdateStatus("verified");
+      
+      if (flashFirmware()) {
+        reportUpdateStatus("success");
+        ESP.restart();
+      } else {
+        reportUpdateStatus("failed", "flash error");
+      }
+    } else {
+      reportUpdateStatus("failed", "verification failed");
+    }
+  } else {
+    reportUpdateStatus("failed", "download error");
+  }
+}
+\`\`\`
+
+**Key Metrics to Track:**
+- Update success rate (target: >98%)
+- Average download time
+- Update failures by error type
+- Rollback rate
+- Device uptime before/after update
+- Battery consumption during update
+
+Reference: [IoT metrics best practices](https://aws.amazon.com/blogs/iot/monitoring-device-fleets-with-aws-iot-device-management/).`,
+
+      `## Power Management During OTA
+
+### Battery Level Checks
+
+\`\`\`cpp
+#define MIN_BATTERY_VOLTAGE 3.6  // Minimum voltage for OTA
+#define ADC_PIN 34
+
+float getBatteryVoltage() {
+  int raw = analogRead(ADC_PIN);
+  return (raw / 4095.0) * 2.0 * 3.3; // Voltage divider
+}
+
+bool isBatterySufficientForOTA() {
+  float voltage = getBatteryVoltage();
+  
+  if (voltage < MIN_BATTERY_VOLTAGE) {
+    Serial.printf("Battery too low: %.2fV (min: %.2fV)\\n", 
+                  voltage, MIN_BATTERY_VOLTAGE);
+    return false;
+  }
+  
+  return true;
+}
+
+void checkForUpdate() {
+  if (!isBatterySufficientForOTA()) {
+    Serial.println("Postponing OTA until battery charged");
+    return;
+  }
+  
+  performOTAUpdate();
+}
+\`\`\`
+
+### Power Consumption Optimization
+
+\`\`\`cpp
+void efficientOTAUpdate() {
+  // Disable non-essential peripherals
+  WiFi.setSleep(false); // Keep WiFi active for fast download
+  setCpuFrequencyMhz(240); // Max CPU speed for faster processing
+  
+  // Turn off BLE
+  btStop();
+  
+  // Disable sensors
+  disableSensors();
+  
+  // Download firmware
+  downloadFirmware();
+  
+  // Reduce CPU during flash write
+  setCpuFrequencyMhz(80);
+  flashFirmware();
+  
+  // Restore settings
+  restorePeripherals();
+}
+\`\`\`
+
+**Power Budget Example (ESP32):**
+| Phase | Duration | Current | Energy |
+|-------|----------|---------|--------|
+| Download (WiFi) | 30s | 160mA | 4.8 mAh |
+| Verify | 5s | 80mA | 0.11 mAh |
+| Flash write | 15s | 120mA | 0.5 mAh |
+| Reboot | 2s | 200mA | 0.11 mAh |
+| **Total** | **52s** | - | **5.52 mAh** |
+
+Learn about [ESP32 power management](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/power_management.html).`,
+
+      `## Testing OTA Updates
+
+### Local Testing Setup
+
+\`\`\`bash
+# Set up local HTTP server for testing
+python3 -m http.server 8080
+
+# Firmware files structure:
+# ./firmware/
+#   ├── version.json
+#   ├── firmware-v1.0.0.bin
+#   ├── firmware-v1.0.0.sig
+#   ├── firmware-v1.0.1.bin
+#   └── firmware-v1.0.1.sig
+\`\`\`
+
+### Automated Testing Script
+
+\`\`\`python
+import requests
+import hashlib
+import time
+
+class OTATester:
+    def __init__(self, device_ip):
+        self.device_ip = device_ip
+        self.base_url = f"http://{device_ip}"
+    
+    def trigger_update(self, firmware_url):
+        response = requests.post(f"{self.base_url}/ota/update",
+                                json={"url": firmware_url})
+        return response.status_code == 200
+    
+    def check_version(self):
+        response = requests.get(f"{self.base_url}/api/version")
+        return response.json()["version"]
+    
+    def test_ota_flow(self):
+        print("Starting OTA test...")
+        
+        # Get current version
+        initial_version = self.check_version()
+        print(f"Initial version: {initial_version}")
+        
+        # Trigger update
+        firmware_url = "http://192.168.1.100:8080/firmware-v1.0.1.bin"
+        if not self.trigger_update(firmware_url):
+            print("❌ Failed to trigger update")
+            return False
+        
+        # Wait for device to reboot
+        print("Waiting for device to update and reboot...")
+        time.sleep(60)
+        
+        # Verify new version
+        try:
+            new_version = self.check_version()
+            if new_version != "1.0.1":
+                print(f"❌ Version mismatch: {new_version}")
+                return False
+        except:
+            print("❌ Device not responding after update")
+            return False
+        
+        print(f"✅ OTA test successful: {initial_version} → {new_version}")
+        return True
+
+# Run test
+tester = OTATester("192.168.1.50")
+tester.test_ota_flow()
+\`\`\`
+
+### Integration Testing Checklist
+
+**Pre-Update Tests:**
+- [ ] Device responds to ping
+- [ ] Current version reported correctly
+- [ ] Free flash space sufficient
+- [ ] Battery level adequate (if battery-powered)
+- [ ] Network connection stable
+
+**During Update:**
+- [ ] Download progress reported
+- [ ] Signature verification successful
+- [ ] Flash write completes without errors
+- [ ] OTA data partition updated
+
+**Post-Update Tests:**
+- [ ] Device reboots successfully
+- [ ] New version reported
+- [ ] All features functional
+- [ ] Network reconnection works
+- [ ] Previous configuration preserved
+- [ ] Rollback available if needed
+
+**Failure Scenarios:**
+- [ ] Corrupted firmware rejected
+- [ ] Invalid signature rejected
+- [ ] Power loss during download (resume/retry)
+- [ ] Flash write failure triggers rollback
+- [ ] Boot failure triggers automatic rollback`,
+
+      `## Common Issues and Solutions
+
+### Issue 1: "Update Failed - Not Enough Space"
+
+**Solution:**
+\`\`\`cpp
+void checkOTASpace() {
+  const esp_partition_t* update_partition = esp_ota_get_next_update_target();
+  
+  if (update_partition == NULL) {
+    Serial.println("No OTA partition found");
+    return;
+  }
+  
+  Serial.printf("OTA partition size: %d bytes\\n", update_partition->size);
+  Serial.printf("Sketch size: %d bytes\\n", ESP.getSketchSize());
+  Serial.printf("Free sketch space: %d bytes\\n", 
+                ESP.getFreeSketchSpace());
+  
+  if (ESP.getFreeSketchSpace() < 100000) {
+    Serial.println("WARNING: Low OTA space, consider smaller partitions");
+  }
+}
+\`\`\`
+
+### Issue 2: Boot Loop After Update
+
+**Solution - Watchdog Timer:**
+\`\`\`cpp
+#include "esp_task_wdt.h"
+
+void setup() {
+  // Enable watchdog with 30s timeout
+  esp_task_wdt_init(30, true);
+  esp_task_wdt_add(NULL);
+  
+  // Application initialization
+  initApplication();
+  
+  // If successful, mark boot as valid
+  markBootSuccessful();
+  
+  // Disable watchdog for normal operation
+  esp_task_wdt_delete(NULL);
+}
+\`\`\`
+
+### Issue 3: Slow Download Speed
+
+**Solution - Increase Buffer Size:**
+\`\`\`cpp
+void optimizedOTADownload() {
+  WiFiClient client;
+  HTTPClient http;
+  
+  http.begin(client, firmware_url);
+  http.setTimeout(15000);
+  
+  int httpCode = http.GET();
+  
+  if (httpCode == 200) {
+    int contentLength = http.getSize();
+    WiFiClient* stream = http.getStreamPtr();
+    
+    // Large buffer for faster downloads
+    uint8_t buff[4096] = {0};
+    
+    while (http.connected() && (contentLength > 0 || contentLength == -1)) {
+      size_t size = stream->available();
+      
+      if (size) {
+        int c = stream->readBytes(buff, min(size, sizeof(buff)));
+        Update.write(buff, c);
+        
+        if (contentLength > 0) {
+          contentLength -= c;
+        }
+      }
+      delay(1);
+    }
+  }
+  
+  http.end();
+}
+\`\`\`
+
+### Issue 4: Certificate Verification Failed
+
+**Solution:**
+\`\`\`cpp
+// Use NTP to sync time (required for certificate validation)
+#include "time.h"
+
+void syncTime() {
+  configTime(0, 0, "pool.ntp.org", "time.nist.gov");
+  
+  Serial.print("Waiting for NTP time sync");
+  time_t now = time(nullptr);
+  while (now < 8 * 3600 * 2) {
+    delay(500);
+    Serial.print(".");
+    now = time(nullptr);
+  }
+  Serial.println(" OK");
+  
+  struct tm timeinfo;
+  gmtime_r(&now, &timeinfo);
+  Serial.printf("Current time: %s", asctime(&timeinfo));
+}
+
+void setup() {
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) delay(500);
+  
+  // Sync time before HTTPS OTA
+  syncTime();
+  
+  // Now HTTPS certificate validation will work
+  performSecureOTA();
+}
+\`\`\``,
+
+      `## Conclusion
+
+OTA firmware updates are essential for maintaining and improving IoT devices in the field. Implementing secure, reliable OTA updates requires careful attention to security, version management, error handling, and recovery mechanisms.
+
+**Key Takeaways:**
+
+1. **Security First:** Always verify firmware signatures before flashing
+2. **Dual Partitions:** Use A/B partitions for safe rollback
+3. **Version Management:** Implement semantic versioning and compatibility checks
+4. **Rollback Protection:** Automatically revert failed updates
+5. **Phased Deployment:** Roll out updates gradually to minimize risk
+6. **Power Management:** Check battery levels before starting updates
+7. **Monitoring:** Track update success rates and failures
+8. **Testing:** Thoroughly test OTA process before production deployment
+
+**Best Practices:**
+
+- Store firmware on secure HTTPS servers
+- Implement delta updates to reduce bandwidth
+- Use MQTT for IoT device fleets
+- Monitor device health post-update
+- Maintain rollback capability
+- Document version compatibility
+- Test power-loss scenarios
+
+**Production Checklist:**
+
+- [ ] Firmware signing and verification implemented
+- [ ] Dual partition scheme configured
+- [ ] Automatic rollback on boot failure
+- [ ] Version management system
+- [ ] Secure transport (HTTPS/MQTTS)
+- [ ] Update monitoring and analytics
+- [ ] Battery level checks (for battery-powered devices)
+- [ ] Phased rollout strategy
+- [ ] Emergency rollback procedure
+- [ ] Documentation and runbooks
+
+**Next Steps:**
+
+- Implement OTA in your next IoT project
+- Set up secure firmware distribution server
+- Create automated testing pipeline
+- Monitor update metrics in production
+- Plan phased rollout strategy
+
+**Need OTA implementation help?** Visit our [Services Page](/services) for firmware development and OTA consulting.
+
+**Explore complete examples!** Check our [IoT Projects Section](/projects) for full OTA implementations with source code.
+
+Secure, reliable OTA updates enable continuous improvement of your IoT products. Start implementing robust update mechanisms today!
+
+**Further Resources:**
+- [ESP-IDF OTA Documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/system/ota.html)
+- [ArduinoOTA Library](https://github.com/esp8266/Arduino/tree/master/libraries/ArduinoOTA)
+- [STM32 Bootloader Guide](https://www.st.com/resource/en/application_note/an2606-stm32-microcontroller-system-memory-boot-mode-stmicroelectronics.pdf)
+- [AWS IoT Jobs for OTA](https://docs.aws.amazon.com/iot/latest/developerguide/iot-jobs.html)
+- [Azure IoT Device Update](https://docs.microsoft.com/en-us/azure/iot-hub-device-update/)
+- [Binary Diff Algorithms](https://www.daemonology.net/bsdiff/)
+- [Code Signing Best Practices](https://www.ssl.com/guide/code-signing-best-practices/)`,
+    ],
+  },
+  "node-red-dashboards": {
+    title: "Node-RED IoT Dashboards: Build Real-Time Data Visualization",
+    date: "2025-09-20",
+    readTime: "15 min read",
+    category: "Visualization",
+    seo: {
+      metaTitle:
+        "Node-RED Dashboard Tutorial: IoT Data Visualization Guide 2024",
+      metaDescription:
+        "Master Node-RED for IoT dashboards. Learn flow-based programming, MQTT integration, dashboard widgets, database storage, ESP32 connectivity, and build production-ready real-time monitoring systems.",
+      keywords: [
+        "Node-RED dashboard tutorial",
+        "IoT data visualization",
+        "Node-RED MQTT integration",
+        "flow-based programming",
+        "ESP32 Node-RED",
+        "real-time dashboard",
+        "Node-RED dashboard widgets",
+        "IoT monitoring system",
+        "Node-RED InfluxDB",
+        "Node-RED Grafana",
+        "home automation dashboard",
+        "sensor data visualization",
+        "Node-RED custom nodes",
+        "industrial IoT dashboard",
+        "Node-RED production deployment",
+      ],
+      featuredImage: "/blog/node-red-dashboard.jpg",
+    },
+    content: [
+      `Node-RED is a powerful flow-based programming tool that makes it incredibly easy to build IoT dashboards, automate workflows, and visualize real-time sensor data. With its drag-and-drop interface and extensive library of pre-built nodes, you can create production-ready IoT applications without writing extensive code.
+
+In this comprehensive guide, you'll learn how to set up Node-RED, integrate MQTT devices, create interactive dashboards, store data in databases, and deploy production-ready IoT monitoring systems for ESP32, Arduino, and other platforms.`,
+
+      `## What is Node-RED?
+
+Node-RED is an open-source visual programming tool created by IBM for wiring together hardware devices, APIs, and online services. It's built on Node.js and provides a browser-based flow editor.
+
+**Key Features:**
+- **Visual Programming:** Drag-and-drop interface for building flows
+- **Built-in Dashboard:** Create web-based UI without HTML/CSS
+- **MQTT Support:** Native MQTT nodes for IoT integration
+- **Extensive Library:** 4000+ community-contributed nodes
+- **Database Integration:** InfluxDB, MySQL, MongoDB support
+- **API Integration:** REST APIs, WebSockets, HTTP requests
+- **Automation:** Complex logic with function nodes (JavaScript)
+
+**Perfect For:**
+- Real-time sensor monitoring dashboards
+- Home automation control panels
+- Industrial IoT data collection
+- Smart building management
+- Agricultural monitoring systems
+- Weather stations
+- Energy consumption tracking
+
+**Use Cases:**
+- Monitor temperature/humidity from ESP32 devices
+- Control lights and appliances remotely
+- Visualize industrial machine data
+- Track solar panel performance
+- Build smart greenhouse automation
+- Create custom alerting systems
+
+Learn more at [Node-RED official site](https://nodered.org/).`,
+
+      `## Installation and Setup
+
+### Install Node-RED
+
+**On Windows/macOS/Linux:**
+\`\`\`bash
+# Install Node.js (prerequisite)
+# Download from https://nodejs.org/
+
+# Install Node-RED globally
+npm install -g node-red
+
+# Start Node-RED
+node-red
+
+# Access web interface at http://localhost:1880
+\`\`\`
+
+**On Raspberry Pi:**
+\`\`\`bash
+# Update system
+sudo apt update
+sudo apt upgrade
+
+# Install Node-RED (comes pre-installed on Raspberry Pi OS)
+bash <(curl -sL https://raw.githubusercontent.com/node-red/linux-installers/master/deb/update-nodejs-and-nodered)
+
+# Enable autostart
+sudo systemctl enable nodered.service
+
+# Start Node-RED
+sudo systemctl start nodered.service
+
+# Access at http://raspberrypi.local:1880
+\`\`\`
+
+**Docker Installation:**
+\`\`\`bash
+# Run Node-RED in Docker container
+docker run -it -p 1880:1880 -v node_red_data:/data --name mynodered nodered/node-red
+
+# Access at http://localhost:1880
+\`\`\`
+
+### Install Dashboard Nodes
+
+\`\`\`bash
+# Install Node-RED Dashboard (essential for UI)
+cd ~/.node-red
+npm install node-red-dashboard
+
+# Install additional useful nodes
+npm install node-red-contrib-influxdb
+npm install node-red-node-mysql
+npm install node-red-contrib-ui-led
+
+# Restart Node-RED to load new nodes
+\`\`\`
+
+Reference: [Node-RED Getting Started](https://nodered.org/docs/getting-started/).`,
+
+      `## Node-RED Basics
+
+### Flow Editor Overview
+
+The Node-RED interface has three main sections:
+
+**1. Node Palette (Left):** Library of available nodes
+- Input nodes (MQTT, HTTP, inject)
+- Output nodes (debug, MQTT, HTTP response)
+- Function nodes (change, switch, function)
+- Dashboard nodes (button, gauge, chart)
+
+**2. Flow Canvas (Center):** Workspace for building flows
+- Drag nodes from palette
+- Connect nodes with wires
+- Multiple tabs for organization
+
+**3. Sidebar (Right):** Information and debugging
+- Debug messages
+- Node information
+- Flow configuration
+
+### Your First Flow
+
+Create a simple timestamp generator:
+
+\`\`\`
+[Inject Node] → [Function Node] → [Debug Node]
+\`\`\`
+
+**Step 1:** Drag "inject" node to canvas
+- Set repeat interval: every 5 seconds
+- Name: "Timestamp Generator"
+
+**Step 2:** Add "function" node
+- Code:
+\`\`\`javascript
+msg.payload = {
+    timestamp: new Date().toISOString(),
+    random: Math.random()
+};
+return msg;
+\`\`\`
+
+**Step 3:** Add "debug" node
+- Set to output complete msg object
+
+**Step 4:** Connect nodes with wires and click "Deploy"
+
+Watch debug sidebar for output every 5 seconds.
+
+Learn about [Node-RED concepts](https://nodered.org/docs/user-guide/concepts).`,
+
+      `## MQTT Integration with ESP32
+
+### ESP32 Sensor Publishing
+
+\`\`\`cpp
+#include <WiFi.h>
+#include <PubSubClient.h>
+#include <DHT.h>
+
+#define WIFI_SSID "YourWiFi"
+#define WIFI_PASS "YourPassword"
+#define MQTT_SERVER "192.168.1.100"  // Node-RED server IP
+#define MQTT_PORT 1883
+
+#define DHT_PIN 4
+#define DHT_TYPE DHT22
+
+WiFiClient espClient;
+PubSubClient mqtt(espClient);
+DHT dht(DHT_PIN, DHT_TYPE);
+
+void setup() {
+  Serial.begin(115200);
+  dht.begin();
+  
+  // Connect WiFi
+  WiFi.begin(WIFI_SSID, WIFI_PASS);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\\nWiFi connected");
+  
+  // Connect MQTT
+  mqtt.setServer(MQTT_SERVER, MQTT_PORT);
+  reconnectMQTT();
+}
+
+void reconnectMQTT() {
+  while (!mqtt.connected()) {
+    Serial.print("Connecting to MQTT...");
+    if (mqtt.connect("ESP32-Sensor-01")) {
+      Serial.println("connected");
+    } else {
+      delay(5000);
+    }
+  }
+}
+
+void loop() {
+  if (!mqtt.connected()) {
+    reconnectMQTT();
+  }
+  mqtt.loop();
+  
+  // Read sensors
+  float temp = dht.readTemperature();
+  float humidity = dht.readHumidity();
+  
+  if (!isnan(temp) && !isnan(humidity)) {
+    // Publish temperature
+    char tempStr[8];
+    dtostrf(temp, 6, 2, tempStr);
+    mqtt.publish("home/livingroom/temperature", tempStr);
+    
+    // Publish humidity
+    char humStr[8];
+    dtostrf(humidity, 6, 2, humStr);
+    mqtt.publish("home/livingroom/humidity", humStr);
+    
+    // Publish JSON payload
+    char payload[100];
+    sprintf(payload, "{\\"temp\\":%.2f,\\"humidity\\":%.2f,\\"device\\":\\"ESP32-01\\"}", 
+            temp, humidity);
+    mqtt.publish("home/livingroom/sensors", payload);
+    
+    Serial.printf("Published - Temp: %.2f°C, Humidity: %.2f%%\\n", temp, humidity);
+  }
+  
+  delay(5000); // Publish every 5 seconds
+}
+\`\`\`
+
+### Node-RED MQTT Flow
+
+**Flow Configuration:**
+\`\`\`
+[MQTT In] → [JSON Parser] → [Function] → [Dashboard Gauge]
+                               ↓
+                          [InfluxDB Out]
+\`\`\`
+
+**1. MQTT In Node:**
+- Server: localhost:1883
+- Topic: home/livingroom/sensors
+- QoS: 1
+- Output: auto-detect
+
+**2. JSON Node:**
+- Action: Convert JSON string to Object
+
+**3. Function Node (Split Data):**
+\`\`\`javascript
+// Extract temperature and humidity
+var temp = {
+    payload: msg.payload.temp,
+    topic: "temperature"
+};
+
+var humidity = {
+    payload: msg.payload.humidity,
+    topic: "humidity"
+};
+
+return [temp, humidity];
+\`\`\`
+
+**4. Dashboard Gauge Nodes:**
+- Temperature: 0-50°C range, units: °C
+- Humidity: 0-100% range, units: %
+
+Reference: [Node-RED MQTT documentation](https://nodered.org/docs/user-guide/nodes#mqtt).`,
+
+      `## Building Interactive Dashboards
+
+### Dashboard Layout
+
+Configure dashboard layout:
+1. Open dashboard sidebar (right panel)
+2. Click "Layout" tab
+3. Create groups and tabs
+4. Organize widgets
+
+**Example Structure:**
+\`\`\`
+Tab: Home
+  ├─ Group: Living Room (3 columns wide)
+  │   ├─ Temperature Gauge
+  │   ├─ Humidity Gauge
+  │   └─ Chart (temperature history)
+  └─ Group: Controls (2 columns wide)
+      ├─ LED Switch
+      └─ Fan Slider
+\`\`\`
+
+### Essential Dashboard Widgets
+
+**1. Gauge Widget:**
+\`\`\`
+[MQTT In: temperature] → [Gauge]
+\`\`\`
+- Type: Gauge
+- Range: 0 to 50
+- Units: °C
+- Label: Temperature
+- Value format: {{value | number:1}}°C
+- Color gradient: Blue → Green → Red
+
+**2. Chart Widget:**
+\`\`\`
+[MQTT In] → [Chart]
+\`\`\`
+- Chart type: Line chart
+- X-axis: Last 1 hour
+- Legend: Show
+- Interpolate: Linear
+- Point style: Circle
+
+**3. Button Widget:**
+\`\`\`
+[Button] → [MQTT Out: home/relay/control]
+\`\`\`
+- Label: Toggle LED
+- Payload: toggle
+- Background color: Blue
+- Icon: fa-lightbulb
+
+**4. Switch Widget:**
+\`\`\`
+[Switch] → [Change Node] → [MQTT Out]
+\`\`\`
+- Label: Fan Control
+- On Payload: 1
+- Off Payload: 0
+- Pass through: enabled
+
+**5. Slider Widget:**
+\`\`\`
+[Slider] → [MQTT Out: home/dimmer/level]
+\`\`\`
+- Label: Brightness
+- Range: 0 to 100
+- Step: 1
+- Output on release: enabled
+
+**6. Text Display:**
+\`\`\`
+[MQTT In] → [Template Node] → [Text]
+\`\`\`
+Template code:
+\`\`\`html
+<div style="font-size: 24px; color: {{msg.payload > 25 ? 'red' : 'blue'}}">
+    {{msg.payload}}°C
+</div>
+\`\`\`
+
+**7. Notification:**
+\`\`\`
+[Function] → [Notification]
+\`\`\`
+Function code:
+\`\`\`javascript
+if (msg.payload.temp > 30) {
+    msg.payload = "Warning: High temperature detected!";
+    return msg;
+}
+\`\`\`
+
+Learn about [Dashboard widgets](https://github.com/node-red/node-red-dashboard).`,
+
+      `## Advanced Dashboard Features
+
+### Real-Time Charts
+
+**Multi-line Chart:**
+\`\`\`javascript
+// Function node to prepare multi-series data
+msg.topic = "sensor-" + msg.payload.device;
+msg.payload = msg.payload.temperature;
+return msg;
+\`\`\`
+
+Chart configuration:
+- Type: Line chart
+- X-axis: Last 30 minutes
+- Y-axis: Temperature (°C)
+- Multiple series: Auto-detect by topic
+
+### Custom Widgets with Template Node
+
+**Custom Gauge with HTML/CSS:**
+\`\`\`html
+<div style="text-align: center; padding: 20px;">
+    <div style="font-size: 48px; font-weight: bold; color: #00aa00;">
+        {{msg.payload}}°C
+    </div>
+    <div style="font-size: 18px; color: #666;">
+        Living Room Temperature
+    </div>
+    <div style="margin-top: 10px;">
+        <progress value="{{msg.payload}}" max="50" 
+                  style="width: 200px; height: 20px;"></progress>
+    </div>
+</div>
+\`\`\`
+
+### Interactive Controls
+
+**Color Picker for RGB LED:**
+\`\`\`
+[Color Picker] → [Function] → [MQTT Out: home/led/rgb]
+\`\`\`
+
+Function code:
+\`\`\`javascript
+// Convert color picker output to RGB values
+var color = msg.payload;
+var r = parseInt(color.substr(1,2), 16);
+var g = parseInt(color.substr(3,2), 16);
+var b = parseInt(color.substr(5,2), 16);
+
+msg.payload = JSON.stringify({r: r, g: g, b: b});
+return msg;
+\`\`\`
+
+**ESP32 RGB LED Control:**
+\`\`\`cpp
+void mqttCallback(char* topic, byte* payload, unsigned int length) {
+  String message = "";
+  for (int i = 0; i < length; i++) {
+    message += (char)payload[i];
+  }
+  
+  // Parse JSON
+  DynamicJsonDocument doc(256);
+  deserializeJson(doc, message);
+  
+  int r = doc["r"];
+  int g = doc["g"];
+  int b = doc["b"];
+  
+  // Set RGB LED
+  ledcWrite(0, r); // Red channel
+  ledcWrite(1, g); // Green channel
+  ledcWrite(2, b); // Blue channel
+  
+  Serial.printf("RGB set to: R=%d, G=%d, B=%d\\n", r, g, b);
+}
+\`\`\`
+
+### Dropdown Menus
+
+\`\`\`
+[Dropdown] → [Switch Node] → [MQTT Out]
+\`\`\`
+
+Dropdown options:
+- Auto Mode (payload: "auto")
+- Manual Mode (payload: "manual")
+- Off (payload: "off")
+
+Switch node routes based on payload to different MQTT topics.`,
+
+      `## Database Integration
+
+### InfluxDB Setup
+
+**Install InfluxDB:**
+\`\`\`bash
+# Ubuntu/Debian
+wget -q https://repos.influxdata.com/influxdata-archive_compat.key
+echo '393e8779c89ac8d958f81f942f9ad7fb82a25e133faddaf92e15b16e6ac9ce4c influxdata-archive_compat.key' | sha256sum -c && cat influxdata-archive_compat.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg > /dev/null
+
+echo 'deb [signed-by=/etc/apt/trusted.gpg.d/influxdata-archive_compat.gpg] https://repos.influxdata.com/debian stable main' | sudo tee /etc/apt/sources.list.d/influxdata.list
+
+sudo apt update && sudo apt install influxdb2
+
+# Start InfluxDB
+sudo systemctl start influxdb
+sudo systemctl enable influxdb
+\`\`\`
+
+**Configure InfluxDB in Node-RED:**
+\`\`\`
+[MQTT In] → [Function: Format Data] → [InfluxDB Out]
+\`\`\`
+
+Function node:
+\`\`\`javascript
+// Format data for InfluxDB
+msg.payload = [
+    {
+        measurement: "environment",
+        fields: {
+            temperature: msg.payload.temp,
+            humidity: msg.payload.humidity
+        },
+        tags: {
+            location: "livingroom",
+            device: "ESP32-01"
+        },
+        timestamp: new Date()
+    }
+];
+return msg;
+\`\`\`
+
+InfluxDB node configuration:
+- URL: http://localhost:8086
+- Database: iot_sensors
+- Measurement: From msg.payload
+
+### Query Historical Data
+
+\`\`\`
+[Inject: Every hour] → [InfluxDB In] → [Chart]
+\`\`\`
+
+InfluxDB query:
+\`\`\`sql
+SELECT mean("temperature") 
+FROM "environment" 
+WHERE time > now() - 24h 
+GROUP BY time(1h)
+\`\`\`
+
+Learn about [InfluxDB Node-RED integration](https://flows.nodered.org/node/node-red-contrib-influxdb).`,
+
+      `### MySQL Integration
+
+**Store sensor readings:**
+\`\`\`
+[MQTT In] → [Function] → [MySQL]
+\`\`\`
+
+Function node:
+\`\`\`javascript
+msg.topic = "INSERT INTO sensor_data (timestamp, device, temperature, humidity) VALUES (NOW(), ?, ?, ?)";
+msg.payload = [
+    msg.payload.device,
+    msg.payload.temp,
+    msg.payload.humidity
+];
+return msg;
+\`\`\`
+
+MySQL node configuration:
+- Host: localhost
+- Port: 3306
+- Database: iot_monitoring
+- User: nodered
+- Password: your_password
+
+**Query recent data:**
+\`\`\`javascript
+msg.topic = "SELECT * FROM sensor_data WHERE device = ? ORDER BY timestamp DESC LIMIT 100";
+msg.payload = ["ESP32-01"];
+return msg;
+\`\`\`
+
+### MongoDB Integration
+
+\`\`\`bash
+# Install MongoDB node
+npm install node-red-node-mongodb
+\`\`\`
+
+**Store documents:**
+\`\`\`javascript
+// Function node
+msg.payload = {
+    timestamp: new Date(),
+    device: "ESP32-01",
+    location: "livingroom",
+    sensors: {
+        temperature: msg.payload.temp,
+        humidity: msg.payload.humidity
+    }
+};
+
+msg.collection = "sensor_readings";
+return msg;
+\`\`\`
+
+Reference: [Node-RED database nodes](https://flows.nodered.org/?type=node&num_pages=1).`,
+
+      `## Production Deployment
+
+### Security Best Practices
+
+**1. Enable Authentication:**
+
+Edit settings.js:
+\`\`\`javascript
+adminAuth: {
+    type: "credentials",
+    users: [{
+        username: "admin",
+        password: "$2b$08$...", // bcrypt hash
+        permissions: "*"
+    }]
+}
+\`\`\`
+
+Generate password hash:
+\`\`\`bash
+node-red-admin hash-pw
+\`\`\`
+
+**2. Enable HTTPS:**
+\`\`\`javascript
+https: {
+    key: require("fs").readFileSync('privkey.pem'),
+    cert: require("fs").readFileSync('cert.pem')
+}
+\`\`\`
+
+**3. Configure CORS:**
+\`\`\`javascript
+httpNodeCors: {
+    origin: "https://yourdomain.com",
+    credentials: true
+}
+\`\`\`
+
+### Reverse Proxy with Nginx
+
+\`\`\`nginx
+server {
+    listen 80;
+    server_name nodered.yourdomain.com;
+    
+    location / {
+        proxy_pass http://localhost:1880;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+\`\`\`
+
+### Docker Compose Deployment
+
+\`\`\`yaml
+version: '3.8'
+
+services:
+  nodered:
+    image: nodered/node-red:latest
+    container_name: nodered
+    restart: unless-stopped
+    ports:
+      - "1880:1880"
+    volumes:
+      - ./node-red-data:/data
+    environment:
+      - TZ=America/New_York
+  
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb-data:/var/lib/influxdb2
+    environment:
+      - INFLUXDB_DB=iot_sensors
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=secretpassword
+  
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+\`\`\`
+
+Start services:
+\`\`\`bash
+docker-compose up -d
+\`\`\`
+
+Learn about [Node-RED Docker](https://nodered.org/docs/getting-started/docker).`,
+
+      `## Custom Node Development
+
+### Create Custom Node
+
+**Package structure:**
+\`\`\`
+my-custom-node/
+├── package.json
+├── custom-sensor.js
+└── custom-sensor.html
+\`\`\`
+
+**custom-sensor.js:**
+\`\`\`javascript
+module.exports = function(RED) {
+    function CustomSensorNode(config) {
+        RED.nodes.createNode(this, config);
+        var node = this;
+        
+        node.on('input', function(msg) {
+            // Process sensor data
+            msg.payload = {
+                temperature: msg.payload.temp,
+                humidity: msg.payload.humidity,
+                timestamp: new Date().toISOString(),
+                processed: true
+            };
+            
+            node.send(msg);
+        });
+    }
+    
+    RED.nodes.registerType("custom-sensor", CustomSensorNode);
+}
+\`\`\`
+
+**custom-sensor.html:**
+\`\`\`html
+<script type="text/javascript">
+    RED.nodes.registerType('custom-sensor', {
+        category: 'function',
+        color: '#a6bbcf',
+        defaults: {
+            name: {value: ""}
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "file.png",
+        label: function() {
+            return this.name || "custom-sensor";
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="custom-sensor">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+\`\`\`
+
+**package.json:**
+\`\`\`json
+{
+  "name": "node-red-contrib-custom-sensor",
+  "version": "1.0.0",
+  "description": "Custom sensor processing node",
+  "node-red": {
+    "nodes": {
+      "custom-sensor": "custom-sensor.js"
+    }
+  }
+}
+\`\`\`
+
+Install locally:
+\`\`\`bash
+cd ~/.node-red
+npm install /path/to/my-custom-node
+\`\`\`
+
+Reference: [Creating custom nodes](https://nodered.org/docs/creating-nodes/).`,
+
+      `## Real-World Project Examples
+
+### Example 1: Smart Home Dashboard
+
+**Features:**
+- Monitor 5 rooms (temperature, humidity, motion)
+- Control lights and fans
+- Energy consumption tracking
+- Alert notifications for anomalies
+
+**Flow Overview:**
+\`\`\`
+ESP32 Devices → MQTT → Node-RED → InfluxDB
+                          ↓
+                    Dashboard UI
+                          ↓
+                  Alert Notifications
+\`\`\`
+
+**Alert Function:**
+\`\`\`javascript
+// Check for high temperature
+if (msg.payload.temp > 30) {
+    var alert = {
+        payload: "High temperature alert: " + msg.payload.temp + "°C in " + msg.payload.location,
+        priority: "high"
+    };
+    return alert;
+}
+\`\`\`
+
+### Example 2: Industrial Monitoring System
+
+**Requirements:**
+- Monitor 20+ sensors across factory floor
+- Real-time production metrics
+- Equipment status tracking
+- Historical trend analysis
+- Email alerts for failures
+
+**Architecture:**
+\`\`\`
+Modbus Devices → Node-RED Modbus → Processing
+PLC Data → OPC UA → Node-RED → InfluxDB
+MQTT Sensors → MQTT In → Node-RED → Grafana
+\`\`\`
+
+**Data Processing:**
+\`\`\`javascript
+// Calculate OEE (Overall Equipment Effectiveness)
+var availability = msg.payload.uptime / msg.payload.planned_time;
+var performance = msg.payload.actual_output / msg.payload.target_output;
+var quality = msg.payload.good_parts / msg.payload.total_parts;
+
+msg.payload = {
+    oee: (availability * performance * quality * 100).toFixed(2),
+    availability: (availability * 100).toFixed(2),
+    performance: (performance * 100).toFixed(2),
+    quality: (quality * 100).toFixed(2)
+};
+
+return msg;
+\`\`\`
+
+### Example 3: Agricultural Monitoring
+
+**Sensors:**
+- Soil moisture (capacitive sensors)
+- Temperature and humidity (DHT22)
+- Light levels (LDR)
+- Water level (ultrasonic sensor)
+
+**Automation:**
+\`\`\`javascript
+// Auto-irrigation logic
+if (msg.payload.soil_moisture < 30 && !context.get('irrigation_active')) {
+    // Turn on pump
+    var pumpOn = {
+        payload: 1,
+        topic: "greenhouse/pump/control"
+    };
+    
+    context.set('irrigation_active', true);
+    context.set('irrigation_start', new Date());
+    
+    return pumpOn;
+} else if (msg.payload.soil_moisture > 60 && context.get('irrigation_active')) {
+    // Turn off pump
+    var pumpOff = {
+        payload: 0,
+        topic: "greenhouse/pump/control"
+    };
+    
+    context.set('irrigation_active', false);
+    
+    return pumpOff;
+}
+\`\`\`
+
+Explore [Node-RED flows library](https://flows.nodered.org/) for more examples.`,
+
+      `## Performance Optimization
+
+### Flow Optimization Tips
+
+**1. Use Function Node Efficiently:**
+\`\`\`javascript
+// Bad: Creating new Date every time
+msg.payload.timestamp = new Date().toISOString();
+
+// Good: Use context to cache
+var cached = context.get('cached_data') || {};
+if (!cached.timestamp || Date.now() - cached.time > 60000) {
+    cached.timestamp = new Date().toISOString();
+    cached.time = Date.now();
+    context.set('cached_data', cached);
+}
+msg.payload.timestamp = cached.timestamp;
+\`\`\`
+
+**2. Limit Debug Nodes in Production:**
+- Disable debug nodes after testing
+- Use \`node.warn()\` instead of debug for important messages
+
+**3. Batch Database Writes:**
+\`\`\`javascript
+// Buffer messages and write in batches
+var buffer = context.get('buffer') || [];
+buffer.push(msg.payload);
+
+if (buffer.length >= 10) {
+    msg.payload = buffer;
+    context.set('buffer', []);
+    return msg; // Send to database
+} else {
+    context.set('buffer', buffer);
+    return null; // Don't send yet
+}
+\`\`\`
+
+**4. Use Delay Node for Rate Limiting:**
+\`\`\`
+[MQTT In] → [Delay: Rate Limit 1 msg/sec] → [Dashboard]
+\`\`\`
+
+### Memory Management
+
+**Monitor Node-RED Memory:**
+\`\`\`javascript
+// Function node to monitor memory
+msg.payload = {
+    rss: Math.round(process.memoryUsage().rss / 1024 / 1024) + ' MB',
+    heapTotal: Math.round(process.memoryUsage().heapTotal / 1024 / 1024) + ' MB',
+    heapUsed: Math.round(process.memoryUsage().heapUsed / 1024 / 1024) + ' MB'
+};
+return msg;
+\`\`\`
+
+**Clean Up Context:**
+\`\`\`javascript
+// Clear old context data periodically
+var keys = context.keys();
+keys.forEach(function(key) {
+    if (key.startsWith('temp_')) {
+        context.set(key, undefined);
+    }
+});
+\`\`\`
+
+Reference: [Node-RED performance tips](https://nodered.org/docs/faq/interacting-with-arduino).`,
+
+      `## Troubleshooting Common Issues
+
+### Issue 1: Dashboard Not Loading
+
+**Solution:**
+\`\`\`bash
+# Check if dashboard is installed
+cd ~/.node-red
+npm list node-red-dashboard
+
+# Reinstall if needed
+npm install node-red-dashboard
+
+# Restart Node-RED
+node-red-restart
+\`\`\`
+
+Access dashboard at: http://localhost:1880/ui
+
+### Issue 2: MQTT Connection Failed
+
+**Debug steps:**
+\`\`\`javascript
+// Test MQTT connection
+var mqtt = require('mqtt');
+var client = mqtt.connect('mqtt://localhost:1883');
+
+client.on('connect', function() {
+    console.log('MQTT Connected');
+    client.subscribe('test/topic');
+});
+
+client.on('error', function(err) {
+    console.log('MQTT Error:', err);
+});
+\`\`\`
+
+**Check broker:**
+\`\`\`bash
+# Test with mosquitto_pub/sub
+mosquitto_sub -h localhost -t '#' -v
+\`\`\`
+
+### Issue 3: High CPU Usage
+
+**Solutions:**
+- Reduce MQTT publish frequency on devices
+- Use delay nodes to rate limit
+- Optimize function nodes (avoid loops)
+- Disable unnecessary debug nodes
+
+### Issue 4: Data Not Persisting
+
+**Check context storage:**
+
+Edit settings.js:
+\`\`\`javascript
+contextStorage: {
+    default: {
+        module: "localfilesystem"
+    }
+}
+\`\`\`
+
+**Use persistent context:**
+\`\`\`javascript
+// Store in file-based context
+context.set('data', msg.payload, 'file');
+
+// Retrieve
+var data = context.get('data', 'file');
+\`\`\``,
+
+      `## Conclusion
+
+Node-RED is a powerful platform for building IoT dashboards and automation systems. Its visual programming approach makes complex IoT workflows accessible to both developers and non-programmers.
+
+**Key Takeaways:**
+
+1. **Visual Development:** Build complex flows with drag-and-drop
+2. **MQTT Native:** Seamless integration with IoT devices
+3. **Rich Dashboard:** Create web UIs without coding HTML/CSS
+4. **Database Support:** Store and query historical data
+5. **Extensible:** 4000+ community nodes available
+6. **Production Ready:** Deploy with Docker, secure with HTTPS
+7. **Real-Time:** WebSocket support for live updates
+
+**Best Practices:**
+
+- Organize flows into logical tabs
+- Use subflows for reusable components
+- Implement error handling with catch nodes
+- Secure deployment with authentication
+- Monitor system performance
+- Batch database operations
+- Use version control (export flows to JSON)
+- Document complex flows with comments
+
+**Production Checklist:**
+
+- [ ] Enable admin authentication
+- [ ] Configure HTTPS/TLS
+- [ ] Set up automated backups
+- [ ] Implement logging and monitoring
+- [ ] Configure reverse proxy (Nginx)
+- [ ] Set resource limits (Docker)
+- [ ] Test failover scenarios
+- [ ] Document API endpoints
+- [ ] Set up alert notifications
+- [ ] Plan scaling strategy
+
+**Next Steps:**
+
+- Build your first dashboard with ESP32
+- Integrate with cloud services (AWS IoT, Azure)
+- Explore advanced nodes (AI/ML, computer vision)
+- Create custom nodes for your use case
+- Join Node-RED community forums
+
+**Ready to build dashboards?** Visit our [Services Page](/services) for Node-RED consulting and custom dashboard development.
+
+**Need project ideas?** Check our [IoT Projects Section](/projects) for complete Node-RED examples with source code.
+
+Node-RED transforms IoT development from complex coding to visual flow creation. Start building powerful dashboards today!
+
+**Further Resources:**
+- [Node-RED Official Documentation](https://nodered.org/docs/)
+- [Node-RED Dashboard Guide](https://github.com/node-red/node-red-dashboard)
+- [Node-RED Flow Library](https://flows.nodered.org/)
+- [Node-RED YouTube Channel](https://www.youtube.com/c/NodeRED)
+- [Node-RED Forum](https://discourse.nodered.org/)
+- [InfluxDB with Node-RED](https://docs.influxdata.com/influxdb/v2.0/tools/nodered/)
+- [MQTT Essentials](https://www.hivemq.com/mqtt-essentials/)
+- [Grafana Integration](https://grafana.com/docs/grafana/latest/datasources/influxdb/)`,
     ],
   },
 };

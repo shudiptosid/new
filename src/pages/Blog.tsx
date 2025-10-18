@@ -13,7 +13,7 @@ const Blog = () => {
       title: "Optimizing Power Consumption in IoT Devices",
       excerpt:
         "Master power optimization techniques to extend battery life 10-50x. Learn sleep modes, DVFS, low-power protocols, and energy harvesting for sustainable IoT devices.",
-      date: "2024-01-15",
+      date: "2025-10-15",
       readTime: "14 min read",
       category: "Power Management",
       featured: true,
@@ -24,7 +24,7 @@ const Blog = () => {
       title: "Real-Time Operating Systems (RTOS) for IoT: Complete Guide",
       excerpt:
         "Master RTOS for IoT with FreeRTOS & Zephyr. Learn task scheduling, inter-task communication, code examples, and build production-ready embedded systems.",
-      date: "2024-01-20",
+      date: "2025-10-08",
       readTime: "16 min read",
       category: "IoT",
       featured: true,
@@ -35,7 +35,7 @@ const Blog = () => {
       title: "Building Resilient LoRaWAN Networks",
       excerpt:
         "Best practices for designing and deploying reliable long-range wireless sensor networks in challenging environments and remote locations.",
-      date: "2024-01-02",
+      date: "2025-09-25",
       readTime: "12 min read",
       category: "Networking",
       featured: true,
@@ -46,7 +46,7 @@ const Blog = () => {
       title: "Debugging Embedded Systems: A Complete Guide",
       excerpt:
         "Master essential debugging strategies, tools, and methodologies for Arduino, ESP32, and STM32 projects. Learn UART logging, IDE debugging, and hardware troubleshooting.",
-      date: "2024-01-20",
+      date: "2025-10-12",
       readTime: "15 min read",
       category: "Development",
       featured: true,
@@ -57,9 +57,66 @@ const Blog = () => {
       title: "Edge AI on Microcontrollers: TensorFlow Lite Micro Guide",
       excerpt:
         "Run machine learning on ESP32, Arduino, STM32. Master TensorFlow Lite Micro, quantization, model optimization, and deploy AI at the edge with complete examples.",
-      date: "2023-12-10",
+      date: "2025-09-22",
       readTime: "18 min read",
       category: "AI/ML",
+      featured: true,
+      available: true,
+    },
+    {
+      slug: "mqtt-protocol",
+      title: "MQTT Protocol Deep Dive: Complete Guide for IoT Developers",
+      excerpt:
+        "Master MQTT messaging protocol for IoT. Learn QoS levels, retained messages, Last Will Testament, broker setup (Mosquitto, HiveMQ), and build production-ready ESP32 applications.",
+      date: "2025-10-05",
+      readTime: "16 min read",
+      category: "Protocols",
+      featured: true,
+      available: true,
+    },
+    {
+      slug: "iot-security",
+      title: "IoT Security Best Practices: Complete Guide for Embedded Systems",
+      excerpt:
+        "Master IoT security for production devices. Learn secure boot, TLS encryption, secure OTA updates, hardware security modules, authentication, and protect against common vulnerabilities.",
+      date: "2025-10-18",
+      readTime: "18 min read",
+      category: "Security",
+      featured: true,
+      available: true,
+    },
+    {
+      slug: "ble-basics",
+      title:
+        "BLE (Bluetooth Low Energy) Basics: Complete Guide for IoT Developers",
+      excerpt:
+        "Master Bluetooth Low Energy for IoT projects. Learn BLE fundamentals, GATT services, ESP32 implementation, beacons, mobile app integration, and build wireless connected devices.",
+      date: "2025-10-02",
+      readTime: "16 min read",
+      category: "Connectivity",
+      featured: true,
+      available: true,
+    },
+    {
+      slug: "ota-updates",
+      title:
+        "OTA Firmware Updates: Secure Over-the-Air Updates for IoT Devices",
+      excerpt:
+        "Master secure OTA firmware updates for ESP32, Arduino, STM32. Learn version management, rollback protection, delta updates, firmware signing, and deploy updates safely to production.",
+      date: "2025-09-28",
+      readTime: "17 min read",
+      category: "Development",
+      featured: true,
+      available: true,
+    },
+    {
+      slug: "node-red-dashboards",
+      title: "Node-RED IoT Dashboards: Build Real-Time Data Visualization",
+      excerpt:
+        "Master Node-RED for IoT dashboards. Learn flow-based programming, MQTT integration, dashboard widgets, database storage, ESP32 connectivity, and build production-ready monitoring systems.",
+      date: "2025-09-20",
+      readTime: "15 min read",
+      category: "Visualization",
       featured: true,
       available: true,
     },
@@ -68,8 +125,11 @@ const Blog = () => {
   const categories = [
     "All",
     "Power Management",
+    "Protocols",
     "Security",
+    "Connectivity",
     "Networking",
+    "Visualization",
     "RTOS",
     "Development",
     "AI/ML",
@@ -186,10 +246,12 @@ const Blog = () => {
                     <Link to={`/blog/${post.slug}`}>
                       <Button
                         variant="ghost"
-                        className="p-0 h-auto text-accent hover:text-accent/80 font-medium text-lg"
+                        className="p-0 h-auto text-accent hover:text-accent hover:bg-transparent font-medium text-lg group/btn"
                       >
-                        Read Article
-                        <ArrowRight className="ml-2 w-5 h-5" />
+                        <span className="group-hover/btn:underline">
+                          Read Article
+                        </span>
+                        <ArrowRight className="ml-2 w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                       </Button>
                     </Link>
                   ) : (
