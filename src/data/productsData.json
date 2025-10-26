@@ -354,7 +354,7 @@
     "id": "MCU-03",
     "serialNo": 40,
     "name": "ESP32",
-    "price": 850,
+    "price": 550,
     "description": "Powerful WiFi & Bluetooth enabled microcontroller with dual-core processor and rich peripherals.",
     "category": "Development Board",
     "imageUrl": "/src/assets/icon/esp32.png"
