@@ -125,13 +125,13 @@ const Blog = () => {
       available: true,
     },
     {
-      slug: "esp-usb-drivers",
+      slug: "esp32-usb-driver",
       title: "ESP32/ESP8266 USB Driver Installation: Fix Port Detection Issues",
       excerpt:
-        "Solve ESP32 and ESP8266 port detection problems on Windows, macOS, and Linux. Learn driver installation for CP2102, CH340, and FTDI chips with step-by-step troubleshooting.",
-      date: "2025-10-16",
-      readTime: "12 min read",
-      category: "Development",
+        "Fix ESP32/ESP8266 COM port not detected. Install CP2102, CH340, FTDI drivers on Windows, Mac, Linux. Complete troubleshooting guide with all backlinks.",
+      date: "2025-10-27",
+      readTime: "5 min read",
+      category: "Troubleshooting",
       featured: true,
       available: true,
     },
