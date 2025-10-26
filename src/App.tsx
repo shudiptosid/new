@@ -17,7 +17,8 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const CompletedProjects = lazy(() => import("./pages/CompletedProjects"));
 const Resources = lazy(() => import("./pages/Resources"));
 const SortQuestionsPage2 = lazy(() => import("./pages/SortQuestionsPage2"));
-const BlogPost = lazy(() => import("./pages/BlogPost"));
+// Using compressed version - 91% smaller (36KB vs 358KB)
+const BlogPost = lazy(() => import("./pages/BlogPostCompressed"));
 const ECEResources = lazy(() => import("./pages/ECEResources"));
 const CostEstimator = lazy(() => import("./pages/CostEstimator"));
 
