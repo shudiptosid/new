@@ -624,16 +624,16 @@
     "id": "ACT-06",
     "serialNo": 70,
     "name": "Mini Water Pump",
-    "price": 120,
+    "price": 140,
     "description": "Submersible DC water pump for aquariums and plant watering systems, 3-6V, 120L/H flow rate.",
     "category": "Pump",
     "imageUrl": "/src/assets/icon/water-pump.png"
   },
   {
     "id": "ACT-07",
-    "serialNo": 80,
+    "serialNo": 71,
     "name": "Submersible Water Pump",
-    "price": 180,
+    "price": 160,
     "description": "Larger submersible water pump for fountains and irrigation, 12V, 240L/H flow rate.",
     "category": "Pump",
     "imageUrl": "/src/assets/icon/submersible-pump.png"
