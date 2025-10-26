@@ -331,5 +331,320 @@
     "description": "Time-of-Flight (ToF) LiDAR sensor for fast and accurate distance measurement up to 8m.",
     "category": "Distance Sensor",
     "imageUrl": "/src/assets/Sensor/Lidar.png"
+  },
+  {
+    "id": "MCU-01",
+    "serialNo": 38,
+    "name": "Arduino Uno",
+    "price": 450,
+    "description": "Popular ATmega328P-based microcontroller board with 14 digital I/O pins and 6 analog inputs.",
+    "category": "Development Board",
+    "imageUrl": "/src/assets/icon/arduino-uno.png"
+  },
+  {
+    "id": "MCU-02",
+    "serialNo": 39,
+    "name": "Arduino Nano",
+    "price": 350,
+    "description": "Compact Arduino board based on ATmega328P; breadboard-friendly with mini-USB.",
+    "category": "Development Board",
+    "imageUrl": "/src/assets/icon/arduino-nano.png"
+  },
+  {
+    "id": "MCU-03",
+    "serialNo": 40,
+    "name": "ESP32",
+    "price": 850,
+    "description": "Powerful WiFi & Bluetooth enabled microcontroller with dual-core processor and rich peripherals.",
+    "category": "Development Board",
+    "imageUrl": "/src/assets/icon/esp32.png"
+  },
+  {
+    "id": "MCU-04",
+    "serialNo": 41,
+    "name": "ESP8266",
+    "price": 300,
+    "description": "WiFi-enabled development board based on ESP8266 with built-in USB and Lua firmware support.",
+    "category": "Development Board",
+    "imageUrl": "/src/assets/icon/esp8266.png"
+  },
+  {
+    "id": "MCU-05",
+    "serialNo": 42,
+    "name": "Raspberry Pi Pico",
+    "price": 400,
+    "description": "Low-cost microcontroller board with RP2040 chip, dual-core ARM Cortex M0+ processor.",
+    "category": "Development Board",
+    "imageUrl": "/src/assets/icon/raspberry-pi-pico.png"
+  },
+  {
+    "id": "MCU-06",
+    "serialNo": 43,
+    "name": "STM32 Blue Pill",
+    "price": 550,
+    "description": "ARM Cortex-M3 development board with 72MHz clock, 64KB flash, ideal for advanced projects.",
+    "category": "Development Board",
+    "imageUrl": "/src/assets/icon/stm32.png"
+  },
+  {
+    "id": "DISP-01",
+    "serialNo": 44,
+    "name": "16x2 LCD Display",
+    "price": 120,
+    "description": "Character LCD with 16 columns x 2 rows, blue backlight, parallel interface, 5V.",
+    "category": "LCD Display",
+    "imageUrl": "/src/assets/icon/16x2-lcd.png"
+  },
+  {
+    "id": "DISP-02",
+    "serialNo": 45,
+    "name": "0.96\" OLED Display",
+    "price": 180,
+    "description": "Small OLED display with I2C interface, high contrast, wide viewing angle, 128x64 resolution.",
+    "category": "OLED Display",
+    "imageUrl": "/src/assets/icon/oled-096.png"
+  },
+  {
+    "id": "DISP-03",
+    "serialNo": 46,
+    "name": "1.3\" OLED Display",
+    "price": 250,
+    "description": "Larger OLED display with SPI interface, white or blue color, 128x64 resolution, 3.3-5V compatible.",
+    "category": "OLED Display",
+    "imageUrl": "/src/assets/icon/oled-13.png"
+  },
+  {
+    "id": "DISP-04",
+    "serialNo": 47,
+    "name": "Nokia 5110 LCD",
+    "price": 150,
+    "description": "Monochrome graphic LCD with 84x48 resolution, SPI interface, low power consumption.",
+    "category": "LCD Display",
+    "imageUrl": "/src/assets/icon/nokia5110.png"
+  },
+  {
+    "id": "DISP-05",
+    "serialNo": 48,
+    "name": "TFT 1.8\" Color Display",
+    "price": 350,
+    "description": "Small color TFT display with 128x160 resolution, SPI interface, ST7735 driver.",
+    "category": "TFT Display",
+    "imageUrl": "/src/assets/icon/tft-18.png"
+  },
+  {
+    "id": "DISP-06",
+    "serialNo": 49,
+    "name": "TFT 2.4\" Touchscreen",
+    "price": 650,
+    "description": "Color TFT display with resistive touch, 240x320 resolution, SPI interface, ILI9341 driver.",
+    "category": "TFT Display",
+    "imageUrl": "/src/assets/icon/tft-24.png"
+  },
+  {
+    "id": "PWR-01",
+    "serialNo": 50,
+    "name": "5V Power Adapter",
+    "price": 80,
+    "description": "AC to DC power adapter with micro-USB connector, 5V 2A output, ideal for Arduino and Raspberry Pi.",
+    "category": "Power Supply",
+    "imageUrl": "/src/assets/icon/power-adapter.png"
+  },
+  {
+    "id": "PWR-02",
+    "serialNo": 51,
+    "name": "9V Battery",
+    "price": 30,
+    "description": "Standard 9V alkaline battery for low-power electronics and sensors.",
+    "category": "Battery",
+    "imageUrl": "/src/assets/icon/9v-battery.png"
+  },
+  {
+    "id": "PWR-03",
+    "serialNo": 52,
+    "name": "18650 Battery",
+    "price": 50,
+    "description": "Rechargeable lithium-ion battery, 3.7V, 2200-3500mAh capacity, ideal for portable projects.",
+    "category": "Battery",
+    "imageUrl": "/src/assets/icon/18650-battery.png"
+  },
+  {
+    "id": "PWR-04",
+    "serialNo": 53,
+    "name": "18650 Battery Holder (Single)",
+    "price": 40,
+    "description": "Battery holder for single 18650 cell with wire leads and protective circuit.",
+    "category": "Power Supply",
+    "imageUrl": "/src/assets/icon/battery-holder-1.png"
+  },
+  {
+    "id": "PWR-05",
+    "serialNo": 54,
+    "name": "18650 Battery Holder (Double)",
+    "price": 60,
+    "description": "Battery holder for two 18650 cells in series (7.4V) with wire leads.",
+    "category": "Power Supply",
+    "imageUrl": "/src/assets/icon/battery-holder-2.png"
+  },
+  {
+    "id": "PWR-06",
+    "serialNo": 55,
+    "name": "18650 Battery Holder (Triple)",
+    "price": 80,
+    "description": "Battery holder for three 18650 cells in series (11.1V) with wire leads.",
+    "category": "Power Supply",
+    "imageUrl": "/src/assets/icon/battery-holder-3.png"
+  },
+  {
+    "id": "PWR-07",
+    "serialNo": 56,
+    "name": "USB Cable",
+    "price": 25,
+    "description": "USB Type-A to Micro-USB cable for Arduino and other microcontroller boards, 1 meter length.",
+    "category": "Cable",
+    "imageUrl": "/src/assets/icon/usb-cable.png"
+  },
+  {
+    "id": "COMP-01",
+    "serialNo": 57,
+    "name": "Breadboard 400 Points",
+    "price": 45,
+    "description": "Half-size solderless breadboard with 400 tie points for prototyping circuits.",
+    "category": "Component",
+    "imageUrl": "/src/assets/icon/breadboard-400.png"
+  },
+  {
+    "id": "COMP-02",
+    "serialNo": 58,
+    "name": "Breadboard 830 Points",
+    "price": 80,
+    "description": "Full-size solderless breadboard with 830 tie points and power rails.",
+    "category": "Component",
+    "imageUrl": "/src/assets/icon/breadboard-830.png"
+  },
+  {
+    "id": "COMP-03",
+    "serialNo": 59,
+    "name": "Jumper Wires (Pack)",
+    "price": 30,
+    "description": "Assorted male-to-male jumper wires for breadboard connections, 65 pieces, various lengths.",
+    "category": "Component",
+    "imageUrl": "/src/assets/icon/jumper-wires.png"
+  },
+  {
+    "id": "COMP-04",
+    "serialNo": 60,
+    "name": "LED Pack (10pcs)",
+    "price": 20,
+    "description": "Assorted 5mm LEDs in various colors (red, green, blue, yellow, white), 10 pieces.",
+    "category": "Component",
+    "imageUrl": "/src/assets/icon/led-pack.png"
+  },
+  {
+    "id": "COMP-05",
+    "serialNo": 61,
+    "name": "Resistor Kit",
+    "price": 50,
+    "description": "Assorted resistor kit with common values from 10Ω to 1MΩ, 1/4W, 600 pieces.",
+    "category": "Component",
+    "imageUrl": "/src/assets/icon/resistor-kit.png"
+  },
+  {
+    "id": "COMP-06",
+    "serialNo": 62,
+    "name": "Push Button (5pcs)",
+    "price": 15,
+    "description": "Tactile push button switches, 6x6mm, 4-pin, momentary, 5 pieces.",
+    "category": "Component",
+    "imageUrl": "/src/assets/icon/push-button.png"
+  },
+  {
+    "id": "COMP-07",
+    "serialNo": 63,
+    "name": "Relay Module",
+    "price": 60,
+    "description": "Single channel 5V relay module with optocoupler, control high-voltage AC/DC loads up to 10A.",
+    "category": "Module",
+    "imageUrl": "/src/assets/icon/relay.png"
+  },
+  {
+    "id": "COMP-08",
+    "serialNo": 64,
+    "name": "Motor Driver L298N",
+    "price": 120,
+    "description": "Dual H-bridge motor driver module, control 2 DC motors or 1 stepper, 5-35V, 2A per channel.",
+    "category": "Module",
+    "imageUrl": "/src/assets/icon/l298n.png"
+  },
+  {
+    "id": "ACT-01",
+    "serialNo": 65,
+    "name": "DC Motor (Standard)",
+    "price": 40,
+    "description": "Small DC motor for hobby projects, 3-6V operating voltage, 16500 RPM.",
+    "category": "Motor",
+    "imageUrl": "/src/assets/icon/dc-motor.png"
+  },
+  {
+    "id": "ACT-02",
+    "serialNo": 66,
+    "name": "Geared DC Motor",
+    "price": 80,
+    "description": "DC motor with gearbox for higher torque and lower speed, 6V, 200 RPM.",
+    "category": "Motor",
+    "imageUrl": "/src/assets/icon/geared-motor.png"
+  },
+  {
+    "id": "ACT-03",
+    "serialNo": 67,
+    "name": "9g Servo Motor",
+    "price": 90,
+    "description": "Micro servo motor with 180° rotation, 4.8-6V operating voltage, torque 1.8kg/cm.",
+    "category": "Servo",
+    "imageUrl": "/src/assets/icon/sg90-servo.png"
+  },
+  {
+    "id": "ACT-04",
+    "serialNo": 68,
+    "name": "Tower Pro SG90 Servo",
+    "price": 120,
+    "description": "Popular micro servo motor with 180° rotation, 4.8-6V, torque 2.5kg/cm.",
+    "category": "Servo",
+    "imageUrl": "/src/assets/icon/sg90-servo.png"
+  },
+  {
+    "id": "ACT-05",
+    "serialNo": 69,
+    "name": "MG996R Servo (Metal Gear)",
+    "price": 350,
+    "description": "High-torque metal gear servo motor, 10kg/cm torque, 180° rotation, 4.8-7.2V.",
+    "category": "Servo",
+    "imageUrl": "/src/assets/icon/mg996r-servo.png"
+  },
+  {
+    "id": "ACT-06",
+    "serialNo": 70,
+    "name": "Mini Water Pump",
+    "price": 120,
+    "description": "Submersible DC water pump for aquariums and plant watering systems, 3-6V, 120L/H flow rate.",
+    "category": "Pump",
+    "imageUrl": "/src/assets/icon/water-pump.png"
+  },
+  {
+    "id": "ACT-07",
+    "serialNo": 80,
+    "name": "Submersible Water Pump",
+    "price": 180,
+    "description": "Larger submersible water pump for fountains and irrigation, 12V, 240L/H flow rate.",
+    "category": "Pump",
+    "imageUrl": "/src/assets/icon/submersible-pump.png"
+  },
+  {
+    "id": "ACT-08",
+    "serialNo": 95,
+    "name": "Stepper Motor (28BYJ-48)",
+    "price": 150,
+    "description": "5V stepper motor with ULN2003 driver board, 4096 steps per revolution, low noise.",
+    "category": "Motor",
+    "imageUrl": "/src/assets/icon/stepper-motor.png"
   }
 ]
