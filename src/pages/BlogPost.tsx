@@ -10831,6 +10831,13 @@ const BlogPost = () => {
 
   const [scrollProgress, setScrollProgress] = useState(0);
 
+  // Log for debugging in production
+  useEffect(() => {
+    console.log("BlogPost path:", path);
+    console.log("Available articles:", Object.keys(articles));
+    console.log("Post found:", !!post);
+  }, [path, post]);
+
   // Calculate reading progress
   useEffect(() => {
     const handleScroll = () => {
@@ -10846,7 +10853,23 @@ const BlogPost = () => {
   }, []);
 
   if (!post) {
-    return <div>Article not found</div>;
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Navigation />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center space-y-4">
+            <h1 className="text-4xl font-bold text-foreground">Article Not Found</h1>
+            <p className="text-muted-foreground">
+              The article "{path}" doesn't exist. Available articles: {Object.keys(articles).join(", ")}
+            </p>
+            <Button onClick={() => navigate("/blog")} className="mt-4">
+              Back to Blog
+            </Button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
   }
 
   const handleClose = () => {
