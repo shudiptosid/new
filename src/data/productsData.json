@@ -246,7 +246,7 @@
     "id": "SEN-30",
     "serialNo": 28,
     "name": "Facial Recognition Module (ESP32-CAM)",
-    "price": 660,
+    "price": 550,
     "description": "Integrated ESP32 microcontroller and camera for WiFi video streaming and face recognition.",
     "category": "Biometric Sensor",
     "imageUrl": "/src/assets/Sensor/Face-Recognition-Sensor.png"
