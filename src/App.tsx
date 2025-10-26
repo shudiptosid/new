@@ -17,7 +17,8 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const CompletedProjects = lazy(() => import("./pages/CompletedProjects"));
 const Resources = lazy(() => import("./pages/Resources"));
 const SortQuestionsPage2 = lazy(() => import("./pages/SortQuestionsPage2"));
-const BlogPost = lazy(() => import("./pages/BlogPost"));
+// Using simplified BlogPost temporarily to fix white screen issue
+const BlogPost = lazy(() => import("./pages/BlogPostSimple"));
 const ECEResources = lazy(() => import("./pages/ECEResources"));
 const CostEstimator = lazy(() => import("./pages/CostEstimator"));
 
