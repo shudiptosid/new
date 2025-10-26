@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Calendar,
   Clock,
@@ -10824,19 +10824,20 @@ Node-RED transforms IoT development from complex coding to visual flow creation.
 };
 
 const BlogPost = () => {
-  const location = useLocation();
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const path = location.pathname.split("/").pop() || "power-consumption";
+  const path = slug || "power-consumption";
   const post = articles[path as keyof typeof articles];
 
   const [scrollProgress, setScrollProgress] = useState(0);
 
   // Log for debugging in production
   useEffect(() => {
+    console.log("BlogPost slug:", slug);
     console.log("BlogPost path:", path);
     console.log("Available articles:", Object.keys(articles));
     console.log("Post found:", !!post);
-  }, [path, post]);
+  }, [slug, path, post]);
 
   // Calculate reading progress
   useEffect(() => {
