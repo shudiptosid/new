@@ -7,6 +7,7 @@ import {
   Linkedin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { memo } from "react";
 
 const Footer = () => {
   return (
@@ -176,4 +177,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default memo(Footer);

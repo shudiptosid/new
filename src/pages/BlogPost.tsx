@@ -7,7 +7,7 @@ import {
   Share2,
   ExternalLink,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import { Button } from "../components/ui/button";
@@ -418,7 +418,8 @@ const articles: Record<string, Article> = {
   },
 
   "ble-basics": {
-    title: "BLE (Bluetooth Low Energy) Basics: Complete Guide for IoT Developers",
+    title:
+      "BLE (Bluetooth Low Energy) Basics: Complete Guide for IoT Developers",
     date: "2025-10-02",
     readTime: "7 min read",
     category: "Connectivity",
@@ -616,17 +617,37 @@ const BlogPost = () => {
   const path = slug || "power-consumption";
   const post = articles[path as keyof typeof articles];
   const [scrollProgress, setScrollProgress] = useState(0);
+  const lastUpdateRef = useRef(0);
+  const rafRef = useRef<number>();
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
-      const progress = (scrollTop / docHeight) * 100;
-      setScrollProgress(progress);
+      // Cancel any pending animation frame
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+
+      rafRef.current = requestAnimationFrame(() => {
+        const now = Date.now();
+        // Throttle updates to max 15fps (every 66ms) for smooth performance
+        if (now - lastUpdateRef.current < 66) return;
+
+        lastUpdateRef.current = now;
+        const scrollTop = window.scrollY;
+        const docHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
+        const progress = (scrollTop / docHeight) * 100;
+        setScrollProgress(progress);
+      });
     };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
   }, []);
 
   if (!post) {
@@ -647,25 +668,30 @@ const BlogPost = () => {
     );
   }
 
-  const handleShare = (platform: string) => {
-    const url = window.location.href;
-    const title = post.title;
-    const shareUrls: Record<string, string> = {
-      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-        title
-      )}&url=${encodeURIComponent(url)}`,
-      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
-        url
-      )}`,
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(title + " " + url)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        url
-      )}`,
-    };
-    if (shareUrls[platform]) {
-      window.open(shareUrls[platform], "_blank", "width=600,height=400");
-    }
-  };
+  const handleShare = useCallback(
+    (platform: string) => {
+      const url = window.location.href;
+      const title = post.title;
+      const shareUrls: Record<string, string> = {
+        twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+          title
+        )}&url=${encodeURIComponent(url)}`,
+        linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+          url
+        )}`,
+        whatsapp: `https://wa.me/?text=${encodeURIComponent(
+          title + " " + url
+        )}`,
+        facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+          url
+        )}`,
+      };
+      if (shareUrls[platform]) {
+        window.open(shareUrls[platform], "_blank", "width=600,height=400");
+      }
+    },
+    [post.title]
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-background">

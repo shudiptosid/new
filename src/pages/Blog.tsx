@@ -5,11 +5,21 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Clock, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchInput, setSearchInput] = useState(""); // Immediate input state
+  const [searchQuery, setSearchQuery] = useState(""); // Debounced search state
+
+  // Debounce search to reduce re-renders
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(searchInput);
+    }, 300); // 300ms delay
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const posts = [
     {
@@ -195,8 +205,8 @@ const Blog = () => {
                 type="text"
                 placeholder="Search articles..."
                 className="pl-10 pr-4 py-3 text-lg"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
               />
             </div>
           </div>
