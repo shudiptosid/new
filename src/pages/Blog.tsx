@@ -12,6 +12,15 @@ const Blog = () => {
   const [searchInput, setSearchInput] = useState(""); // Immediate input state
   const [searchQuery, setSearchQuery] = useState(""); // Debounced search state
 
+  // Preload BlogPost component when user lands on blog page
+  // This eliminates 1-1.5 sec loading delay when clicking "Read Article"
+  useEffect(() => {
+    // Prefetch the BlogPost chunk in the background
+    import("./BlogPost").catch(() => {
+      // Silently ignore preload errors
+    });
+  }, []);
+
   // Debounce search to reduce re-renders
   useEffect(() => {
     const timer = setTimeout(() => {
