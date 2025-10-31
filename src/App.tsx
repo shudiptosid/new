@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Analytics } from "@vercel/analytics/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 // Lazy load all pages for better code splitting
 const Index = lazy(() => import("./pages/Index"));
@@ -21,6 +22,11 @@ const SortQuestionsPage2 = lazy(() => import("./pages/SortQuestionsPage2"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const ECEResources = lazy(() => import("./pages/ECEResources"));
 const CostEstimator = lazy(() => import("./pages/CostEstimator"));
+// Authentication pages
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const TestSupabase = lazy(() => import("./pages/TestSupabase"));
 
 // Optimized QueryClient configuration
 const queryClient = new QueryClient({
@@ -43,34 +49,44 @@ const LoadingFallback = () => (
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <SpeedInsights />
-      <Analytics />
-      <BrowserRouter>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/projects" element={<Projects />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/completed-projects" element={<CompletedProjects />} />
-            <Route path="/resources" element={<Resources />} />
-            <Route path="/resources/ece" element={<ECEResources />} />
-            <Route
-              path="/resources/questions/2"
-              element={<SortQuestionsPage2 />}
-            />
-            <Route path="/cost-estimator" element={<CostEstimator />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <SpeedInsights />
+        <Analytics />
+        <BrowserRouter>
+          <Suspense fallback={<LoadingFallback />}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route
+                path="/completed-projects"
+                element={<CompletedProjects />}
+              />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/resources/ece" element={<ECEResources />} />
+              <Route
+                path="/resources/questions/2"
+                element={<SortQuestionsPage2 />}
+              />
+              <Route path="/cost-estimator" element={<CostEstimator />} />
+              {/* Authentication routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/test-supabase" element={<TestSupabase />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
