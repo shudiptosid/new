@@ -1,27 +1,28 @@
-import { supabase } from '@/lib/supabaseClient'
+import { supabase } from "@/lib/supabaseClient";
 
 // Email validation function
 const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  const emailRegex =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
   return emailRegex.test(email);
-}
+};
 
 // Contact form submission
 export const submitContactForm = async (formData: {
-  firstName: string
-  lastName?: string
-  email: string
-  company?: string
-  projectType?: string
-  message: string
+  firstName: string;
+  lastName?: string;
+  email: string;
+  company?: string;
+  projectType?: string;
+  message: string;
 }) => {
   // Validate email before database insertion
   if (!isValidEmail(formData.email)) {
-    throw new Error('Invalid email address format');
+    throw new Error("Invalid email address format");
   }
 
   const { data, error } = await supabase
-    .from('contacts')
+    .from("contacts")
     .insert([
       {
         first_name: formData.firstName,
@@ -32,48 +33,12 @@ export const submitContactForm = async (formData: {
         message: formData.message,
       },
     ])
-    .select()
+    .select();
 
   if (error) {
-    console.error('Error submitting contact form:', error)
-    throw error
+    console.error("Error submitting contact form:", error);
+    throw error;
   }
 
-  return data
-}
-
-// Quote form submission
-export const submitQuoteForm = async (formData: {
-  firstName: string
-  lastName?: string
-  email: string
-  company?: string
-  projectType?: string
-  projectDetails: string
-}) => {
-  // Validate email before database insertion
-  if (!isValidEmail(formData.email)) {
-    throw new Error('Invalid email address format');
-  }
-
-  const { data, error } = await supabase
-    .from('quotes')
-    .insert([
-      {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        email: formData.email,
-        company: formData.company,
-        project_type: formData.projectType,
-        project_details: formData.projectDetails,
-      },
-    ])
-    .select()
-
-  if (error) {
-    console.error('Error submitting quote form:', error)
-    throw error
-  }
-
-  return data
-}
+  return data;
+};

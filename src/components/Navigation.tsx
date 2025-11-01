@@ -2,7 +2,6 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, User, LogOut } from "lucide-react";
 import { useState, useEffect, memo } from "react";
-import QuoteDialog from "./QuoteDialog";
 import logoImage from "@/assets/2nd logo.png";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -109,14 +108,6 @@ const Navigation = () => {
                 {item.label}
               </Link>
             ))}
-            <QuoteDialog>
-              <Button
-                variant="default"
-                className="bg-accent hover:bg-accent/90"
-              >
-                Get Quote
-              </Button>
-            </QuoteDialog>
 
             {/* Auth Buttons / User Menu */}
             {user ? (
@@ -231,16 +222,6 @@ const Navigation = () => {
                   {item.label}
                 </Link>
               ))}
-              <div className="pt-2">
-                <QuoteDialog>
-                  <Button
-                    variant="default"
-                    className="w-full bg-accent hover:bg-accent/90"
-                  >
-                    Get Quote
-                  </Button>
-                </QuoteDialog>
-              </div>
 
               {/* Mobile Auth Buttons */}
               {user ? (
