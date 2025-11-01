@@ -68,16 +68,29 @@ const Login = () => {
       return;
     }
 
-    const { error: signInError } = await signIn(email, password);
+    try {
+      console.log("=== LOGIN: Starting sign in ===");
+      const { error: signInError } = await signIn(email, password);
 
-    if (signInError) {
-      setError(signInError.message);
+      if (signInError) {
+        console.log("=== LOGIN: Error ===", signInError);
+        setError(signInError.message);
+        setLoading(false);
+        return;
+      }
+
+      console.log("=== LOGIN: Success! Redirecting to dashboard ===");
+      console.log("=== LOGIN: Current URL:", window.location.href);
+
+      // Force immediate redirect
+      window.location.href = "/dashboard";
+
+      console.log("=== LOGIN: Redirect called ===");
+    } catch (err: any) {
+      console.error("=== LOGIN: Exception ===", err);
+      setError(err?.message || "Login failed");
       setLoading(false);
-      return;
     }
-
-    // Success - redirect to dashboard
-    navigate("/dashboard");
   };
 
   const handleGoogleLogin = async () => {

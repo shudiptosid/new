@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabaseClient";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import FloatingIconsHome from "@/components/FloatingIconsHome";
 import backgroundImage from "@/assets/bg3.jpg";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Calendar,
   User,
@@ -15,33 +17,79 @@ import {
   Lightbulb,
   Wrench,
   MapPin,
+  Send,
+  Phone,
 } from "lucide-react";
 
-// Service categories
+// Service categories with questionnaires
 const categories = [
   {
     id: "consulting",
     name: "Consulting",
+    subtitle: "Project Planning & Feasibility",
     icon: Lightbulb,
     color: "from-blue-500 to-blue-600",
+    questions: [
+      "What problem or goal does your project aim to solve?",
+      "Do you already have any hardware or is this a new concept?",
+      "What kind of system are you planning (IoT, embedded, automation, sensor-based, etc.)?",
+      "Do you need help in circuit design, coding, or both?",
+      "What's your expected project completion timeline?",
+      "Do you have a preferred microcontroller or platform (Arduino, ESP32, Raspberry Pi, etc.)?",
+      "What's your estimated budget for consultation and development?",
+      "Do you require documentation or a report for academic/industrial submission?",
+    ],
   },
   {
     id: "prototyping",
     name: "Prototyping",
+    subtitle: "Hardware + Design Stage",
     icon: Wrench,
     color: "from-purple-500 to-purple-600",
+    questions: [
+      "Do you have a circuit design or schematic ready, or should we design it for you?",
+      "What sensors, modules, or components do you plan to use?",
+      "What will be the prototype's key function or output?",
+      "Should the prototype be portable, fixed, or PCB-based?",
+      "Do you need PCB design and fabrication support?",
+      "Do you need enclosure design or 3D printing for the prototype?",
+      "Is this for a college project, startup demo, or industrial prototype?",
+      "What's your target deadline for prototype delivery?",
+    ],
   },
   {
     id: "firmware",
     name: "Firmware Development",
+    subtitle: "Coding & Control Logic",
     icon: Code,
     color: "from-green-500 to-green-600",
+    questions: [
+      "Which microcontroller or board will be used (ESP32, STM32, Arduino, etc.)?",
+      "Do you already have the hardware setup ready for testing?",
+      "What inputs and outputs (sensors, motors, relays, displays) should the firmware handle?",
+      "Do you need integration with any IoT platform (Blynk, Firebase, MQTT, etc.)?",
+      "Should the code include data logging or cloud storage?",
+      "Are there any specific control algorithms or logic requirements?",
+      "What communication protocol is preferred (Wi-Fi, Bluetooth, LoRa, etc.)?",
+      "Should we optimize the firmware for speed, power efficiency, or both?",
+    ],
   },
   {
     id: "ondemand",
     name: "On Demand Project",
+    subtitle: "Complete End-to-End Development",
     icon: Briefcase,
     color: "from-orange-500 to-orange-600",
+    questions: [
+      "Describe your project idea or goal in a few sentences.",
+      "What problem will this project solve or demonstrate?",
+      "Do you want us to handle design, development, and testing — or specific parts only?",
+      "Should it include IoT integration (app/dashboard/web)?",
+      "What are your preferred hardware components (if any)?",
+      "What is the expected final output or demo result?",
+      "Do you require project documentation, a report, or presentation slides?",
+      "What's your expected delivery date and budget range?",
+    ],
   },
 ];
 
@@ -49,12 +97,26 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, profile, loading } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [queries, setQueries] = useState<any[]>([]);
+  const [responses, setResponses] = useState<{ [key: number]: string }>({});
+  const [wantsConsultation, setWantsConsultation] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Debug logging
+  useEffect(() => {
+    console.log("Dashboard state:", {
+      loading,
+      user: !!user,
+      profile: !!profile,
+    });
+  }, [loading, user, profile]);
 
   // Redirect if not logged in
   useEffect(() => {
     if (!loading && !user) {
+      console.log("Not authenticated, redirecting to login...");
       navigate("/login");
+    } else if (!loading && user) {
+      console.log("User authenticated:", user.email);
     }
   }, [user, loading, navigate]);
 
@@ -69,12 +131,146 @@ const Dashboard = () => {
   // Handle category selection
   const handleCategoryClick = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    // TODO: Fetch queries for this category from backend
-    // For now, we'll use placeholder data
-    setQueries([]);
+    setResponses({}); // Clear previous responses
+    setWantsConsultation(false);
   };
 
-  // Show loading state
+  // Handle response change
+  const handleResponseChange = (questionIndex: number, value: string) => {
+    setResponses((prev) => ({ ...prev, [questionIndex]: value }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      const selectedCat = categories.find((c) => c.id === selectedCategory);
+      if (!selectedCat || !user) {
+        throw new Error("Missing category or user information");
+      }
+
+      // Prepare the data based on category
+      const baseData = {
+        user_id: user.id,
+        user_email: user.email!,
+        user_name: profile?.full_name || user.email?.split("@")[0] || "Unknown",
+        wants_consultation: wantsConsultation,
+      };
+
+      let tableName = "";
+      let requestData: any = { ...baseData };
+
+      // Map responses to appropriate table columns based on category
+      switch (selectedCategory) {
+        case "consulting":
+          tableName = "consulting_requests";
+          requestData = {
+            ...baseData,
+            problem_goal: responses[0] || null,
+            hardware_status: responses[1] || null,
+            system_type: responses[2] || null,
+            help_needed: responses[3] || null,
+            timeline: responses[4] || null,
+            platform_preference: responses[5] || null,
+            budget: responses[6] || null,
+            documentation_needed: responses[7] || null,
+          };
+          break;
+
+        case "prototyping":
+          tableName = "prototyping_requests";
+          requestData = {
+            ...baseData,
+            circuit_design_status: responses[0] || null,
+            components_list: responses[1] || null,
+            key_function: responses[2] || null,
+            prototype_type: responses[3] || null,
+            pcb_support_needed: responses[4] || null,
+            enclosure_design_needed: responses[5] || null,
+            project_purpose: responses[6] || null,
+            deadline: responses[7] || null,
+          };
+          break;
+
+        case "firmware":
+          tableName = "firmware_requests";
+          requestData = {
+            ...baseData,
+            microcontroller: responses[0] || null,
+            hardware_ready: responses[1] || null,
+            inputs_outputs: responses[2] || null,
+            iot_platform: responses[3] || null,
+            data_logging: responses[4] || null,
+            control_algorithms: responses[5] || null,
+            communication_protocol: responses[6] || null,
+            optimization_focus: responses[7] || null,
+          };
+          break;
+
+        case "ondemand":
+          tableName = "ondemand_requests";
+          requestData = {
+            ...baseData,
+            project_description: responses[0] || null,
+            problem_solving: responses[1] || null,
+            scope_of_work: responses[2] || null,
+            iot_integration: responses[3] || null,
+            hardware_components: responses[4] || null,
+            expected_output: responses[5] || null,
+            documentation_needed: responses[6] || null,
+            delivery_and_budget: responses[7] || null,
+          };
+          break;
+
+        default:
+          throw new Error("Invalid category");
+      }
+
+      console.log(`Submitting to ${tableName}:`, requestData);
+
+      // Insert into appropriate table
+      const { data, error } = await supabase
+        .from(tableName)
+        .insert([requestData])
+        .select();
+
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+
+      console.log("Successfully saved:", data);
+
+      // Show success message
+      alert(
+        `✅ Your ${
+          selectedCat.name
+        } request has been submitted successfully!\n\nRequest ID: ${
+          data[0]?.id
+        }\n\nWe'll review your requirements and get back to you soon.${
+          wantsConsultation
+            ? "\n\nWe'll contact you to schedule your free consultation call!"
+            : ""
+        }`
+      );
+
+      // Reset form
+      setResponses({});
+      setWantsConsultation(false);
+      setSelectedCategory(null);
+    } catch (error: any) {
+      console.error("Submission error:", error);
+      alert(
+        `❌ Failed to submit request: ${
+          error.message || "Unknown error"
+        }\n\nPlease try again or contact support.`
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Show loading state only while checking auth
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -88,7 +284,13 @@ const Dashboard = () => {
 
   // If no user after loading, they'll be redirected by useEffect
   if (!user) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <p className="text-foreground">Redirecting to login...</p>
+        </div>
+      </div>
+    );
   }
 
   // Log if profile is missing (still works without it)
@@ -304,34 +506,149 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Queries Section */}
+              {/* Questionnaire Section */}
               {selectedCategory && (
                 <Card className="p-8 bg-surface-elevated/95 backdrop-blur-sm border-border shadow-xl">
-                  <h2 className="text-2xl font-bold text-foreground mb-6">
-                    {categories.find((c) => c.id === selectedCategory)?.name}{" "}
-                    Queries
-                  </h2>
+                  {(() => {
+                    const selectedCat = categories.find(
+                      (c) => c.id === selectedCategory
+                    );
+                    if (!selectedCat) return null;
 
-                  {queries.length === 0 ? (
-                    <div className="text-center py-12">
-                      <p className="text-muted-foreground text-lg">
-                        No queries available for this category yet.
-                      </p>
-                      <p className="text-muted-foreground mt-2">
-                        Please provide the queries you'd like to add for each
-                        category.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {/* Queries will be displayed here */}
-                      {queries.map((query, index) => (
-                        <div key={index} className="p-4 bg-accent/5 rounded-lg">
-                          {/* Query content */}
+                    const Icon = selectedCat.icon;
+
+                    return (
+                      <>
+                        {/* Header */}
+                        <div className="flex items-center gap-4 mb-8">
+                          <div
+                            className={`w-16 h-16 rounded-full bg-gradient-to-br ${selectedCat.color} flex items-center justify-center`}
+                          >
+                            <Icon size={32} className="text-white" />
+                          </div>
+                          <div>
+                            <h2 className="text-3xl font-bold text-foreground">
+                              {selectedCat.name}
+                            </h2>
+                            <p className="text-muted-foreground">
+                              {selectedCat.subtitle}
+                            </p>
+                          </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
+
+                        {/* Questions */}
+                        <div className="space-y-6 mb-8">
+                          {selectedCat.questions.map((question, index) => (
+                            <div key={index} className="space-y-2">
+                              <label className="flex items-start gap-2 text-foreground font-medium">
+                                <span
+                                  className={`inline-flex items-center justify-center w-7 h-7 rounded-full bg-gradient-to-br ${selectedCat.color} text-white text-sm font-bold flex-shrink-0 mt-0.5`}
+                                >
+                                  {index + 1}
+                                </span>
+                                <span className="flex-1">{question}</span>
+                              </label>
+                              <Textarea
+                                value={responses[index] || ""}
+                                onChange={(e) =>
+                                  handleResponseChange(index, e.target.value)
+                                }
+                                placeholder="Type your answer here..."
+                                className="min-h-[100px] bg-background/50 border-border focus:border-accent transition-colors"
+                              />
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Consultation Call Option */}
+                        <div className="mb-8 p-6 bg-gradient-to-r from-accent/10 to-accent/5 border-2 border-accent/20 rounded-lg">
+                          <div className="flex items-start gap-4">
+                            <Phone className="w-6 h-6 text-accent flex-shrink-0 mt-1" />
+                            <div className="flex-1">
+                              <h3 className="text-lg font-semibold text-foreground mb-2">
+                                Free 10-Minute Consultation Call
+                              </h3>
+                              <p className="text-muted-foreground mb-4">
+                                Would you like a free consultation call to
+                                finalize your requirements? Our experts will
+                                help clarify your project needs and provide
+                                guidance.
+                              </p>
+                              <div className="flex gap-4">
+                                <Button
+                                  variant={
+                                    wantsConsultation ? "default" : "outline"
+                                  }
+                                  onClick={() => setWantsConsultation(true)}
+                                  className={
+                                    wantsConsultation
+                                      ? "bg-accent hover:bg-accent/90"
+                                      : ""
+                                  }
+                                >
+                                  Yes, I'm Interested
+                                </Button>
+                                <Button
+                                  variant={
+                                    !wantsConsultation ? "default" : "outline"
+                                  }
+                                  onClick={() => setWantsConsultation(false)}
+                                  className={
+                                    !wantsConsultation
+                                      ? "bg-muted hover:bg-muted/90"
+                                      : ""
+                                  }
+                                >
+                                  No, Thanks
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Submit Button */}
+                        <div className="flex gap-4">
+                          <Button
+                            onClick={handleSubmit}
+                            disabled={
+                              isSubmitting ||
+                              Object.keys(responses).length === 0
+                            }
+                            className={`flex-1 h-12 text-lg font-semibold bg-gradient-to-r ${selectedCat.color} hover:opacity-90 transition-opacity`}
+                          >
+                            {isSubmitting ? (
+                              <>
+                                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                                Submitting...
+                              </>
+                            ) : (
+                              <>
+                                <Send size={20} className="mr-2" />
+                                Submit Responses
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            onClick={() => {
+                              setSelectedCategory(null);
+                              setResponses({});
+                              setWantsConsultation(false);
+                            }}
+                            variant="outline"
+                            className="h-12"
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+
+                        {/* Helper Text */}
+                        <p className="text-center text-sm text-muted-foreground mt-4">
+                          💡 Tip: The more details you provide, the better we
+                          can assist you!
+                        </p>
+                      </>
+                    );
+                  })()}
                 </Card>
               )}
 

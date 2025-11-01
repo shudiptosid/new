@@ -6,7 +6,7 @@ import timeLapseBg from "@/assets/time-lapse-bg.mp4";
 const HeroSection = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Video */}
+      {/* Background Video - Lazy loaded for performance */}
       <video
         className="absolute inset-0 w-full h-full object-cover"
         style={{ opacity: 0.95 }}
@@ -14,6 +14,8 @@ const HeroSection = () => {
         loop
         muted
         playsInline
+        preload="none"
+        poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect width='1920' height='1080' fill='%230a0a0a'/%3E%3C/svg%3E"
       >
         <source src={timeLapseBg} type="video/mp4" />
       </video>

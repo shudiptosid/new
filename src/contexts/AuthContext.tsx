@@ -49,56 +49,110 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user profile from database
+  // Fetch user profile from database with timeout
   const fetchProfile = async (userId: string) => {
     try {
       console.log("Fetching profile for user:", userId);
-      const { data, error } = await supabase
+
+      // Create a timeout promise (10 seconds for slower connections)
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("Profile fetch timeout")), 10000);
+      });
+
+      // Race between fetch and timeout
+      const fetchPromise = supabase
         .from("user_profiles")
         .select("*")
         .eq("id", userId)
         .single();
 
+      const { data, error } = (await Promise.race([
+        fetchPromise,
+        timeoutPromise.then(() => ({
+          data: null,
+          error: new Error("Timeout"),
+        })),
+      ])) as any;
+
       if (error) {
         console.error("Profile fetch error:", error);
-        throw error;
+        console.error("Error details:", error.message, error.code);
+        // Set profile to null so we know fetch completed (even if failed)
+        setProfile(null);
+        return null;
       }
+
       console.log("Profile fetched successfully:", data);
       setProfile(data);
-    } catch (error) {
+      return data;
+    } catch (error: any) {
       console.error("Error fetching profile:", error);
-      // Don't set profile to null, keep it undefined to show it's still loading
-      // User can still access dashboard with basic info
+      console.error("Exception details:", error?.message);
+      // Always set profile (to null if failed) so loading can complete
+      setProfile(null);
+      return null;
     }
   };
 
   // Initialize auth state
   useEffect(() => {
+    let mounted = true;
+
+    console.log("AuthContext initializing...");
+
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-      setLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(async ({ data: { session } }) => {
+        if (!mounted) return;
+
+        console.log("Initial session:", session?.user?.email || "No user");
+
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          await fetchProfile(session.user.id);
+        }
+
+        // CRITICAL: Always set loading to false, even if profile fetch failed
+        setLoading(false);
+        console.log("Auth loading complete, loading set to false");
+      })
+      .catch((error) => {
+        console.error("Error getting session:", error);
+        setLoading(false); // Set loading false even on error
+      });
 
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!mounted) return;
+
+      console.log(
+        "Auth state changed:",
+        event,
+        session?.user?.email || "No user"
+      );
+
       setSession(session);
       setUser(session?.user ?? null);
-      if (session?.user) {
+
+      // Fetch profile on SIGNED_IN event
+      if (event === "SIGNED_IN" && session?.user) {
+        console.log("User signed in, fetching profile...");
         await fetchProfile(session.user.id);
-      } else {
+      } else if (event === "SIGNED_OUT") {
+        console.log("User signed out, clearing profile");
         setProfile(null);
       }
-      setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Sign up with email and password
@@ -142,40 +196,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       );
 
       // Backup: Create profile manually if trigger might have failed
-      // Wait a bit for trigger to complete
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
+      // Use shorter timeout to avoid UI freeze
       if (data.user) {
-        // Check if profile exists
-        const { data: existingProfile } = await supabase
-          .from("user_profiles")
-          .select("id")
-          .eq("id", data.user.id)
-          .single();
+        // Check if profile exists after brief delay for trigger
+        setTimeout(async () => {
+          try {
+            const { data: existingProfile } = await supabase
+              .from("user_profiles")
+              .select("id")
+              .eq("id", data.user!.id)
+              .single();
 
-        if (!existingProfile) {
-          console.log("Profile not found, creating manually...");
-          const { error: profileError } = await supabase
-            .from("user_profiles")
-            .insert({
-              id: data.user.id,
-              email: data.user.email!,
-              full_name: fullName,
-              phone_number: phone || null,
-              location: location || null,
-              age: age || null,
-              role: "customer",
-              email_verified: false,
-            });
+            if (!existingProfile) {
+              console.log("Profile not found, creating manually...");
+              const { error: profileError } = await supabase
+                .from("user_profiles")
+                .insert({
+                  id: data.user!.id,
+                  email: data.user!.email!,
+                  full_name: fullName,
+                  phone_number: phone || null,
+                  location: location || null,
+                  age: age || null,
+                  role: "customer",
+                  email_verified: false,
+                });
 
-          if (profileError) {
-            console.error("Error creating profile manually:", profileError);
-          } else {
-            console.log("Profile created manually successfully");
+              if (profileError) {
+                console.error("Error creating profile manually:", profileError);
+              } else {
+                console.log("Profile created manually successfully");
+              }
+            } else {
+              console.log("Profile exists from trigger");
+            }
+          } catch (err) {
+            console.error("Error checking/creating profile:", err);
           }
-        } else {
-          console.log("Profile exists from trigger");
-        }
+        }, 500); // Non-blocking 500ms delay
       }
 
       return { error: null };

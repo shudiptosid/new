@@ -8,6 +8,12 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 
+// Silence React Router v7 warnings
+const futureConfig = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true,
+};
+
 // Lazy load all pages for better code splitting
 const Index = lazy(() => import("./pages/Index"));
 const Services = lazy(() => import("./pages/Services"));
@@ -27,6 +33,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const TestSupabase = lazy(() => import("./pages/TestSupabase"));
+const DebugAuth = lazy(() => import("./pages/DebugAuth"));
 
 // Optimized QueryClient configuration
 const queryClient = new QueryClient({
@@ -55,7 +62,7 @@ const App = () => (
         <Sonner />
         <SpeedInsights />
         <Analytics />
-        <BrowserRouter>
+        <BrowserRouter future={futureConfig}>
           <Suspense fallback={<LoadingFallback />}>
             <Routes>
               <Route path="/" element={<Index />} />
@@ -80,6 +87,7 @@ const App = () => (
               <Route path="/signup" element={<Signup />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/test-supabase" element={<TestSupabase />} />
+              <Route path="/debug-auth" element={<DebugAuth />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

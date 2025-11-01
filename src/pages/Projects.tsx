@@ -82,6 +82,7 @@ const VideoCard = () => {
         loop
         muted
         playsInline
+        preload="metadata"
         src={servoVideo}
       >
         Your browser does not support the video tag.

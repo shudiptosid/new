@@ -143,29 +143,37 @@ const Signup = () => {
 
     setLoading(true);
 
-    const { error: signUpError } = await signUp(
-      formData.email,
-      formData.password,
-      formData.fullName,
-      formData.phone || undefined,
-      formData.location || undefined,
-      formData.age ? parseInt(formData.age) : undefined
-    );
+    try {
+      console.log("Starting signup process...");
 
-    if (signUpError) {
-      setError(signUpError.message);
+      const { error: signUpError } = await signUp(
+        formData.email,
+        formData.password,
+        formData.fullName,
+        formData.phone || undefined,
+        formData.location || undefined,
+        formData.age ? parseInt(formData.age) : undefined
+      );
+
+      if (signUpError) {
+        console.error("Signup error:", signUpError);
+        setError(signUpError.message);
+        setLoading(false);
+        return;
+      }
+
+      // Success - redirect immediately
+      setSuccess(true);
+
+      // Force redirect to login
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
+    } catch (err) {
+      console.error("Signup exception:", err);
+      setError("An unexpected error occurred during signup");
       setLoading(false);
-      return;
     }
-
-    // Success
-    setSuccess(true);
-    setLoading(false);
-
-    // Redirect after 2 seconds
-    setTimeout(() => {
-      navigate("/login");
-    }, 2000);
   };
 
   const handleGoogleSignup = async () => {

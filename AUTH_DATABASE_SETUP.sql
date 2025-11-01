@@ -48,7 +48,7 @@ ON public.user_profiles
 FOR SELECT
 USING (auth.uid() = id);
 
--- Users can update their own profile
+-- Users can update their own profile  
 CREATE POLICY "Users can update own profile"
 ON public.user_profiles
 FOR UPDATE
@@ -60,28 +60,6 @@ CREATE POLICY "Enable insert for authenticated users and triggers"
 ON public.user_profiles
 FOR INSERT
 WITH CHECK (true);
-
--- Admins can view all profiles (if the calling user has role = 'admin' in their own profile)
-CREATE POLICY "Admins can view all profiles"
-ON public.user_profiles
-FOR SELECT
-USING (
-  auth.uid() = id
-  OR EXISTS (
-    SELECT 1 FROM public.user_profiles up WHERE up.id = auth.uid() AND up.role = 'admin'
-  )
-);
-
--- Admins can update any profile (if the calling user is admin)
-CREATE POLICY "Admins can update all profiles"
-ON public.user_profiles
-FOR UPDATE
-USING (
-  auth.uid() = id
-  OR EXISTS (
-    SELECT 1 FROM public.user_profiles up WHERE up.id = auth.uid() AND up.role = 'admin'
-  )
-);
 
 -- ========================================
 -- AUTOMATIC PROFILE CREATION TRIGGER
