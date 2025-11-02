@@ -34,10 +34,6 @@ const Navigation = () => {
       href: "/resources",
     },
     {
-      label: "Cost Estimator",
-      href: "/cost-estimator",
-    },
-    {
       label: "Contact",
       href: "/contact",
     },
@@ -96,13 +92,9 @@ const Navigation = () => {
                 key={item.href}
                 to={item.href}
                 className={`transition-all duration-200 text-sm px-3 py-1.5 rounded-md font-medium ${
-                  item.href === "/cost-estimator"
-                    ? "bg-accent text-white hover:bg-accent/90 shadow-md hover:shadow-lg font-semibold"
-                    : `text-foreground hover:text-accent ${
-                        location.pathname === item.href
-                          ? "text-accent font-semibold"
-                          : ""
-                      }`
+                  location.pathname === item.href
+                    ? "text-accent font-semibold"
+                    : "text-foreground hover:text-accent"
                 }`}
               >
                 {item.label}

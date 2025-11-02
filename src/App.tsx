@@ -7,6 +7,8 @@ import { Analytics } from "@vercel/analytics/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { PublicRoute } from "@/components/PublicRoute";
 
 // Silence React Router v7 warnings
 const futureConfig = {
@@ -32,6 +34,8 @@ const CostEstimator = lazy(() => import("./pages/CostEstimator"));
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
+const AdminPanel = lazy(() => import("./pages/AdminPanel"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const TestSupabase = lazy(() => import("./pages/TestSupabase"));
 const DebugAuth = lazy(() => import("./pages/DebugAuth"));
 
@@ -82,12 +86,66 @@ const App = () => (
                 element={<SortQuestionsPage2 />}
               />
               <Route path="/cost-estimator" element={<CostEstimator />} />
-              {/* Authentication routes */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/test-supabase" element={<TestSupabase />} />
-              <Route path="/debug-auth" element={<DebugAuth />} />
+
+              {/* Public Authentication routes - redirect to dashboard if already logged in */}
+              <Route
+                path="/login"
+                element={
+                  <PublicRoute>
+                    <Login />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <PublicRoute>
+                    <Signup />
+                  </PublicRoute>
+                }
+              />
+
+              {/* OAuth callback - no protection needed (handles own logic) */}
+              <Route path="/auth/callback" element={<AuthCallback />} />
+
+              {/* Protected routes - require authentication */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Admin-only routes - require admin role */}
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminPanel />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Debug/Test routes - protected */}
+              <Route
+                path="/test-supabase"
+                element={
+                  <ProtectedRoute>
+                    <TestSupabase />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/debug-auth"
+                element={
+                  <ProtectedRoute>
+                    <DebugAuth />
+                  </ProtectedRoute>
+                }
+              />
+
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

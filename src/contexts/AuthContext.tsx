@@ -54,9 +54,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log("Fetching profile for user:", userId);
 
-      // Create a timeout promise (10 seconds for slower connections)
+      // Create a timeout promise (3 seconds - faster for better UX)
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error("Profile fetch timeout")), 10000);
+        setTimeout(() => reject(new Error("Profile fetch timeout")), 3000);
       });
 
       // Race between fetch and timeout
@@ -265,7 +265,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo: `${window.location.origin}/auth/callback`,
+          queryParams: {
+            access_type: "offline",
+            prompt: "consent",
+          },
         },
       });
 

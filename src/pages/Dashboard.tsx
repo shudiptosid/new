@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabaseClient";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import FloatingIconsHome from "@/components/FloatingIconsHome";
+import DashboardMessages from "@/components/DashboardMessages";
 import backgroundImage from "@/assets/bg3.jpg";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -95,30 +96,14 @@ const categories = [
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user, profile, loading } = useAuth();
+  const { user, profile } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [responses, setResponses] = useState<{ [key: number]: string }>({});
   const [wantsConsultation, setWantsConsultation] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Debug logging
-  useEffect(() => {
-    console.log("Dashboard state:", {
-      loading,
-      user: !!user,
-      profile: !!profile,
-    });
-  }, [loading, user, profile]);
-
-  // Redirect if not logged in
-  useEffect(() => {
-    if (!loading && !user) {
-      console.log("Not authenticated, redirecting to login...");
-      navigate("/login");
-    } else if (!loading && user) {
-      console.log("User authenticated:", user.email);
-    }
-  }, [user, loading, navigate]);
+  // Note: Authentication is now handled by ProtectedRoute wrapper
+  // No need to check auth or redirect here - the route handles it!
 
   // Member since date
   const memberSince = profile?.created_at
@@ -270,34 +255,8 @@ const Dashboard = () => {
     }
   };
 
-  // Show loading state only while checking auth
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-accent mx-auto mb-4"></div>
-          <p className="text-foreground">Loading dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // If no user after loading, they'll be redirected by useEffect
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="text-center">
-          <p className="text-foreground">Redirecting to login...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Log if profile is missing (still works without it)
-  if (!profile) {
-    console.log("No profile found for user:", user.id);
-    console.log("Dashboard will use basic user info from auth");
-  }
+  // Note: No need for loading/redirect checks - ProtectedRoute handles authentication
+  // The user is guaranteed to be authenticated when this component renders
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
@@ -455,6 +414,9 @@ const Dashboard = () => {
 
             {/* Middle Section - Categories and Queries */}
             <div className="lg:col-span-9">
+              {/* Messages from Admin */}
+              <DashboardMessages />
+
               {/* Categories */}
               <div className="mb-8">
                 <h1 className="text-3xl font-bold text-white mb-6">
