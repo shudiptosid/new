@@ -35,6 +35,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AdminPanel = lazy(() => import("./pages/AdminPanel"));
+const PriceManager = lazy(() => import("./components/PriceManager"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const TestSupabase = lazy(() => import("./pages/TestSupabase"));
 const DebugAuth = lazy(() => import("./pages/DebugAuth"));
@@ -124,6 +125,14 @@ const App = () => (
                 element={
                   <ProtectedRoute requireAdmin={true}>
                     <AdminPanel />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/price-manager"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <PriceManager />
                   </ProtectedRoute>
                 }
               />

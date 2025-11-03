@@ -694,7 +694,7 @@ const ECEResources = () => {
                     href="https://ocw.mit.edu/search/?d=Electrical%20Engineering%20and%20Computer%20Science"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-lg font-semibold hover:text-accent transition-colors block mb-2"
+                    className="text-lg font-semibold text-blue-600 hover:text-blue-700 transition-colors block mb-2"
                   >
                     MIT OpenCourseWare: Microelectronics
                   </a>
@@ -709,7 +709,7 @@ const ECEResources = () => {
                     href="https://www.allaboutcircuits.com/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-lg font-semibold hover:text-accent transition-colors block mb-2"
+                    className="text-lg font-semibold text-blue-600 hover:text-blue-700 transition-colors block mb-2"
                   >
                     AllAboutCircuits.com
                   </a>
@@ -724,7 +724,7 @@ const ECEResources = () => {
                     href="https://ieeexplore.ieee.org/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-lg font-semibold hover:text-accent transition-colors block mb-2"
+                    className="text-lg font-semibold text-blue-600 hover:text-blue-700 transition-colors block mb-2"
                   >
                     IEEE Xplore Digital Library
                   </a>
@@ -739,7 +739,7 @@ const ECEResources = () => {
                     href="https://www.coursera.org/specializations/signal-processing"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-lg font-semibold hover:text-accent transition-colors block mb-2"
+                    className="text-lg font-semibold text-blue-600 hover:text-blue-700 transition-colors block mb-2"
                   >
                     Coursera: Signal Processing Specialization
                   </a>
@@ -753,7 +753,7 @@ const ECEResources = () => {
                     href="https://spectrum.ieee.org/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-lg font-semibold hover:text-accent transition-colors block mb-2"
+                    className="text-lg font-semibold text-blue-600 hover:text-blue-700 transition-colors block mb-2"
                   >
                     IEEE Spectrum
                   </a>
@@ -767,7 +767,7 @@ const ECEResources = () => {
                     href="https://www.edx.org/learn/electronic-engineering"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-lg font-semibold hover:text-accent transition-colors block mb-2"
+                    className="text-lg font-semibold text-blue-600 hover:text-blue-700 transition-colors block mb-2"
                   >
                     edX Electronics Courses
                   </a>

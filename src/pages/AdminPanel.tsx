@@ -505,6 +505,26 @@ const AdminPanel = () => {
             </Card>
           </div>
 
+          {/* Price Manager Quick Access */}
+          <Card
+            className="mb-8 bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all cursor-pointer"
+            onClick={() => navigate("/admin/price-manager")}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold mb-1">💰 Price Manager</h3>
+                  <p className="text-orange-100 text-sm">
+                    Manage component prices and inventory
+                  </p>
+                </div>
+                <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
+                  <ChevronRight className="h-6 w-6" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Search Bar */}
           <Card className="mb-6 shadow-md">
             <CardContent className="p-4">
