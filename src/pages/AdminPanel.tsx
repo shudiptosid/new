@@ -48,8 +48,10 @@ import {
   Trash2,
   Download,
   RotateCcw,
+  FileText,
 } from "lucide-react";
 import productsData from "@/data/productsData.json";
+import EstimateBuilder from "@/components/EstimateBuilder";
 
 interface Request {
   id: string;
@@ -78,6 +80,8 @@ const AdminPanel = () => {
   const [submitting, setSubmitting] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [estimateBuilderOpen, setEstimateBuilderOpen] = useState(false);
+  const [currentEstimateData, setCurrentEstimateData] = useState<any>(null);
   const [showCostEstimator, setShowCostEstimator] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categoryComponents, setCategoryComponents] = useState<any[]>([]);
@@ -190,11 +194,17 @@ const AdminPanel = () => {
       const details = await getRequestDetails(request.request_type, request.id);
       setSelectedRequest({ ...request, ...details });
       setReplyMessage("");
+      setCurrentEstimateData(null);
     } catch (error) {
       console.error("Error loading request details:", error);
     } finally {
       setDetailsLoading(false);
     }
+  };
+
+  const handleEstimateSave = (estimateText: string, estimateData: any) => {
+    setReplyMessage(estimateText);
+    setCurrentEstimateData(estimateData);
   };
 
   const handleSubmitReply = async () => {
@@ -765,10 +775,30 @@ const AdminPanel = () => {
 
                   {/* Reply Section */}
                   <div className="border-t pt-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <Mail className="h-5 w-5 text-accent" />
-                      <h3 className="font-semibold text-lg">Admin Reply</h3>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-5 w-5 text-accent" />
+                        <h3 className="font-semibold text-lg">Admin Reply</h3>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setEstimateBuilderOpen(true)}
+                        className="gap-2"
+                      >
+                        <Calculator className="h-4 w-4" />
+                        Create Estimate
+                      </Button>
                     </div>
+                    {currentEstimateData && (
+                      <div className="mb-3 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                        <span className="text-sm text-green-700 font-medium">
+                          Estimate added to reply (₹
+                          {currentEstimateData.total.toFixed(2)})
+                        </span>
+                      </div>
+                    )}
                     <Textarea
                       placeholder="Type your reply to the customer..."
                       value={replyMessage}
@@ -1127,6 +1157,16 @@ const AdminPanel = () => {
           </div>
         </div>
       </div>
+
+      {/* Estimate Builder Modal */}
+      <EstimateBuilder
+        open={estimateBuilderOpen}
+        onClose={() => setEstimateBuilderOpen(false)}
+        onSave={handleEstimateSave}
+        requestId={selectedRequest?.id}
+        customerEmail={selectedRequest?.user_email}
+        customerName={selectedRequest?.user_name}
+      />
     </div>
   );
 };

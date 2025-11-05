@@ -137,9 +137,7 @@ const Login = () => {
             <h1 className="text-4xl font-bold text-foreground mb-2">
               Welcome Back
             </h1>
-            <p className="text-muted-foreground">
-              Sign in to access your dashboard
-            </p>
+            <p className="text-white">Sign in to access your dashboard</p>
           </div>
 
           {/* Login Card */}
