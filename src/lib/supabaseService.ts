@@ -148,6 +148,54 @@ export const submitAdminReply = async (replyData: {
     throw replyError;
   }
 
+  // Send email via Supabase Edge Function + Resend (instant, no CORS!)
+  try {
+    const emailData = {
+      to: replyData.userEmail,
+      subject: "Update on Your Service Request - Circuit Crafters",
+      message: `Hi there,
+
+Your service request has been updated to "${replyData.newStatus}".
+
+Admin Reply:
+${replyData.replyMessage}
+
+You can view full details in your dashboard at: https://circuitcrafters.cc/dashboard
+
+If you have any questions, feel free to reply to this email.
+
+Best regards,
+Circuit Crafters Team
+
+---
+This is an automated notification from Circuit Crafters.`,
+    };
+
+    // Call Supabase Edge Function directly with fetch
+    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+    const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/send-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify(emailData),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      console.log("✅ Email sent successfully via Resend!", result);
+    } else {
+      console.error("⚠️ Error sending email:", response.status, result);
+    }
+  } catch (emailError) {
+    console.error("⚠️ Error sending email:", emailError);
+    // Don't throw error - reply was successful even if email failed
+  }
+
   // Update request status
   const tableMap: { [key: string]: string } = {
     consulting: "consulting_requests",

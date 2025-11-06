@@ -50,24 +50,21 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Network-first for API calls
-  if (event.request.url.includes("/api/")) {
-    event.respondWith(
-      fetch(event.request)
-        .then((response) => {
-          return caches.open(RUNTIME_CACHE).then((cache) => {
-            cache.put(event.request, response.clone());
-            return response;
-          });
-        })
-        .catch(() => {
-          return caches.match(event.request);
-        })
-    );
+  // Skip non-GET requests (POST, PUT, DELETE) - don't cache them
+  if (event.request.method !== "GET") {
     return;
   }
 
-  // Cache-first for static assets
+  // Skip Supabase and external API calls
+  if (
+    event.request.url.includes("supabase.co") ||
+    event.request.url.includes("resend.com") ||
+    event.request.url.includes("/api/")
+  ) {
+    return;
+  }
+
+  // Cache-first for static assets (GET requests only)
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -80,11 +77,13 @@ self.addEventListener("fetch", (event) => {
           return response;
         }
 
-        // Cache the new response
-        const responseToCache = response.clone();
-        caches.open(RUNTIME_CACHE).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
+        // Only cache GET requests
+        if (event.request.method === "GET") {
+          const responseToCache = response.clone();
+          caches.open(RUNTIME_CACHE).then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+        }
 
         return response;
       });
