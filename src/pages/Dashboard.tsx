@@ -226,6 +226,73 @@ const Dashboard = () => {
 
       console.log("Successfully saved:", data);
 
+      // Send admin notification email with all Q&A
+      try {
+        const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+        const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+        // Build email with all questions and answers
+        let qaContent = "";
+        selectedCat.questions.forEach((question, index) => {
+          qaContent += `
+            <div style="margin-bottom: 20px; padding: 15px; background-color: #f8f9fa; border-left: 4px solid #667eea; border-radius: 4px;">
+              <strong style="color: #667eea; font-size: 14px;">Q${
+                index + 1
+              }: ${question}</strong><br>
+              <span style="color: #333333; font-size: 15px; margin-top: 8px; display: block;">${
+                responses[index] || "<em>No answer provided</em>"
+              }</span>
+            </div>
+          `;
+        });
+
+        const requestDetails = `
+          <div style="margin-bottom: 20px;">
+            <strong>Service Type:</strong> ${selectedCat.name}<br>
+            <strong>Customer Name:</strong> ${requestData.user_name}<br>
+            <strong>Email:</strong> ${requestData.user_email}<br>
+            <strong>Request ID:</strong> ${data[0]?.id}<br>
+            <strong>Wants Consultation:</strong> ${
+              wantsConsultation ? "Yes ✅" : "No"
+            }<br>
+          </div>
+          <hr style="border: none; border-top: 2px solid #e0e0e0; margin: 25px 0;">
+          <h3 style="color: #667eea; margin-bottom: 20px;">📋 Service Request Details:</h3>
+          ${qaContent}
+        `;
+
+        const adminEmailData = {
+          to: "circuitcraftersiot@gmail.com",
+          subject: `🔔 New ${selectedCat.name} Request from ${requestData.user_name}`,
+          message: requestDetails,
+          isAdminNotification: true,
+        };
+
+        const response = await fetch(
+          `${SUPABASE_URL}/functions/v1/send-email`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify(adminEmailData),
+          }
+        );
+
+        const result = await response.json();
+        console.log("📧 Admin notification response:", response.status, result);
+
+        if (response.ok) {
+          console.log("✅ Admin notified successfully!");
+        } else {
+          console.error("⚠️ Failed to send admin notification:", result);
+        }
+      } catch (emailError) {
+        console.error("⚠️ Error sending admin notification:", emailError);
+        // Don't block user - request is saved
+      }
+
       // Show success message
       alert(
         `✅ Your ${
