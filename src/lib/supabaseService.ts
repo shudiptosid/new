@@ -40,6 +40,67 @@ export const submitContactForm = async (formData: {
     throw error;
   }
 
+  // Send admin notification email with full request details
+  try {
+    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+    const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+    const fullName = `${formData.firstName} ${formData.lastName || ""}`.trim();
+
+    // Build detailed request info with all Q&A
+    const requestDetails = `
+      <strong>Customer Name:</strong> ${fullName}<br>
+      <strong>Email:</strong> ${formData.email}<br>
+      ${
+        formData.company
+          ? `<strong>Company:</strong> ${formData.company}<br>`
+          : ""
+      }
+      ${
+        formData.projectType
+          ? `<strong>Project Type:</strong> ${formData.projectType}<br>`
+          : ""
+      }
+      <br>
+      <strong>Message:</strong><br>
+      ${formData.message.replace(/\n/g, "<br>")}
+    `;
+
+    const adminEmailData = {
+      to: "circuitcraftersiot@gmail.com",
+      subject: `🔔 New Service Request from ${fullName}`,
+      message: requestDetails,
+      isAdminNotification: true, // Flag for admin emails
+    };
+
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/send-email`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify(adminEmailData),
+    });
+
+    const result = await response.json();
+
+    console.log("📧 Admin Email Response:", response.status, result);
+
+    if (response.ok) {
+      console.log("✅ Admin notification sent successfully!", result);
+    } else {
+      console.error(
+        "⚠️ Failed to send admin notification:",
+        response.status,
+        result
+      );
+      // Don't throw error - request is saved, email is optional
+    }
+  } catch (emailError) {
+    console.error("⚠️ Error sending admin notification:", emailError);
+    // Don't throw - request is saved in database, that's what matters
+  }
+
   return data;
 };
 
