@@ -52,11 +52,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Fetch user profile from database with timeout
   const fetchProfile = async (userId: string) => {
     try {
-      console.log("Fetching profile for user:", userId);
+      console.log("📋 Fetching profile for user:", userId);
 
-      // Create a timeout promise (3 seconds - faster for better UX)
+      // Create a timeout promise (5 seconds - increased for reliability)
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error("Profile fetch timeout")), 3000);
+        setTimeout(() => reject(new Error("Profile fetch timeout")), 5000);
       });
 
       // Race between fetch and timeout
@@ -75,18 +75,65 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       ])) as any;
 
       if (error) {
-        console.error("Profile fetch error:", error);
+        console.error("❌ Profile fetch error:", error);
         console.error("Error details:", error.message, error.code);
+        
+        // If profile doesn't exist (PGRST116 error), try to create it
+        if (error.code === 'PGRST116') {
+          console.log("🔧 Profile not found, attempting to create it...");
+          
+          // Get user data from auth
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          if (user) {
+            // Determine role based on email
+            const isAdmin = user.email === 'circuitcraftersiot@gmail.com';
+            
+            const { data: newProfile, error: insertError } = await supabase
+              .from("user_profiles")
+              .insert({
+                id: userId,
+                email: user.email,
+                full_name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+                phone_number: user.user_metadata?.phone || null,
+                location: user.user_metadata?.location || null,
+                age: user.user_metadata?.age ? parseInt(user.user_metadata.age) : null,
+                role: isAdmin ? 'admin' : 'customer',
+                email_verified: user.email_confirmed_at ? true : false,
+              })
+              .select()
+              .single();
+            
+            if (insertError) {
+              console.error("❌ Failed to create profile:", insertError);
+              setProfile(null);
+              return null;
+            }
+            
+            console.log("✅ Profile created successfully:", {
+              email: newProfile?.email,
+              role: newProfile?.role,
+              full_name: newProfile?.full_name,
+            });
+            setProfile(newProfile);
+            return newProfile;
+          }
+        }
+        
         // Set profile to null so we know fetch completed (even if failed)
         setProfile(null);
         return null;
       }
 
-      console.log("Profile fetched successfully:", data);
+      console.log("✅ Profile fetched successfully:", {
+        email: data?.email,
+        role: data?.role,
+        full_name: data?.full_name,
+      });
       setProfile(data);
       return data;
     } catch (error: any) {
-      console.error("Error fetching profile:", error);
+      console.error("❌ Error fetching profile:", error);
       console.error("Exception details:", error?.message);
       // Always set profile (to null if failed) so loading can complete
       setProfile(null);
@@ -131,20 +178,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!mounted) return;
 
       console.log(
-        "Auth state changed:",
+        "🔄 Auth state changed:",
         event,
+        "| User:",
         session?.user?.email || "No user"
       );
 
       setSession(session);
       setUser(session?.user ?? null);
 
-      // Fetch profile on SIGNED_IN event
-      if (event === "SIGNED_IN" && session?.user) {
-        console.log("User signed in, fetching profile...");
-        await fetchProfile(session.user.id);
+      // Fetch profile on SIGNED_IN event or any event with session
+      if (session?.user && (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED")) {
+        console.log("👤 User authenticated, fetching profile for:", session.user.email);
+        const profileData = await fetchProfile(session.user.id);
+        if (profileData) {
+          console.log("✅ Profile loaded:", profileData.email, "Role:", profileData.role);
+        } else {
+          console.log("⚠️ Profile not found or failed to load");
+        }
       } else if (event === "SIGNED_OUT") {
-        console.log("User signed out, clearing profile");
+        console.log("👋 User signed out, clearing profile");
         setProfile(null);
       }
     });
