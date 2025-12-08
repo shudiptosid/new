@@ -154,6 +154,63 @@ const Blog = () => {
       featured: true,
       available: true,
     },
+    {
+      slug: "esp32-getting-started",
+      title:
+        "ESP32 Getting Started Guide: Your First IoT Project in 30 Minutes",
+      excerpt:
+        "Complete beginner-friendly ESP32 tutorial. Learn setup, installation, first code upload, WiFi connection, and sensor integration in 30 minutes. Perfect for IoT beginners.",
+      date: "2025-11-24",
+      readTime: "10 min read",
+      category: "Tutorials",
+      featured: true,
+      available: true,
+    },
+    {
+      slug: "smart-greenhouse-diy",
+      title: "Build Your Own Smart Greenhouse: Complete Step-by-Step Guide",
+      excerpt:
+        "Build an automated smart greenhouse with temperature, humidity, soil moisture control. Complete tutorial with code, wiring, sensor integration, and cloud monitoring.",
+      date: "2025-11-22",
+      readTime: "20 min read",
+      category: "Projects",
+      featured: true,
+      available: true,
+    },
+    {
+      slug: "iot-sensors-guide",
+      title: "Top 10 IoT Sensors Every Developer Must Know (With Datasheets)",
+      excerpt:
+        "Complete guide to essential IoT sensors: DHT11, HC-SR04, PIR, Soil Moisture, Gas, GPS, and more. Includes datasheets, wiring, code examples, and real-world applications.",
+      date: "2025-11-18",
+      readTime: "15 min read",
+      category: "Sensors",
+      featured: true,
+      available: true,
+    },
+    {
+      slug: "arduino-vs-esp32",
+      title: "Arduino vs ESP32: Which Microcontroller Should You Choose?",
+      excerpt:
+        "Compare Arduino Uno and ESP32: performance, WiFi, price, GPIO pins, power consumption. Detailed guide to help you choose the right microcontroller for your IoT project.",
+      date: "2025-11-20",
+      readTime: "12 min read",
+      category: "Hardware",
+      featured: true,
+      available: true,
+    },
+    {
+      slug: "wifi-troubleshooting",
+      title:
+        "WiFi Connection Issues on ESP32/ESP8266: Complete Troubleshooting Guide",
+      excerpt:
+        "Solve ESP32 and ESP8266 WiFi connection problems: authentication failed, SSID not found, weak signal, disconnections. Includes code fixes and network configuration.",
+      date: "2025-11-15",
+      readTime: "13 min read",
+      category: "Troubleshooting",
+      featured: true,
+      available: true,
+    },
   ];
 
   const categories = [
@@ -167,6 +224,10 @@ const Blog = () => {
     "RTOS",
     "Development",
     "AI/ML",
+    "Tutorials",
+    "Projects",
+    "Sensors",
+    "Hardware",
   ];
 
   // Filter posts based on selected category and search query

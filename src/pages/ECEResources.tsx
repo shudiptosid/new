@@ -24,10 +24,13 @@ import {
 
 // NOC Introduction to Internet of Things PDFs - Now hosted on Google Drive (no imports needed)
 
-// Import Reference Books
-import CommunicationsNetworkingBook from "@/assets/ECE/Books/Data-Communications-and-Networking-By-Behrouz-A.Forouzan.pdf";
-import IntroToIoTBook from "@/assets/ECE/Books/INTRODUCTION TO IOT by SUDIP MISRA, ANANDARUP MUKHERJEE, ARIJIT ROY.pdf";
-import IoTRajKamalBook from "@/assets/ECE/Books/Internet of things IoT by Raj Kamal Text Book.pdf";
+// Reference Books - Now in public folder to avoid bundling (32MB saved!)
+const CommunicationsNetworkingBook =
+  "/books/Data-Communications-and-Networking-By-Behrouz-A.Forouzan.pdf";
+const IntroToIoTBook =
+  "/books/INTRODUCTION TO IOT by SUDIP MISRA, ANANDARUP MUKHERJEE, ARIJIT ROY.pdf";
+const IoTRajKamalBook =
+  "/books/Internet of things IoT by Raj Kamal Text Book.pdf";
 
 interface PDFFile {
   id: string;

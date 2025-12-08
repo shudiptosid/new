@@ -105,6 +105,8 @@ const AboutSnippet = () => {
                   src={profileImage}
                   alt="Shudipto Gain - Embedded Systems Developer"
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                   style={{
                     objectPosition: "50% 30%",
                   }}

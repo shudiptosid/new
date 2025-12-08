@@ -775,19 +775,19 @@ const AdminPanel = () => {
 
                   {/* Reply Section */}
                   <div className="border-t pt-6">
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
                       <div className="flex items-center gap-2">
                         <Mail className="h-5 w-5 text-accent" />
                         <h3 className="font-semibold text-lg">Admin Reply</h3>
                       </div>
                       <Button
-                        variant="outline"
+                        variant="default"
                         size="sm"
                         onClick={() => setEstimateBuilderOpen(true)}
-                        className="gap-2"
+                        className="gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md"
                       >
                         <Calculator className="h-4 w-4" />
-                        Create Estimate
+                        Cost Estimator
                       </Button>
                     </div>
                     {currentEstimateData && (
