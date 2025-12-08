@@ -112,7 +112,7 @@
 
 /* Apply animations to form elements */
 .auth-card {
-  animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  animation: bounceIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   position: relative;
   overflow: visible;
 }
@@ -139,7 +139,7 @@
 }
 
 .auth-input {
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
 }
 
 .auth-input:focus {
@@ -152,7 +152,7 @@
 }
 
 .auth-button {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
@@ -186,19 +186,19 @@
 }
 
 .auth-error {
-  animation: shake 0.5s ease-in-out, fadeIn 0.3s ease-out;
+  animation: shake 0.25s ease-in-out, fadeIn 0.15s ease-out;
 }
 
 .auth-success {
-  animation: pulse 0.5s ease-in-out, fadeIn 0.3s ease-out;
+  animation: pulse 0.25s ease-in-out, fadeIn 0.15s ease-out;
 }
 
 .auth-divider {
-  animation: slideInLeft 1s ease-out 0.3s both;
+  animation: slideInLeft 0.25s ease-out 0.15s both;
 }
 
 .auth-link {
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
   position: relative;
 }
 
@@ -210,7 +210,7 @@
   width: 0;
   height: 2px;
   background: currentColor;
-  transition: width 0.3s ease;
+  transition: width 0.15s ease;
 }
 
 .auth-link:hover::after {
@@ -229,12 +229,12 @@
 }
 
 .auth-spinner {
-  animation: spin 1s linear infinite;
+  animation: spin 0.25s linear infinite;
 }
 
 /* Social button hover effects */
 .social-button {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .social-button:hover {
@@ -248,23 +248,23 @@
 
 /* Card entrance stagger effect */
 .form-field {
-  animation: slideInRight 0.5s ease-out backwards;
+  animation: slideInRight 0.25s ease-out backwards;
 }
 
 .form-field:nth-child(1) {
-  animation-delay: 0.1s;
+  animation-delay: 0.0.25s;
 }
 .form-field:nth-child(2) {
   animation-delay: 0.2s;
 }
 .form-field:nth-child(3) {
-  animation-delay: 0.3s;
+  animation-delay: 0.15s;
 }
 .form-field:nth-child(4) {
   animation-delay: 0.4s;
 }
 .form-field:nth-child(5) {
-  animation-delay: 0.5s;
+  animation-delay: 0.25s;
 }
 .form-field:nth-child(6) {
   animation-delay: 0.6s;
@@ -272,7 +272,7 @@
 
 /* Password visibility toggle animation */
 .password-toggle {
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: transform 0.15s ease, color 0.15s ease;
 }
 
 .password-toggle:hover {
@@ -286,7 +286,7 @@
 
 /* Footer link animations */
 .footer-link {
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
 }
 
 .footer-link:hover {

@@ -25,7 +25,7 @@ export default {
         },
       },
       animation: {
-        glow: "glow 15s linear infinite",
+        glow: "glow 3s ease-in-out infinite",
       },
       colors: {
         border: "hsl(var(--border))",

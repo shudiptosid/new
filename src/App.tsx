@@ -52,9 +52,9 @@ const queryClient = new QueryClient({
   },
 });
 
-// Loading fallback component
+// Loading fallback component with smooth fade-in transition
 const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen">
+  <div className="flex items-center justify-center min-h-screen animate-in fade-in duration-150">
     <div className="animate-pulse text-primary text-xl">Loading...</div>
   </div>
 );

@@ -498,7 +498,7 @@ const Dashboard = () => {
                       <Card
                         key={category.id}
                         onClick={() => handleCategoryClick(category.id)}
-                        className={`p-6 cursor-pointer transition-all duration-300 hover:scale-105 ${
+                        className={`p-6 cursor-pointer transition-all duration-150 hover:scale-105 ${
                           isSelected
                             ? "bg-gradient-to-br " +
                               category.color +

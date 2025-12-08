@@ -98,9 +98,9 @@ const Services = () => {
             {services.map((service, index) => (
               <Card
                 key={index}
-                className="p-8 hover:shadow-strong transition-all duration-300 group"
+                className="p-8 hover:shadow-strong transition-all duration-150 group"
               >
-                <div className="text-accent mb-6 group-hover:scale-110 transition-transform duration-300">
+                <div className="text-accent mb-6 group-hover:scale-110 transition-transform duration-150">
                   {service.icon}
                 </div>
 

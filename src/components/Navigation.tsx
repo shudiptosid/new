@@ -68,20 +68,20 @@ const Navigation = () => {
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-3 group relative p-2 rounded-lg hover:bg-accent/10 transition-all duration-300"
+            className="flex items-center gap-3 group relative p-2 rounded-lg hover:bg-accent/10 transition-all duration-150"
           >
             <div className="relative bg-surface-elevated/90 rounded-lg p-2 -m-2">
               <img
                 src={logoImage}
                 alt="Circuit Crafters Logo"
-                className="h-12 w-auto drop-shadow-lg brightness-110 contrast-125 saturate-110 group-hover:scale-105 transition-transform duration-300"
+                className="h-12 w-auto drop-shadow-lg brightness-110 contrast-125 saturate-110 group-hover:scale-105 transition-transform duration-150"
                 style={{
                   filter:
                     "drop-shadow(0 2px 8px rgba(0, 154, 217, 0.3)) brightness(1.1) contrast(1.25)",
                 }}
               />
               {/* Glow effect on hover */}
-              <div className="absolute inset-0 bg-accent/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+              <div className="absolute inset-0 bg-accent/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-150 -z-10"></div>
             </div>
           </Link>
 

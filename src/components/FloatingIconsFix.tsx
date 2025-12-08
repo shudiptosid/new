@@ -188,7 +188,7 @@ const FloatingIconsFix: React.FC = () => {
       {icons.map((icon) => (
         <div
           key={icon.id}
-          className="absolute opacity-40 hover:opacity-70 transition-all duration-300"
+          className="absolute opacity-40 hover:opacity-70 transition-all duration-150"
           style={{
             width: `${icon.size}px`,
             height: `${icon.size}px`,

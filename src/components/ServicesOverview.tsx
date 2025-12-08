@@ -42,8 +42,8 @@ const ServicesOverview = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-12">
           {services.map((service, index) => (
-            <Card key={index} className="p-6 hover:shadow-medium transition-all duration-300 group cursor-pointer border-border/50 h-full flex flex-col">
-              <div className="text-accent mb-4 group-hover:scale-110 transition-transform duration-300">
+            <Card key={index} className="p-6 hover:shadow-medium transition-all duration-150 group cursor-pointer border-border/50 h-full flex flex-col">
+              <div className="text-accent mb-4 group-hover:scale-110 transition-transform duration-150">
                 {service.icon}
               </div>
               <h3 className="text-xl font-semibold mb-3 text-foreground group-hover:text-accent transition-colors">

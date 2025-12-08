@@ -297,7 +297,7 @@ const FloatingIconsHome: React.FC<FloatingIconsHomeProps> = ({
         return (
           <div
             key={icon.id}
-            className="absolute transition-all duration-300 hover:opacity-70"
+            className="absolute transition-all duration-150 hover:opacity-70"
             style={{
               width: `${icon.size}px`,
               height: `${icon.size}px`,

@@ -111,7 +111,7 @@ const VideoCard = () => {
 
       {/* YouTube-style controls overlay */}
       <div
-        className={`absolute left-0 right-0 bottom-0 transition-opacity duration-300 ${
+        className={`absolute left-0 right-0 bottom-0 transition-opacity duration-150 ${
           isHovering ? "opacity-100" : "opacity-0"
         }`}
       >

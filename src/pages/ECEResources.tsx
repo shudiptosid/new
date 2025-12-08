@@ -374,7 +374,7 @@ const ECEResources = () => {
           />
 
           <div className="container mx-auto px-4 relative z-10">
-            <div className="mx-auto mb-12 max-w-2xl rounded-2xl bg-white/90 shadow-xl border-2 border-accent/30 p-6 flex flex-col items-center backdrop-blur-md hover:bg-white/95 transition-colors duration-300">
+            <div className="mx-auto mb-12 max-w-2xl rounded-2xl bg-white/90 shadow-xl border-2 border-accent/30 p-6 flex flex-col items-center backdrop-blur-md hover:bg-white/95 transition-colors duration-150">
               <h2 className="text-4xl md:text-5xl font-extrabold text-center drop-shadow-lg bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse">
                 Electronics and Communication Engineering
               </h2>
@@ -417,7 +417,7 @@ const ECEResources = () => {
                           <div key={item.id} className="space-y-2">
                             {/* Folder or File Item */}
                             <div
-                              className={`group bg-gradient-to-r from-white to-accent/5 border-2 border-accent/20 rounded-xl p-4 hover:border-accent/60 hover:shadow-lg transition-all duration-300 ${
+                              className={`group bg-gradient-to-r from-white to-accent/5 border-2 border-accent/20 rounded-xl p-4 hover:border-accent/60 hover:shadow-lg transition-all duration-150 ${
                                 !isFolder ? "hover:scale-[1.02]" : ""
                               }`}
                             >
@@ -614,7 +614,7 @@ const ECEResources = () => {
                           {referenceBooks.map((book, index) => (
                             <div
                               key={book.id}
-                              className="bg-gradient-to-r from-white to-primary/5 border-2 border-primary/20 rounded-lg p-3 hover:border-primary/60 hover:shadow-lg transition-all duration-300 hover:scale-[1.01]"
+                              className="bg-gradient-to-r from-white to-primary/5 border-2 border-primary/20 rounded-lg p-3 hover:border-primary/60 hover:shadow-lg transition-all duration-150 hover:scale-[1.01]"
                             >
                               <div className="grid grid-cols-12 gap-3 items-center">
                                 {/* Number Column */}
@@ -687,7 +687,7 @@ const ECEResources = () => {
 
           {/* Online Learning Resources - Vertical Card */}
           <div className="container mx-auto px-4 mt-12 mb-8">
-            <Card className="max-w-4xl mx-auto p-8 bg-white/90 backdrop-blur-md shadow-xl border-2 border-accent/30 hover:border-accent/60 transition-all duration-300">
+            <Card className="max-w-4xl mx-auto p-8 bg-white/90 backdrop-blur-md shadow-xl border-2 border-accent/30 hover:border-accent/60 transition-all duration-150">
               <h3 className="text-3xl font-bold text-primary mb-6 text-center">
                 Online Learning Resources
               </h3>

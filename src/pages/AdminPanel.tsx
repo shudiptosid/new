@@ -419,7 +419,7 @@ const AdminPanel = () => {
                 {componentCategories.map((category) => (
                   <Card
                     key={category.id}
-                    className={`cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl ${
+                    className={`cursor-pointer transition-all duration-150 hover:scale-105 hover:shadow-xl ${
                       selectedCategory === category.id
                         ? "ring-2 ring-accent"
                         : ""
@@ -615,7 +615,7 @@ const AdminPanel = () => {
                       {filteredRequests.map((request) => (
                         <Card
                           key={request.id}
-                          className="cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all duration-300 border-l-4 border-l-accent bg-gradient-to-r from-white to-slate-50 dark:from-slate-800 dark:to-slate-800"
+                          className="cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all duration-150 border-l-4 border-l-accent bg-gradient-to-r from-white to-slate-50 dark:from-slate-800 dark:to-slate-800"
                           onClick={() => handleRequestClick(request)}
                         >
                           <CardHeader className="pb-3">

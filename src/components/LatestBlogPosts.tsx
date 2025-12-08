@@ -54,7 +54,7 @@ const LatestBlogPosts = () => {
           {posts.map((post, index) => (
             <Card
               key={index}
-              className="p-6 hover:shadow-medium transition-all duration-300 group cursor-pointer h-full flex flex-col"
+              className="p-6 hover:shadow-medium transition-all duration-150 group cursor-pointer h-full flex flex-col"
             >
               <div className="mb-4">
                 <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-xs font-medium rounded-full">

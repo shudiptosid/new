@@ -39,7 +39,7 @@ const StickyContactBar = () => {
   return (
     <div className="fixed right-0 top-1/2 transform -translate-y-1/2 z-50">
       <div
-        className={`flex items-center transition-all duration-300 ease-in-out ${
+        className={`flex items-center transition-all duration-150 ease-in-out ${
           isExpanded ? "translate-x-0" : "translate-x-[calc(100%-3rem)]"
         }`}
       >
@@ -58,7 +58,7 @@ const StickyContactBar = () => {
 
         {/* Contact Buttons */}
         <div
-          className={`flex flex-col space-y-2 bg-white dark:bg-gray-900 p-3 rounded-l-lg shadow-lg border-l border-t border-b transition-all duration-300 ${
+          className={`flex flex-col space-y-2 bg-white dark:bg-gray-900 p-3 rounded-l-lg shadow-lg border-l border-t border-b transition-all duration-150 ${
             isExpanded ? "opacity-100 translate-x-0" : "opacity-0 translate-x-4"
           }`}
         >

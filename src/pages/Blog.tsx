@@ -25,7 +25,7 @@ const Blog = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearchQuery(searchInput);
-    }, 300); // 300ms delay
+    }, 100); // 100ms delay
 
     return () => clearTimeout(timer);
   }, [searchInput]);
@@ -342,7 +342,7 @@ const Blog = () => {
                     {featuredPosts.map((post, index) => (
                       <Card
                         key={index}
-                        className={`overflow-hidden transition-all duration-300 group ${
+                        className={`overflow-hidden transition-all duration-150 group ${
                           post.available
                             ? "hover:shadow-strong cursor-pointer"
                             : "opacity-70"
@@ -435,7 +435,7 @@ const Blog = () => {
                     {regularPosts.map((post, index) => (
                       <Card
                         key={index}
-                        className={`p-6 transition-all duration-300 group ${
+                        className={`p-6 transition-all duration-150 group ${
                           post.available
                             ? "hover:shadow-medium cursor-pointer"
                             : "opacity-70"

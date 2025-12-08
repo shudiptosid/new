@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import ContactCTA from "@/components/ContactCTA";
+import FloatingIconsFix from "@/components/FloatingIconsFix";
 import booksImg from "@/assets/books.png";
 import boardImg from "@/assets/board.png";
 import { ArduinoUnoDialog } from "@/components/ArduinoUnoDialog";
@@ -1388,7 +1389,7 @@ const SensorsAndActuatorsSection = () => {
         <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-4 text-center bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-lg">
           Sensors and Actuators
         </h3>
-        <div className="max-w-4xl w-full bg-white/90 rounded-xl shadow-lg border-2 border-accent/20 p-3 sm:p-4 md:p-6 hover:bg-white/95 transition-colors duration-300">
+        <div className="max-w-4xl w-full bg-white/90 rounded-xl shadow-lg border-2 border-accent/20 p-3 sm:p-4 md:p-6 hover:bg-white/95 transition-colors duration-150">
           {/* Search Bar */}
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
@@ -1408,7 +1409,7 @@ const SensorsAndActuatorsSection = () => {
                 filteredSensors.map((sensor) => (
                   <Card
                     key={sensor.id}
-                    className="p-3 sm:p-4 hover:shadow-xl transition-all duration-300 border-2 border-accent/20 hover:border-accent/60 group cursor-pointer"
+                    className="p-3 sm:p-4 hover:shadow-xl transition-all duration-150 border-2 border-accent/20 hover:border-accent/60 group cursor-pointer"
                     onClick={() => handleSensorClick(sensor)}
                   >
                     <div className="flex gap-3 sm:gap-4">
@@ -1461,6 +1462,11 @@ const Resources = () => {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen flex flex-col relative">
+      {/* Floating icons across the resources page */}
+      <div className="fixed inset-0 pointer-events-none z-10">
+        <FloatingIconsFix />
+      </div>
+
       <SEO
         title="IoT Sensors & Electronics Resources - Complete Learning Guide"
         description="Comprehensive guide to IoT sensors, actuators, Arduino boards, and electronics resources. Learn about ultrasonic sensors, DHT11, PIR motion detectors, and more with detailed tutorials, pinout diagrams, and real-world applications."
@@ -1503,7 +1509,7 @@ const Resources = () => {
             style={{ filter: "blur(100px)" }}
           />
           <div className="container mx-auto px-4 relative z-10">
-            <div className="mx-auto mb-12 max-w-2xl rounded-2xl bg-white/90 shadow-xl border-2 border-accent/30 p-6 flex flex-col items-center backdrop-blur-md hover:bg-white/95 transition-colors duration-300">
+            <div className="mx-auto mb-12 max-w-2xl rounded-2xl bg-white/90 shadow-xl border-2 border-accent/30 p-6 flex flex-col items-center backdrop-blur-md hover:bg-white/95 transition-colors duration-150">
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-center drop-shadow-lg bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse px-4">
                 Study Materials & Resources
               </h2>
@@ -1521,7 +1527,7 @@ const Resources = () => {
                 {studyMaterials.map((res, idx) => (
                   <Card
                     key={idx}
-                    className="p-4 sm:p-5 md:p-6 flex flex-col justify-center min-h-[280px] sm:h-[300px] md:h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-300 group bg-white/90 backdrop-blur-md relative overflow-hidden"
+                    className="p-4 sm:p-5 md:p-6 flex flex-col justify-center min-h-[280px] sm:h-[300px] md:h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-150 group bg-white/90 backdrop-blur-md relative overflow-hidden"
                   >
                     {/* Decorative accent shape in card */}
                     <div className="absolute -top-8 -right-8 w-16 sm:w-20 md:w-24 h-16 sm:h-20 md:h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
@@ -1574,7 +1580,7 @@ const Resources = () => {
                 Know Your Board
               </h3>
               <div className="flex-1 flex flex-col justify-stretch w-full max-w-2xl mx-auto">
-                <Card className="p-6 flex flex-col justify-between h-auto min-h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-300 group bg-white/90 backdrop-blur-md relative overflow-hidden">
+                <Card className="p-6 flex flex-col justify-between h-auto min-h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-150 group bg-white/90 backdrop-blur-md relative overflow-hidden">
                   {/* Decorative accent shape in card */}
                   <div className="absolute -top-8 -right-8 w-24 h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
                   <div className="flex flex-col items-center">
@@ -1632,7 +1638,7 @@ const Resources = () => {
             <h3 className="text-2xl font-bold text-foreground mb-4 text-center">
               Sort Question
             </h3>
-            <div className="max-w-2xl w-full bg-white/90 rounded-xl shadow-lg border-2 border-accent/20 p-6 flex flex-col items-center hover:bg-white/95 transition-colors duration-300">
+            <div className="max-w-2xl w-full bg-white/90 rounded-xl shadow-lg border-2 border-accent/20 p-6 flex flex-col items-center hover:bg-white/95 transition-colors duration-150">
               <p className="text-muted-foreground text-center mb-2">
                 Here you can find a collection of important sort questions for
                 your studies and board preparation.

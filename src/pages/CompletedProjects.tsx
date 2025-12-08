@@ -86,15 +86,15 @@ const CompletedProjects = () => {
               {completedProjects.map((project, index) => (
                 <Card
                   key={index}
-                  className="overflow-hidden hover:shadow-strong transition-all duration-300 group cursor-pointer"
+                  className="overflow-hidden hover:shadow-strong transition-all duration-150 group cursor-pointer"
                 >
                   <div className="relative overflow-hidden">
                     <img
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-150"
                     />
-                    <div className="absolute inset-0 bg-gradient-hero opacity-0 group-hover:opacity-80 transition-opacity duration-300 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gradient-hero opacity-0 group-hover:opacity-80 transition-opacity duration-150 flex items-center justify-center">
                       <ExternalLink className="w-8 h-8 text-surface-elevated" />
                     </div>
                     <div className="absolute top-4 left-4">
