@@ -68,10 +68,10 @@ const FloatingIconsHome: React.FC<FloatingIconsHomeProps> = ({
 }) => {
   const [icons, setIcons] = useState<Icon[]>([]);
   const [containerWidth, setContainerWidth] = useState<number>(
-    window.innerWidth
+    window.innerWidth,
   );
   const [containerHeight, setContainerHeight] = useState<number>(
-    window.innerHeight * 4
+    window.innerHeight * 4,
   ); // Extended height to cover full page including About section
 
   // Initialize icons
@@ -194,7 +194,7 @@ const FloatingIconsHome: React.FC<FloatingIconsHomeProps> = ({
       const opacityVariance = 0.1;
       const opacity = Math.min(
         0.7,
-        Math.max(0.4, baseOpacity + (Math.random() - 0.5) * opacityVariance)
+        Math.max(0.4, baseOpacity + (Math.random() - 0.5) * opacityVariance),
       );
 
       return {
@@ -256,7 +256,7 @@ const FloatingIconsHome: React.FC<FloatingIconsHomeProps> = ({
             y: newY,
             rotation: (icon.rotation + icon.rotationSpeed) % 360,
           };
-        })
+        }),
       );
       animationId = requestAnimationFrame(animateIcons);
     };
@@ -306,12 +306,15 @@ const FloatingIconsHome: React.FC<FloatingIconsHomeProps> = ({
               opacity: icon.opacity,
               filter: filterValue,
               zIndex: isAboutSection ? 60 : isBottomSection ? 50 : 10, // Highest z-index for About section
+              willChange: "transform",
             }}
           >
             <img
               src={icon.src}
               alt={icon.alt}
               className="w-full h-full object-contain"
+              loading="lazy"
+              decoding="async"
             />
           </div>
         );
@@ -320,4 +323,4 @@ const FloatingIconsHome: React.FC<FloatingIconsHomeProps> = ({
   );
 };
 
-export default FloatingIconsHome;
+export default React.memo(FloatingIconsHome);

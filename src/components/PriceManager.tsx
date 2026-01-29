@@ -69,6 +69,7 @@ const CATEGORIES = [
   "Actuator",
   "Component",
   "Cable",
+  "Audio",
 ];
 
 const PriceManager = () => {
@@ -135,7 +136,7 @@ const PriceManager = () => {
         (p) =>
           p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           p.product_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          p.description.toLowerCase().includes(searchTerm.toLowerCase())
+          p.description.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 

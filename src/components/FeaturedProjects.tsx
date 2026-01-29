@@ -9,6 +9,8 @@ const HeartRateCard = () => {
         src={industrialImage}
         alt="Remote Heart Rate and SPO2 monitor"
         className="h-32 w-full object-cover rounded mb-4"
+        loading="lazy"
+        decoding="async"
       />
       <h3 className="text-xl font-bold mb-2">
         Remote Heart Rate and SPO₂ Monitor
@@ -143,6 +145,8 @@ const CropShadeCard = () => {
         src={iotSensorImage}
         alt="Smart Crop Shade Automation System"
         className="h-32 w-full object-cover rounded mb-4"
+        loading="lazy"
+        decoding="async"
       />
       <h3 className="text-xl font-bold mb-2">
         Smart Crop Shade Automation System
@@ -264,6 +268,8 @@ const GreenHouseCard = () => {
         src={smartHomeImage}
         alt="Automatic Green House Ambience Control"
         className="h-32 w-full object-cover rounded mb-4"
+        loading="lazy"
+        decoding="async"
       />
       <h3 className="text-xl font-bold mb-2">
         Automatic Green House Ambience Control

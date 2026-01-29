@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Performance optimizations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Optimize image rendering */
+img {
+  content-visibility: auto;
+}
+
+/* GPU acceleration for animations */
+.animate-pulse,
+.animate-spin,
+.transition-all,
+.transition-transform {
+  will-change: transform, opacity;
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
@@ -380,13 +399,17 @@ All colors MUST be HSL.
   @keyframes glow-pulse {
     0%,
     100% {
-      box-shadow: 0 0 20px rgba(0, 200, 255, 0.3),
-        0 0 40px rgba(0, 154, 217, 0.2), 0 0 60px rgba(0, 200, 255, 0.1),
+      box-shadow:
+        0 0 20px rgba(0, 200, 255, 0.3),
+        0 0 40px rgba(0, 154, 217, 0.2),
+        0 0 60px rgba(0, 200, 255, 0.1),
         0 8px 24px -4px rgba(0, 0, 0, 0.12);
     }
     50% {
-      box-shadow: 0 0 30px rgba(0, 200, 255, 0.5),
-        0 0 60px rgba(0, 154, 217, 0.3), 0 0 90px rgba(0, 200, 255, 0.2),
+      box-shadow:
+        0 0 30px rgba(0, 200, 255, 0.5),
+        0 0 60px rgba(0, 154, 217, 0.3),
+        0 0 90px rgba(0, 200, 255, 0.2),
         0 8px 24px -4px rgba(0, 0, 0, 0.12);
     }
   }

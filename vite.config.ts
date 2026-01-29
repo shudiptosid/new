@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => ({
     strictPort: false,
   },
   plugins: [react(), mode === "development" && componentTagger()].filter(
-    Boolean
+    Boolean,
   ),
   resolve: {
     alias: {
@@ -36,9 +36,14 @@ export default defineConfig(({ mode }) => ({
             "@radix-ui/react-select",
             "@radix-ui/react-dropdown-menu",
             "@radix-ui/react-accordion",
+            "@radix-ui/react-tabs",
+            "@radix-ui/react-tooltip",
+            "@radix-ui/react-toast",
           ],
+          supabase: ["@supabase/supabase-js"],
           analytics: ["@vercel/analytics", "@vercel/speed-insights"],
           query: ["@tanstack/react-query"],
+          utils: ["date-fns", "clsx", "class-variance-authority"],
         },
         // Optimize asset naming
         chunkFileNames: "assets/js/[name]-[hash].js",
@@ -75,6 +80,9 @@ export default defineConfig(({ mode }) => ({
       "react-dom",
       "react-router-dom",
       "@tanstack/react-query",
+      "clsx",
+      "date-fns",
+      "lucide-react",
     ],
     exclude: ["@vercel/analytics", "@vercel/speed-insights"],
   },

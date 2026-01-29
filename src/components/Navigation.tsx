@@ -26,6 +26,10 @@ const Navigation = () => {
       href: "/projects",
     },
     {
+      label: "Cost Estimator",
+      href: "/cost-estimator",
+    },
+    {
       label: "Blog",
       href: "/blog",
     },
@@ -92,9 +96,11 @@ const Navigation = () => {
                 key={item.href}
                 to={item.href}
                 className={`transition-all duration-200 text-sm px-3 py-1.5 rounded-md font-medium ${
-                  location.pathname === item.href
-                    ? "text-accent font-semibold"
-                    : "text-foreground hover:text-accent"
+                  item.href === "/cost-estimator"
+                    ? "bg-green-600 text-white font-semibold hover:bg-green-700 shadow-md"
+                    : location.pathname === item.href
+                      ? "text-accent font-semibold"
+                      : "text-foreground hover:text-accent"
                 }`}
               >
                 {item.label}
@@ -207,8 +213,8 @@ const Navigation = () => {
                     item.href === "/cost-estimator"
                       ? "bg-accent text-white font-semibold shadow-md"
                       : location.pathname === item.href
-                      ? "bg-accent/10 text-accent font-semibold"
-                      : "text-foreground hover:bg-accent/5"
+                        ? "bg-accent/10 text-accent font-semibold"
+                        : "text-foreground hover:bg-accent/5"
                   }`}
                 >
                   {item.label}

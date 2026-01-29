@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, Zap, Cpu } from "lucide-react";
+import { ArrowRight, Zap, Cpu, Calculator } from "lucide-react";
 import timeLapseBg from "@/assets/time-lapse-bg.mp4";
 
 const HeroSection = () => {
@@ -58,6 +58,15 @@ const HeroSection = () => {
               >
                 View My Work
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+            </Link>
+            <Link to="/cost-estimator">
+              <Button
+                size="lg"
+                className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-4 text-base sm:text-lg font-semibold group"
+              >
+                <Calculator className="mr-2 w-5 h-5" />
+                Cost Estimator
               </Button>
             </Link>
             <Link to="/services">

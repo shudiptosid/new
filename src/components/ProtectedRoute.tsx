@@ -22,9 +22,6 @@ export const ProtectedRoute = ({
   const { user, profile, loading } = useAuth();
   const [profileCheckComplete, setProfileCheckComplete] = useState(false);
 
-  // Admin email constant
-  const ADMIN_EMAIL = "circuitcraftersiot@gmail.com";
-
   // Wait for profile to be loaded when admin access is required
   useEffect(() => {
     if (!loading && user && requireAdmin) {
@@ -75,24 +72,21 @@ export const ProtectedRoute = ({
     );
   }
 
-  // Admin required - check BOTH email and role
+  // Admin required - check role only (any user with admin role can access)
   if (requireAdmin) {
-    const isAdminEmail = user?.email === ADMIN_EMAIL;
     const isAdminRole = profile?.role === "admin";
 
     console.log("ProtectedRoute: Admin check", {
       email: user?.email,
-      isAdminEmail,
       profileRole: profile?.role,
       isAdminRole,
       profileLoaded: !!profile,
     });
 
-    // User must be circuitcraftersiot@gmail.com AND have admin role
-    if (!isAdminEmail || !isAdminRole) {
+    // User must have admin role
+    if (!isAdminRole) {
       console.log("ProtectedRoute: Access denied - not admin", {
         email: user?.email,
-        expectedEmail: ADMIN_EMAIL,
         role: profile?.role,
       });
       return <Navigate to="/" replace />;
