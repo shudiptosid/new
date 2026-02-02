@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Documentation files (exclude from build to reduce bundle size)
+*.md
+!README.md

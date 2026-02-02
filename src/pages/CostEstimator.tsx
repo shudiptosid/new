@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,11 +27,14 @@ import {
   ChevronDown,
   Settings2,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
-import productsData from "@/data/productsData.json";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import StickyContactBar from "@/components/StickyContactBar";
+
+// Lazy load productsData for better performance
+let productsData: any[] = [];
 
 // Helper function to get product price from productsData.json
 const getProductFromData = (id: string) => {
@@ -262,6 +265,7 @@ const actuatorOptions = [
 ];
 
 export default function CostEstimator() {
+  const [dataLoaded, setDataLoaded] = useState(false);
   const [selectedMCU, setSelectedMCU] = useState<string>("");
   const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
   const [selectedComponents, setSelectedComponents] = useState<string[]>([]);
@@ -276,6 +280,37 @@ export default function CostEstimator() {
   const [actuatorQuantities, setActuatorQuantities] = useState<
     Record<string, number>
   >({});
+
+  // Load products data asynchronously
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await import("@/data/productsData.json");
+        productsData = data.default;
+        setDataLoaded(true);
+      } catch (error) {
+        console.error("Failed to load products data:", error);
+        setDataLoaded(true); // Still set to true to show the UI
+      }
+    };
+    loadData();
+  }, []);
+
+  // Show loading spinner while data loads
+  if (!dataLoaded) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <Navigation />
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin mx-auto text-blue-600 mb-4" />
+            <p className="text-gray-600">Loading cost estimator...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   // Toggle sensor selection
   const toggleSensor = (sensorId: string) => {
@@ -294,7 +329,7 @@ export default function CostEstimator() {
   const toggleComponent = (componentId: string) => {
     if (selectedComponents.includes(componentId)) {
       setSelectedComponents(
-        selectedComponents.filter((id) => id !== componentId)
+        selectedComponents.filter((id) => id !== componentId),
       );
       const newQuantities = { ...componentQuantities };
       delete newQuantities[componentId];
@@ -322,7 +357,7 @@ export default function CostEstimator() {
   const updateQuantity = (
     id: string,
     delta: number,
-    type: "sensor" | "component" | "actuator"
+    type: "sensor" | "component" | "actuator",
   ) => {
     if (type === "sensor") {
       setSensorQuantities({
@@ -398,7 +433,7 @@ export default function CostEstimator() {
     const display = displayOptions.find((d) => d.id === selectedDisplay);
 
     let estimate = `PROJECT COST ESTIMATE - Circuit Crafters\nDate: ${new Date().toLocaleDateString()}\n${"=".repeat(
-      50
+      50,
     )}\n\n`;
 
     if (mcu) {
@@ -446,11 +481,11 @@ export default function CostEstimator() {
     }
 
     estimate += `${"=".repeat(
-      50
+      50,
     )}\nTOTAL ESTIMATED COST: ₹${totalCost.toLocaleString(
-      "en-IN"
+      "en-IN",
     )}\n${"=".repeat(
-      50
+      50,
     )}\n\nNote: This is an estimate only. Actual costs may vary.\nContact us for a detailed quote.`;
 
     const blob = new Blob([estimate], { type: "text/plain" });
@@ -638,7 +673,7 @@ export default function CostEstimator() {
                           ))}
                         </div>
                       </div>
-                    )
+                    ),
                   )}
                 </CardContent>
               </Card>
@@ -677,7 +712,7 @@ export default function CostEstimator() {
                               <div className="flex items-start gap-2 sm:gap-3 w-full">
                                 <Checkbox
                                   checked={selectedComponents.includes(
-                                    component.id
+                                    component.id,
                                   )}
                                   onCheckedChange={() =>
                                     toggleComponent(component.id)
@@ -711,7 +746,7 @@ export default function CostEstimator() {
                                       updateQuantity(
                                         component.id,
                                         -1,
-                                        "component"
+                                        "component",
                                       )
                                     }
                                   >
@@ -728,7 +763,7 @@ export default function CostEstimator() {
                                       updateQuantity(
                                         component.id,
                                         1,
-                                        "component"
+                                        "component",
                                       )
                                     }
                                   >
@@ -740,7 +775,7 @@ export default function CostEstimator() {
                           ))}
                         </div>
                       </div>
-                    )
+                    ),
                   )}
                 </CardContent>
               </Card>
@@ -779,7 +814,7 @@ export default function CostEstimator() {
                               <div className="flex items-start gap-2 sm:gap-3 w-full">
                                 <Checkbox
                                   checked={selectedActuators.includes(
-                                    actuator.id
+                                    actuator.id,
                                   )}
                                   onCheckedChange={() =>
                                     toggleActuator(actuator.id)
@@ -813,7 +848,7 @@ export default function CostEstimator() {
                                       updateQuantity(
                                         actuator.id,
                                         -1,
-                                        "actuator"
+                                        "actuator",
                                       )
                                     }
                                   >
@@ -838,7 +873,7 @@ export default function CostEstimator() {
                           ))}
                         </div>
                       </div>
-                    )
+                    ),
                   )}
                 </CardContent>
               </Card>
@@ -926,7 +961,7 @@ export default function CostEstimator() {
                       <div className="text-[10px] sm:text-xs text-muted-foreground space-y-1">
                         {selectedSensors.slice(0, 3).map((sensorId) => {
                           const sensor = productsData.find(
-                            (s) => s.id === sensorId
+                            (s) => s.id === sensorId,
                           );
                           const qty = sensorQuantities[sensorId] || 1;
                           return (
@@ -962,7 +997,7 @@ export default function CostEstimator() {
                       <div className="text-xs text-muted-foreground space-y-1">
                         {selectedComponents.slice(0, 3).map((compId) => {
                           const comp = powerComponents.find(
-                            (c) => c.id === compId
+                            (c) => c.id === compId,
                           );
                           const qty = componentQuantities[compId] || 1;
                           return (
@@ -995,7 +1030,7 @@ export default function CostEstimator() {
                       <div className="text-xs text-muted-foreground space-y-1">
                         {selectedActuators.slice(0, 3).map((actId) => {
                           const act = actuatorOptions.find(
-                            (a) => a.id === actId
+                            (a) => a.id === actId,
                           );
                           const qty = actuatorQuantities[actId] || 1;
                           return (

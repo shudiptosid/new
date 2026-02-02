@@ -102,16 +102,24 @@ const PriceManager = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
+      console.log("🔄 Fetching products from Supabase...");
+
       const { data, error } = await supabase
         .from("component_prices")
         .select("*")
         .eq("is_active", true)
         .order("serial_no", { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error("❌ Error fetching products:", error);
+        throw error;
+      }
+
+      console.log(`✅ Loaded ${data?.length || 0} products`);
       setProducts(data || []);
       setFilteredProducts(data || []);
     } catch (error: any) {
+      console.error("❌ fetchProducts error:", error);
       toast({
         title: "Error loading products",
         description: error.message,
@@ -230,40 +238,71 @@ const PriceManager = () => {
       if (!addForm.name || !addForm.product_id || !addForm.price) {
         toast({
           title: "Missing fields",
-          description: "Please fill in all required fields",
+          description:
+            "Please fill in all required fields (Product ID, Name, and Price are required)",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Validate price is greater than 0
+      if (addForm.price <= 0) {
+        toast({
+          title: "Invalid price",
+          description: "Price must be greater than 0",
           variant: "destructive",
         });
         return;
       }
 
       setSaving(true);
+      console.log("🔄 Adding new product:", addForm);
 
       // Get next serial number
-      const { data: maxSerial } = await supabase
+      const { data: maxSerial, error: serialError } = await supabase
         .from("component_prices")
         .select("serial_no")
         .order("serial_no", { ascending: false })
         .limit(1);
 
+      if (serialError) {
+        console.error("❌ Error fetching serial number:", serialError);
+        throw new Error(`Failed to get serial number: ${serialError.message}`);
+      }
+
       const nextSerial =
         maxSerial && maxSerial[0] ? maxSerial[0].serial_no + 1 : 1;
 
-      const { error } = await supabase.from("component_prices").insert({
-        product_id: addForm.product_id,
-        serial_no: nextSerial,
-        name: addForm.name,
-        category: addForm.category,
-        price: addForm.price,
-        description: addForm.description || "",
-        image_url: addForm.image_url || "/src/assets/icon/default.png",
-        is_active: true,
-      });
+      console.log("📝 Next serial number:", nextSerial);
 
-      if (error) throw error;
+      const newProduct = {
+        product_id: addForm.product_id.trim(),
+        serial_no: nextSerial,
+        name: addForm.name.trim(),
+        category: addForm.category || "Sensor",
+        price: addForm.price,
+        description: addForm.description?.trim() || "",
+        image_url: addForm.image_url?.trim() || "/src/assets/icon/default.png",
+        is_active: true,
+      };
+
+      console.log("💾 Inserting product:", newProduct);
+
+      const { data, error } = await supabase
+        .from("component_prices")
+        .insert(newProduct)
+        .select();
+
+      if (error) {
+        console.error("❌ Insert error:", error);
+        throw error;
+      }
+
+      console.log("✅ Product added successfully:", data);
 
       toast({
-        title: "Product added",
-        description: `${addForm.name} added successfully`,
+        title: "✅ Product added successfully!",
+        description: `${addForm.name} has been added to the database`,
       });
 
       setShowAddDialog(false);
@@ -274,9 +313,27 @@ const PriceManager = () => {
       });
       fetchProducts();
     } catch (error: any) {
+      console.error("❌ Error in handleAddProduct:", error);
+
+      let errorMessage = error.message;
+
+      // Provide more specific error messages
+      if (error.code === "23505") {
+        errorMessage = "A product with this Product ID already exists";
+      } else if (error.code === "42501") {
+        errorMessage =
+          "Permission denied. Please check if you're logged in as admin";
+      } else if (error.message.includes("JWT")) {
+        errorMessage = "Session expired. Please log in again";
+      } else if (error.message.includes("category_check")) {
+        errorMessage = `Invalid category. Allowed categories are: ${CATEGORIES.join(", ")}. Please run FIX_CATEGORY_CONSTRAINT.sql in Supabase.`;
+      } else if (error.message.includes("check constraint")) {
+        errorMessage = `Database constraint violation: ${error.message}. Check FIX_CATEGORY_CONSTRAINT.sql for solution.`;
+      }
+
       toast({
-        title: "Error adding product",
-        description: error.message,
+        title: "❌ Error adding product",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

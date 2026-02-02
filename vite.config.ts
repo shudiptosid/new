@@ -27,6 +27,10 @@ export default defineConfig(({ mode }) => ({
 
     // Optimize chunk splitting
     rollupOptions: {
+      // Exclude documentation files from bundle
+      external: (id) => {
+        return id.endsWith(".md");
+      },
       output: {
         manualChunks: {
           // Vendor chunks
