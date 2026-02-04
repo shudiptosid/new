@@ -33,71 +33,60 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import StickyContactBar from "@/components/StickyContactBar";
 
-// Lazy load productsData for better performance
-let productsData: any[] = [];
-
-// Helper function to get product price from productsData.json
-const getProductFromData = (id: string) => {
-  const product = productsData.find((p) => p.id === id);
-  return product
-    ? { id: product.id, name: product.name, price: product.price }
-    : null;
-};
-
-// MCU options - Now dynamically reading from productsData.json
+// MCU options - Static fallback data
 const mcuOptions = [
-  getProductFromData("MCU-01") || {
+  {
     id: "MCU-01",
     name: "Arduino Uno",
     price: 450,
   },
-  getProductFromData("MCU-02") || {
+  {
     id: "MCU-02",
     name: "Arduino Nano",
     price: 350,
   },
-  getProductFromData("MCU-03") || { id: "MCU-03", name: "ESP32", price: 850 },
-  getProductFromData("MCU-04") || { id: "MCU-04", name: "ESP8266", price: 300 },
-  getProductFromData("MCU-05") || {
+  { id: "MCU-03", name: "ESP32", price: 850 },
+  { id: "MCU-04", name: "ESP8266", price: 300 },
+  {
     id: "MCU-05",
     name: "Raspberry Pi Pico",
     price: 400,
   },
-  getProductFromData("MCU-06") || {
+  {
     id: "MCU-06",
     name: "STM32 Blue Pill",
     price: 550,
   },
 ];
 
-// Display options - Now dynamically reading from productsData.json
+// Display options - Static fallback data
 const displayOptions = [
-  getProductFromData("DISP-01") || {
+  {
     id: "DISP-01",
     name: "16x2 LCD Display",
     price: 120,
   },
-  getProductFromData("DISP-02") || {
+  {
     id: "DISP-02",
     name: '0.96" OLED Display',
     price: 180,
   },
-  getProductFromData("DISP-03") || {
+  {
     id: "DISP-03",
     name: '1.3" OLED Display',
     price: 250,
   },
-  getProductFromData("DISP-04") || {
+  {
     id: "DISP-04",
     name: "Nokia 5110 LCD",
     price: 150,
   },
-  getProductFromData("DISP-05") || {
+  {
     id: "DISP-05",
     name: 'TFT 1.8" Color Display',
     price: 350,
   },
-  getProductFromData("DISP-06") || {
+  {
     id: "DISP-06",
     name: 'TFT 2.4" Touchscreen',
     price: 650,
@@ -105,106 +94,93 @@ const displayOptions = [
   { id: "DISP-07", name: "None", price: 0 },
 ];
 
-// Helper function to get product with category from productsData.json
-const getProductWithCategory = (id: string, fallbackCategory: string) => {
-  const product = productsData.find((p) => p.id === id);
-  return product
-    ? {
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        category: fallbackCategory,
-      }
-    : null;
-};
-
-// Power & Components options - Now dynamically reading from productsData.json
+// Power & Components options - Static fallback data
 const powerComponents = [
-  getProductWithCategory("PWR-01", "Power Supply") || {
+  {
     id: "PWR-01",
     name: "5V Power Adapter",
     price: 80,
     category: "Power Supply",
   },
-  getProductWithCategory("PWR-02", "Power Supply") || {
+  {
     id: "PWR-02",
     name: "9V Battery",
     price: 30,
     category: "Power Supply",
   },
-  getProductWithCategory("PWR-03", "Power Supply") || {
+  {
     id: "PWR-03",
     name: "18650 Battery",
     price: 50,
     category: "Power Supply",
   },
-  getProductWithCategory("PWR-04", "Power Supply") || {
+  {
     id: "PWR-04",
     name: "18650 Battery Holder (Single)",
     price: 40,
     category: "Power Supply",
   },
-  getProductWithCategory("PWR-05", "Power Supply") || {
+  {
     id: "PWR-05",
     name: "18650 Battery Holder (Double)",
     price: 60,
     category: "Power Supply",
   },
-  getProductWithCategory("PWR-06", "Power Supply") || {
+  {
     id: "PWR-06",
     name: "18650 Battery Holder (Triple)",
     price: 80,
     category: "Power Supply",
   },
-  getProductWithCategory("PWR-07", "Cable") || {
+  {
     id: "PWR-07",
     name: "USB Cable",
     price: 25,
     category: "Cable",
   },
-  getProductWithCategory("COMP-01", "Component") || {
+  {
     id: "COMP-01",
     name: "Breadboard 400 Points",
     price: 45,
     category: "Component",
   },
-  getProductWithCategory("COMP-02", "Component") || {
+  {
     id: "COMP-02",
     name: "Breadboard 830 Points",
     price: 80,
     category: "Component",
   },
-  getProductWithCategory("COMP-03", "Component") || {
+  {
     id: "COMP-03",
     name: "Jumper Wires (Pack)",
     price: 30,
     category: "Component",
   },
-  getProductWithCategory("COMP-04", "Component") || {
+  {
     id: "COMP-04",
     name: "LED Pack (10pcs)",
     price: 20,
     category: "Component",
   },
-  getProductWithCategory("COMP-05", "Component") || {
+  {
     id: "COMP-05",
     name: "Resistor Kit",
     price: 50,
     category: "Component",
   },
-  getProductWithCategory("COMP-06", "Component") || {
+  {
     id: "COMP-06",
     name: "Push Button (5pcs)",
     price: 15,
     category: "Component",
   },
-  getProductWithCategory("COMP-07", "Module") || {
+  {
     id: "COMP-07",
     name: "Relay Module",
     price: 60,
     category: "Module",
   },
-  getProductWithCategory("COMP-08", "Module") || {
+  {
     id: "COMP-08",
     name: "Motor Driver L298N",
     price: 120,
@@ -212,51 +188,51 @@ const powerComponents = [
   },
 ];
 
-// Actuator options - Now dynamically reading from productsData.json
+// Actuator options - Static fallback data
 const actuatorOptions = [
-  getProductWithCategory("ACT-01", "Motor") || {
+  {
     id: "ACT-01",
     name: "DC Motor (Standard)",
     price: 40,
     category: "Motor",
   },
-  getProductWithCategory("ACT-02", "Motor") || {
+  {
     id: "ACT-02",
     name: "Geared DC Motor",
     price: 80,
     category: "Motor",
   },
-  getProductWithCategory("ACT-03", "Servo") || {
+  {
     id: "ACT-03",
     name: "9g Servo Motor",
     price: 90,
     category: "Servo",
   },
-  getProductWithCategory("ACT-04", "Servo") || {
+  {
     id: "ACT-04",
     name: "Tower Pro SG90 Servo",
     price: 120,
     category: "Servo",
   },
-  getProductWithCategory("ACT-05", "Servo") || {
+  {
     id: "ACT-05",
     name: "MG996R Servo (Metal Gear)",
     price: 350,
     category: "Servo",
   },
-  getProductWithCategory("ACT-06", "Pump") || {
+  {
     id: "ACT-06",
     name: "Mini Water Pump",
     price: 120,
     category: "Pump",
   },
-  getProductWithCategory("ACT-07", "Pump") || {
+  {
     id: "ACT-07",
     name: "Submersible Water Pump",
     price: 180,
     category: "Pump",
   },
-  getProductWithCategory("ACT-08", "Motor") || {
+  {
     id: "ACT-08",
     name: "Stepper Motor (28BYJ-48)",
     price: 150,
@@ -265,6 +241,7 @@ const actuatorOptions = [
 ];
 
 export default function CostEstimator() {
+  const [productsData, setProductsData] = useState<any[]>([]);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [selectedMCU, setSelectedMCU] = useState<string>("");
   const [selectedSensors, setSelectedSensors] = useState<string[]>([]);
@@ -286,7 +263,7 @@ export default function CostEstimator() {
     const loadData = async () => {
       try {
         const data = await import("@/data/productsData.json");
-        productsData = data.default;
+        setProductsData(data.default || []);
         setDataLoaded(true);
       } catch (error) {
         console.error("Failed to load products data:", error);
@@ -296,7 +273,81 @@ export default function CostEstimator() {
     loadData();
   }, []);
 
-  // Show loading spinner while data loads
+  // Calculate totals - MUST be before early return
+  const mcuCost = useMemo(() => {
+    const mcu = mcuOptions.find((m) => m.id === selectedMCU);
+    return mcu ? mcu.price : 0;
+  }, [selectedMCU]);
+
+  const sensorsCost = useMemo(() => {
+    return selectedSensors.reduce((total, sensorId) => {
+      const sensor = productsData.find((s) => s.id === sensorId);
+      const quantity = sensorQuantities[sensorId] || 1;
+      return total + (sensor ? sensor.price * quantity : 0);
+    }, 0);
+  }, [selectedSensors, sensorQuantities, productsData, dataLoaded]);
+
+  const componentsCost = useMemo(() => {
+    return selectedComponents.reduce((total, compId) => {
+      const component = powerComponents.find((c) => c.id === compId);
+      const quantity = componentQuantities[compId] || 1;
+      return total + (component ? component.price * quantity : 0);
+    }, 0);
+  }, [selectedComponents, componentQuantities]);
+
+  const actuatorsCost = useMemo(() => {
+    return selectedActuators.reduce((total, actId) => {
+      const actuator = actuatorOptions.find((a) => a.id === actId);
+      const quantity = actuatorQuantities[actId] || 1;
+      return total + (actuator ? actuator.price * quantity : 0);
+    }, 0);
+  }, [selectedActuators, actuatorQuantities]);
+
+  const displayCost = useMemo(() => {
+    const display = displayOptions.find((d) => d.id === selectedDisplay);
+    return display ? display.price : 0;
+  }, [selectedDisplay]);
+
+  const totalCost =
+    mcuCost + sensorsCost + componentsCost + actuatorsCost + displayCost;
+
+  // Group sensors by category - MUST be before early return
+  const sensorsByCategory = useMemo(() => {
+    const grouped: Record<string, typeof productsData> = {};
+    productsData.forEach((sensor) => {
+      if (!grouped[sensor.category]) {
+        grouped[sensor.category] = [];
+      }
+      grouped[sensor.category].push(sensor);
+    });
+    return grouped;
+  }, [productsData, dataLoaded]);
+
+  // Group components by category - MUST be before early return
+  const componentsByCategory = useMemo(() => {
+    const grouped: Record<string, typeof powerComponents> = {};
+    powerComponents.forEach((comp) => {
+      if (!grouped[comp.category]) {
+        grouped[comp.category] = [];
+      }
+      grouped[comp.category].push(comp);
+    });
+    return grouped;
+  }, [dataLoaded]);
+
+  // Group actuators by category - MUST be before early return
+  const actuatorsByCategory = useMemo(() => {
+    const grouped: Record<string, typeof actuatorOptions> = {};
+    actuatorOptions.forEach((act) => {
+      if (!grouped[act.category]) {
+        grouped[act.category] = [];
+      }
+      grouped[act.category].push(act);
+    });
+    return grouped;
+  }, [dataLoaded]);
+
+  // Show loading spinner while data loads - AFTER all hooks
   if (!dataLoaded) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -376,44 +427,6 @@ export default function CostEstimator() {
       });
     }
   };
-
-  // Calculate totals
-  const mcuCost = useMemo(() => {
-    const mcu = mcuOptions.find((m) => m.id === selectedMCU);
-    return mcu ? mcu.price : 0;
-  }, [selectedMCU]);
-
-  const sensorsCost = useMemo(() => {
-    return selectedSensors.reduce((total, sensorId) => {
-      const sensor = productsData.find((s) => s.id === sensorId);
-      const quantity = sensorQuantities[sensorId] || 1;
-      return total + (sensor ? sensor.price * quantity : 0);
-    }, 0);
-  }, [selectedSensors, sensorQuantities]);
-
-  const componentsCost = useMemo(() => {
-    return selectedComponents.reduce((total, compId) => {
-      const component = powerComponents.find((c) => c.id === compId);
-      const quantity = componentQuantities[compId] || 1;
-      return total + (component ? component.price * quantity : 0);
-    }, 0);
-  }, [selectedComponents, componentQuantities]);
-
-  const actuatorsCost = useMemo(() => {
-    return selectedActuators.reduce((total, actId) => {
-      const actuator = actuatorOptions.find((a) => a.id === actId);
-      const quantity = actuatorQuantities[actId] || 1;
-      return total + (actuator ? actuator.price * quantity : 0);
-    }, 0);
-  }, [selectedActuators, actuatorQuantities]);
-
-  const displayCost = useMemo(() => {
-    const display = displayOptions.find((d) => d.id === selectedDisplay);
-    return display ? display.price : 0;
-  }, [selectedDisplay]);
-
-  const totalCost =
-    mcuCost + sensorsCost + componentsCost + actuatorsCost + displayCost;
 
   // Reset all
   const resetAll = () => {
@@ -496,42 +509,6 @@ export default function CostEstimator() {
     a.click();
     URL.revokeObjectURL(url);
   };
-
-  // Group sensors by category
-  const sensorsByCategory = useMemo(() => {
-    const grouped: Record<string, typeof productsData> = {};
-    productsData.forEach((sensor) => {
-      if (!grouped[sensor.category]) {
-        grouped[sensor.category] = [];
-      }
-      grouped[sensor.category].push(sensor);
-    });
-    return grouped;
-  }, []);
-
-  // Group components by category
-  const componentsByCategory = useMemo(() => {
-    const grouped: Record<string, typeof powerComponents> = {};
-    powerComponents.forEach((comp) => {
-      if (!grouped[comp.category]) {
-        grouped[comp.category] = [];
-      }
-      grouped[comp.category].push(comp);
-    });
-    return grouped;
-  }, []);
-
-  // Group actuators by category
-  const actuatorsByCategory = useMemo(() => {
-    const grouped: Record<string, typeof actuatorOptions> = {};
-    actuatorOptions.forEach((act) => {
-      if (!grouped[act.category]) {
-        grouped[act.category] = [];
-      }
-      grouped[act.category].push(act);
-    });
-    return grouped;
-  }, []);
 
   return (
     <>
