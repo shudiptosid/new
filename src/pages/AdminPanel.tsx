@@ -49,9 +49,10 @@ import {
   Download,
   RotateCcw,
   FileText,
+  BookOpen,
 } from "lucide-react";
-import productsData from "@/data/productsData.json";
 import EstimateBuilder from "@/components/EstimateBuilder";
+import StudyMaterialsManager from "@/components/StudyMaterialsManager";
 
 interface Request {
   id: string;
@@ -89,6 +90,7 @@ const AdminPanel = () => {
     [key: string]: { product: any; quantity: number };
   }>({});
   const [showCart, setShowCart] = useState(false);
+  const [productsData, setProductsData] = useState<any[]>([]);
 
   // Calculate component categories
   const componentCategories = [
@@ -149,12 +151,25 @@ const AdminPanel = () => {
   // Calculate component counts
   const getCategoryCount = (categories: string[]) => {
     return productsData.filter((product: any) =>
-      categories.includes(product.category)
+      categories.includes(product.category),
     ).length;
   };
 
   // Note: Admin authentication is now handled by ProtectedRoute with requireAdmin={true}
   // User is guaranteed to be authenticated and admin when this component renders
+
+  // Load products data lazily
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const data = await import("@/data/productsData.json");
+        setProductsData(data.default);
+      } catch (error) {
+        console.error("Error loading products:", error);
+      }
+    };
+    loadProducts();
+  }, []);
 
   // Load ALL requests on mount
   useEffect(() => {
@@ -177,7 +192,7 @@ const AdminPanel = () => {
       setAllRequests(data || []);
       // Set initial filtered requests for pending tab
       const pendingRequests = (data || []).filter(
-        (req) => req.status === "pending"
+        (req) => req.status === "pending",
       );
       setRequests(pendingRequests);
     } catch (error) {
@@ -272,7 +287,7 @@ const AdminPanel = () => {
     (req) =>
       req.user_email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       req.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      req.summary?.toLowerCase().includes(searchTerm.toLowerCase())
+      req.summary?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const getStatusBadge = (status: string) => {
@@ -300,7 +315,7 @@ const AdminPanel = () => {
 
   const handleCategoryClick = (category: any) => {
     const components = productsData.filter((product: any) =>
-      category.categories.includes(product.category)
+      category.categories.includes(product.category),
     );
     setCategoryComponents(components);
     setSelectedCategory(category.id);
@@ -342,7 +357,7 @@ const AdminPanel = () => {
   const calculateTotal = () => {
     return Object.values(selectedItems).reduce(
       (total, item) => total + item.product.price * item.quantity,
-      0
+      0,
     );
   };
 
@@ -532,6 +547,23 @@ const AdminPanel = () => {
                   <ChevronRight className="h-6 w-6" />
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Study Materials Management */}
+          <Card className="mb-6 shadow-lg">
+            <CardHeader className="border-b border-slate-200 dark:border-slate-700 pb-4">
+              <CardTitle className="flex items-center gap-2">
+                <BookOpen className="h-5 w-5 text-accent" />
+                Study Materials Management
+              </CardTitle>
+              <CardDescription>
+                Upload and manage study materials for different engineering
+                streams (CSE, ECE, Mechatronics, MEC, General)
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <StudyMaterialsManager />
             </CardContent>
           </Card>
 
@@ -734,7 +766,7 @@ const AdminPanel = () => {
                         <Clock className="h-4 w-4 text-accent" />
                         <p className="text-sm text-slate-900 dark:text-white font-medium">
                           {new Date(
-                            selectedRequest.created_at
+                            selectedRequest.created_at,
                           ).toLocaleString()}
                         </p>
                       </div>
@@ -758,7 +790,7 @@ const AdminPanel = () => {
                               "user_name",
                               "request_type",
                               "admin_notes",
-                            ].includes(key)
+                            ].includes(key),
                         )
                         .map(([key, value]) => (
                           <div key={key}>
@@ -908,7 +940,7 @@ const AdminPanel = () => {
                             <ChevronRight className="h-4 w-4 text-accent" />
                             {
                               componentCategories.find(
-                                (c) => c.id === selectedCategory
+                                (c) => c.id === selectedCategory,
                               )?.name
                             }
                           </h3>
@@ -976,7 +1008,7 @@ const AdminPanel = () => {
                             <p className="text-xs text-white/80 mt-1">
                               {Object.values(selectedItems).reduce(
                                 (sum, item) => sum + item.quantity,
-                                0
+                                0,
                               )}{" "}
                               items in cart
                             </p>
@@ -1062,7 +1094,7 @@ const AdminPanel = () => {
                                         onClick={() =>
                                           updateQuantity(
                                             product.id,
-                                            quantity - 1
+                                            quantity - 1,
                                           )
                                         }
                                         className="h-7 w-7 p-0"
@@ -1078,7 +1110,7 @@ const AdminPanel = () => {
                                         onClick={() =>
                                           updateQuantity(
                                             product.id,
-                                            quantity + 1
+                                            quantity + 1,
                                           )
                                         }
                                         className="h-7 w-7 p-0"
@@ -1092,7 +1124,7 @@ const AdminPanel = () => {
                                   </div>
                                 </div>
                               </Card>
-                            )
+                            ),
                           )}
                         </div>
 
@@ -1108,7 +1140,7 @@ const AdminPanel = () => {
                               <span>
                                 {Object.values(selectedItems).reduce(
                                   (sum, item) => sum + item.quantity,
-                                  0
+                                  0,
                                 )}
                               </span>
                             </div>
@@ -1140,7 +1172,7 @@ const AdminPanel = () => {
                               alert(
                                 `Total: ₹${calculateTotal()}\nItems: ${
                                   Object.values(selectedItems).length
-                                }`
+                                }`,
                               );
                             }}
                           >

@@ -15,7 +15,6 @@ const HeartRateCard = () => {
       <h3 className="text-xl font-bold mb-2">
         Remote Heart Rate and SPO₂ Monitor
       </h3>
-      <div className="text-2xl font-bold text-accent mb-3">₹1,900</div>
       <p className="text-muted-foreground mb-2">
         Portable IoT-Based Heart & SpO₂ Monitor – Real-Time Health at Your
         Fingertips
@@ -151,7 +150,6 @@ const CropShadeCard = () => {
       <h3 className="text-xl font-bold mb-2">
         Smart Crop Shade Automation System
       </h3>
-      <div className="text-2xl font-bold text-accent mb-3">₹1,600</div>
       <p className="text-muted-foreground mb-2">
         An automated shading system for crops that protects against excessive
         heat and rain while ensuring optimal soil moisture.
@@ -274,7 +272,6 @@ const GreenHouseCard = () => {
       <h3 className="text-xl font-bold mb-2">
         Automatic Green House Ambience Control
       </h3>
-      <div className="text-2xl font-bold text-accent mb-3">₹3,200</div>
       <p className="text-muted-foreground mb-2">
         "A smart greenhouse system that automatically balances soil, humidity,
         temperature, and light for healthier plant growth."

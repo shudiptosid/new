@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
@@ -15,7 +15,15 @@ import { ESP8266Dialog } from "@/components/ESP8266Dialog";
 import { ArduinoNanoDialog } from "@/components/ArduinoNanoDialog";
 import { STM32Dialog } from "@/components/STM32Dialog";
 import { RaspberryPiPicoDialog } from "@/components/RaspberryPiPicoDialog";
-import { Search } from "lucide-react";
+import { ESP32C6Dialog } from "@/components/ESP32C6Dialog";
+import { ESP32S3Dialog } from "@/components/ESP32S3Dialog";
+import { RaspberryPi3BPlusDialog } from "@/components/RaspberryPi3BPlusDialog";
+import { RaspberryPi5Dialog } from "@/components/RaspberryPi5Dialog";
+import { ArduinoUnoQDialog } from "@/components/ArduinoUnoQDialog";
+import { BW16Dialog } from "@/components/BW16Dialog";
+import { FPGADialog } from "@/components/FPGADialog";
+import { ArduinoMegaDialog } from "@/components/ArduinoMegaDialog";
+import { Search, Download, FileText, Eye } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -24,6 +32,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SensorDialog } from "@/components/SensorDialog";
+import { supabase } from "@/lib/supabaseClient";
+import { useToast } from "@/hooks/use-toast";
 
 // Import Sensor Images
 import ultrasonicImg from "@/assets/Sensor/HC-SR04.png";
@@ -66,6 +76,21 @@ import ambientLightImg from "@/assets/Sensor/Ambient-Light.png";
 import soilMoistureImg from "@/assets/Sensor/Soil-Moisture.png";
 import gestureImg from "@/assets/Sensor/Gesture.png";
 import lidarImg from "@/assets/Sensor/Lidar.png";
+
+interface StudyMaterial {
+  id: string;
+  title: string;
+  author: string | null;
+  description: string | null;
+  year: number | null;
+  category: string;
+  file_url: string;
+  file_name: string;
+  file_size: number | null;
+  is_active: boolean;
+  download_count: number;
+  created_at: string;
+}
 
 const studyMaterials = [
   {
@@ -179,7 +204,7 @@ const sensorsData = [
       "DHT11 pinout",
       "smart home sensor",
     ],
-    datasheet: "https://handsontec.com/dataspecs/sensor/Vibration%20Sensor.pdf",
+    datasheet: "https://cdn.sparkfun.com/datasheets/Sensors/Temp/DHT11.pdf",
   },
   {
     id: 3,
@@ -399,7 +424,7 @@ const sensorsData = [
       "IMU sensor",
       "drone stabilization",
     ],
-    datasheet: "https://www.robotics.org.za/GY-521",
+    datasheet: "https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf",
   },
   {
     id: 8,
@@ -487,7 +512,7 @@ const sensorsData = [
       "altitude sensor",
       "weather station",
     ],
-    datasheet: "https://www.tinytronics.nl/product_files/000198_BMP180.pdf",
+    datasheet: "https://www.adafruit.com/datasheets/BMP180.pdf",
   },
   {
     id: 11,
@@ -578,7 +603,7 @@ const sensorsData = [
       "satellite tracking",
     ],
     datasheet:
-      "https://components.ubitap.com/datasheet/UART_GPS_NEO-6M_UserManual.pdf",
+      "https://www.u-blox.com/sites/default/files/NEO-6_DataSheet_%28GPS.G6-HW-09005%29.pdf",
   },
   {
     id: 14,
@@ -668,7 +693,7 @@ const sensorsData = [
       "touch switch",
       "interactive sensor",
     ],
-    datasheet: "https://www.handsontec.com/dataspecs/sensor/TTP223B+.pdf",
+    datasheet: "https://www.microchip.com/en-us/product/TTP223",
   },
   {
     id: 17,
@@ -875,7 +900,7 @@ const sensorsData = [
       "earthquake sensor",
     ],
     datasheet:
-      "https://www.mouser.com/datasheet/2/758/DHT11-Technical-Data-Sheet-Translated-Version-1143054.pdf",
+      "https://www.mide.com/content/1/Products/Vibration_Sensors/Vibration_Sensor_Data_Sheet.pdf",
   },
   {
     id: 24,
@@ -1139,7 +1164,7 @@ const sensorsData = [
       "gas sensor",
       "safety alarm",
     ],
-    datasheet: "https://www.sparkfun.com/datasheets/Sensors/Biometric/MQ-7.pdf",
+    datasheet: "https://www.sparkfun.com/datasheets/Sensors/MQ-7.pdf",
   },
   {
     id: 34,
@@ -1259,7 +1284,7 @@ const sensorsData = [
       "auto brightness",
     ],
     datasheet:
-      "https://www.handsontec.com/dataspecs/sensor/BH1750%20Light%20Sensor.pdf",
+      "https://www.rohm.com/datasheet/BH1750FVI/bh1750fvi-e.pdf",
   },
   {
     id: 40,
@@ -1289,7 +1314,7 @@ const sensorsData = [
       "plant monitoring",
     ],
     datasheet:
-      "https://rajguruelectronics.com/Product/5538/Capacitive%20Soil%20Moisture%20Sensor%20V2(1).0.pdf",
+      "https://www.dfrobot.com/wiki/index.php/Capacitive_Soil_Moisture_Sensor_SKU_SEN0114",
   },
   {
     id: 41,
@@ -1319,7 +1344,7 @@ const sensorsData = [
       "motion detection",
     ],
     datasheet:
-      "https://cdn.sparkfun.com/assets/learn_tutorials/3/2/1/Avago-APDS-9960-datasheet.pdf",
+      "https://www.broadcom.com/products/optical-sensors/integrated-ambient-light-and-proximity-sensors/apds-9960",
   },
   {
     id: 42,
@@ -1349,7 +1374,7 @@ const sensorsData = [
       "autonomous vehicle",
     ],
     datasheet:
-      "https://en.benewake.com/uploadfiles/2024/04/20240426135921367.pdf",
+      "https://www.stanford.edu/class/ee267/misc/lidar/TFLidar-S1-Datasheet.pdf",
   },
   // Add more sensors and actuators as needed
 ];
@@ -1375,7 +1400,7 @@ const SensorsAndActuatorsSection = () => {
     (sensor) =>
       sensor.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       sensor.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      sensor.description.toLowerCase().includes(searchQuery.toLowerCase())
+      sensor.description.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleSensorClick = (sensor: (typeof sensorsData)[0]) => {
@@ -1385,11 +1410,11 @@ const SensorsAndActuatorsSection = () => {
 
   return (
     <>
-      <div className="mt-8 mb-8 flex flex-col items-center px-2 sm:px-4">
-        <h3 className="text-xl sm:text-2xl md:text-3xl font-extrabold mb-4 text-center bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-lg">
+      <div className="mt-6 sm:mt-8 mb-6 sm:mb-8 flex flex-col items-center px-2 sm:px-4">
+        <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-extrabold mb-3 sm:mb-4 text-center bg-gradient-to-r from-accent via-primary to-accent bg-clip-text text-transparent animate-pulse drop-shadow-lg">
           Sensors and Actuators
         </h3>
-        <div className="max-w-4xl w-full bg-white/90 rounded-xl shadow-lg border-2 border-accent/20 p-3 sm:p-4 md:p-6 hover:bg-white/95 transition-colors duration-150">
+        <div className="max-w-full sm:max-w-4xl w-full bg-white/90 rounded-lg sm:rounded-xl shadow-lg border-2 border-accent/20 p-3 sm:p-4 md:p-6 hover:bg-white/95 transition-colors duration-150">
           {/* Search Bar */}
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground" />
@@ -1460,6 +1485,51 @@ const SensorsAndActuatorsSection = () => {
 
 const Resources = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [materials, setMaterials] = useState<StudyMaterial[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [loadingMaterials, setLoadingMaterials] = useState(false);
+
+  // Fetch materials from Supabase when category is selected
+  const fetchMaterials = async (category: string) => {
+    try {
+      setLoadingMaterials(true);
+      const { data, error } = await supabase
+        .from("study_materials")
+        .select("*")
+        .eq("category", category.toUpperCase())
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setMaterials(data || []);
+    } catch (error: any) {
+      console.error("Error fetching materials:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load study materials",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingMaterials(false);
+    }
+  };
+
+  // Download material and increment counter
+  const handleDownload = async (material: StudyMaterial) => {
+    try {
+      // Increment download count
+      await supabase.rpc("increment_download_count", {
+        material_id: material.id,
+      });
+
+      // Open file in new tab
+      window.open(material.file_url, "_blank");
+    } catch (error: any) {
+      console.error("Download error:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col relative">
       {/* Floating icons across the resources page */}
@@ -1478,6 +1548,12 @@ const Resources = () => {
           "ultrasonic sensor HC-SR04",
           "DHT11 temperature sensor",
           "PIR motion sensor",
+          "electronics learning",
+          "sensor pinout diagrams",
+          "IoT projects",
+          "sort questions",
+          "electronics learning",
+          "microcontroller tutorials",
           "Arduino boards",
           "ESP32",
           "Raspberry Pi",
@@ -1490,7 +1566,7 @@ const Resources = () => {
           "microcontroller tutorials",
           "Arduino programming",
           "sensor applications",
-          "robotics sensors",
+          "robotics sensors"
         ]}
         image="/resources-og-image.jpg"
         type="website"
@@ -1517,17 +1593,17 @@ const Resources = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 md:gap-10 lg:gap-12 mb-8 sm:mb-10 md:mb-12 px-2 sm:px-4">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:gap-8 lg:gap-10 mb-6 sm:mb-8 md:mb-10 lg:mb-12 px-2 sm:px-4">
             {/* Study Material Section */}
-            <div className="flex flex-col items-center h-full">
-              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3 sm:mb-4 mt-0 w-full max-w-2xl text-center mx-auto">
+            <div className="flex flex-col items-center">
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2 sm:mb-3 md:mb-4 mt-0 w-full max-w-2xl text-center mx-auto">
                 Study Material
               </h3>
-              <div className="flex-1 flex flex-col justify-center w-full max-w-2xl h-full">
+              <div className="w-full max-w-2xl">
                 {studyMaterials.map((res, idx) => (
                   <Card
                     key={idx}
-                    className="p-4 sm:p-5 md:p-6 flex flex-col justify-center min-h-[280px] sm:h-[300px] md:h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-150 group bg-white/90 backdrop-blur-md relative overflow-hidden"
+                    className="p-3 sm:p-4 md:p-5 lg:p-6 flex flex-col w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-150 group bg-white/90 backdrop-blur-md relative"
                   >
                     {/* Decorative accent shape in card */}
                     <div className="absolute -top-8 -right-8 w-16 sm:w-20 md:w-24 h-16 sm:h-20 md:h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
@@ -1547,10 +1623,10 @@ const Resources = () => {
                       </p>
                       <div className="w-full max-w-sm mx-auto mt-3">
                         <Select
+                          value={selectedCategory}
                           onValueChange={(value) => {
-                            if (value === "ece") {
-                              navigate("/resources/ece");
-                            }
+                            setSelectedCategory(value);
+                            fetchMaterials(value);
                           }}
                         >
                           <SelectTrigger className="w-full text-xl font-semibold bg-accent/5 border-2 border-accent/30 hover:border-accent/60 transition-colors h-14 px-6">
@@ -1566,23 +1642,116 @@ const Resources = () => {
                               Mechatronics
                             </SelectItem>
                             <SelectItem value="mec">MEC</SelectItem>
+                            <SelectItem value="general">General</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
+
+                      {/* Display materials for selected category */}
+                      {selectedCategory && (
+                        <div className="w-full mt-6 study-materials-container overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-thumb-accent/30 scrollbar-track-transparent hover:scrollbar-thumb-accent/50 custom-scrollbar rounded-lg border border-accent/20 max-h-44 sm:max-h-56 md:max-h-72 lg:max-h-96">
+                          {loadingMaterials ? (
+                            <div className="text-center py-8">
+                              <p className="text-muted-foreground">
+                                Loading materials...
+                              </p>
+                            </div>
+                          ) : materials.length === 0 ? (
+                            <div className="text-center py-8">
+                              <p className="text-muted-foreground">
+                                No materials available for{" "}
+                                {selectedCategory.toUpperCase()} yet.
+                              </p>
+                            </div>
+                          ) : (
+                            <div className="space-y-3 study-materials-content">
+                              {materials.map((material) => (
+                                <div
+                                  key={material.id}
+                                  className="border border-accent/20 rounded-lg p-4 hover:bg-accent/5 transition-colors"
+                                >
+                                  <div className="flex flex-col sm:flex-row items-start gap-3">
+                                    <div className="flex-1 w-full">
+                                      <div className="flex items-start gap-2 mb-2">
+                                        <FileText className="w-5 h-5 text-accent flex-shrink-0 mt-0.5" />
+                                        <div className="flex-1 min-w-0">
+                                          <h5 className="font-semibold text-sm leading-relaxed break-words">
+                                            {material.title}
+                                          </h5>
+                                        </div>
+                                      </div>
+                                      {material.author && (
+                                        <p className="text-xs text-muted-foreground mb-1 pl-7">
+                                          By: {material.author}
+                                        </p>
+                                      )}
+                                      {material.description && (
+                                        <p className="text-xs text-muted-foreground pl-7 break-words">
+                                          {material.description}
+                                        </p>
+                                      )}
+                                      <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-muted-foreground pl-7">
+                                        {material.year && (
+                                          <span>Year: {material.year}</span>
+                                        )}
+                                        {material.download_count > 0 && (
+                                          <span>
+                                            {material.download_count} downloads
+                                          </span>
+                                        )}
+                                        {material.file_size && (
+                                          <span>
+                                            {(
+                                              material.file_size /
+                                              (1024 * 1024)
+                                            ).toFixed(2)}{" "}
+                                            MB
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div className="flex gap-2 w-full sm:w-auto sm:flex-col">
+                                      <button
+                                        onClick={() =>
+                                          window.open(
+                                            material.file_url,
+                                            "_blank",
+                                          )
+                                        }
+                                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium whitespace-nowrap"
+                                      >
+                                        <Eye className="w-4 h-4" />
+                                        View
+                                      </button>
+                                      <button
+                                        onClick={() => handleDownload(material)}
+                                        className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors text-sm font-medium whitespace-nowrap"
+                                      >
+                                        <Download className="w-4 h-4" />
+                                        Download
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </Card>
                 ))}
               </div>
             </div>
             {/* Know Your Board Section */}
-            <div className="flex flex-col h-full">
-              <h3 className="text-2xl font-bold text-foreground mb-4 mt-0 w-full max-w-2xl text-center mx-auto">
+            <div className="flex flex-col items-center">
+              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-foreground mb-2 sm:mb-3 md:mb-4 mt-0 w-full max-w-2xl text-center mx-auto">
                 Know Your Board
               </h3>
-              <div className="flex-1 flex flex-col justify-stretch w-full max-w-2xl mx-auto">
-                <Card className="p-6 flex flex-col justify-between h-auto min-h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-150 group bg-white/90 backdrop-blur-md relative overflow-hidden">
+              <div className="w-full max-w-2xl">
+                <Card className="p-3 sm:p-4 md:p-5 lg:p-6 flex flex-col min-h-[280px] sm:min-h-[300px] md:min-h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-150 group bg-white/90 backdrop-blur-md relative overflow-hidden">
                   {/* Decorative accent shape in card */}
-                  <div className="absolute -top-8 -right-8 w-24 h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
+                  <div className="absolute -top-8 -right-8 w-16 sm:w-20 md:w-24 h-16 sm:h-20 md:h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
                   <div className="flex flex-col items-center">
                     <img
                       src={boardImg}
@@ -1593,7 +1762,7 @@ const Resources = () => {
                       Know Your Board
                     </h4>
                     <div className="flex flex-col items-center space-y-6 w-full">
-                      <div className="flex justify-between w-full max-w-md mx-auto gap-6">
+                      <div className="grid grid-cols-2 gap-4 w-full max-w-md mx-auto">
                         <div className="space-y-2">
                           <div className="flex items-center gap-2">
                             <span className="text-accent">•</span>
@@ -1601,11 +1770,27 @@ const Resources = () => {
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-accent">•</span>
+                            <ArduinoNanoDialog />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <ArduinoUnoQDialog />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <ArduinoMegaDialog />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
                             <ESP32Dialog />
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="text-accent">•</span>
-                            <ArduinoNanoDialog />
+                            <ESP32C6Dialog />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <ESP32S3Dialog />
                           </div>
                         </div>
                         <div className="space-y-2">
@@ -1621,6 +1806,22 @@ const Resources = () => {
                             <span className="text-accent">•</span>
                             <RaspberryPiPicoDialog />
                           </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <RaspberryPi3BPlusDialog />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <RaspberryPi5Dialog />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <BW16Dialog />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-accent">•</span>
+                            <FPGADialog />
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -1634,99 +1835,99 @@ const Resources = () => {
           <SensorsAndActuatorsSection />
 
           {/* Sort Question Section at the bottom */}
-          <div className="mt-8 flex flex-col items-center px-4">
-            <h3 className="text-2xl font-bold text-foreground mb-4 text-center">
+          <div className="mt-6 sm:mt-8 flex flex-col items-center px-4">
+            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3 sm:mb-4 text-center">
               Sort Question
             </h3>
-            <div className="max-w-2xl w-full bg-white/90 rounded-xl shadow-lg border-2 border-accent/20 p-6 flex flex-col items-center hover:bg-white/95 transition-colors duration-150">
-              <p className="text-muted-foreground text-center mb-2">
+            <div className="max-w-full sm:max-w-2xl w-full bg-white/90 rounded-lg sm:rounded-xl shadow-lg border-2 border-accent/20 p-4 sm:p-6 flex flex-col items-center hover:bg-white/95 transition-colors duration-150">
+              <p className="text-muted-foreground text-center mb-2 text-sm sm:text-base">
                 Here you can find a collection of important sort questions for
                 your studies and board preparation.
               </p>
-              <ul className="list-none pl-6 text-left w-full space-y-4">
-                <li className="border-b border-accent/10 pb-3 hover:bg-accent/5 p-2 rounded-lg transition-colors">
-                  <strong className="text-primary">
+              <ul className="list-none pl-4 sm:pl-6 text-left w-full space-y-3 sm:space-y-4">
+                <li className="border-b border-accent/10 pb-2 sm:pb-3 hover:bg-accent/5 p-2 rounded-lg transition-colors">
+                  <strong className="text-primary text-sm sm:text-base">
                     Q1: What is Arduino Uno?
                   </strong>
                   <br />
-                  <span className="text-muted-foreground">
+                  <span className="text-muted-foreground text-xs sm:text-sm">
                     A: Arduino Uno is an open-source microcontroller board based
                     on the ATmega328P chip.
                   </span>
                 </li>
                 <li>
-                  <strong>
+                  <strong className="text-sm sm:text-base">
                     Q2: How many digital I/O pins does Arduino Uno have?
                   </strong>
                   <br />
-                  <span>
+                  <span className="text-xs sm:text-sm">
                     A: 14 digital I/O pins (of which 6 can be used as PWM
                     outputs).
                   </span>
                 </li>
                 <li>
-                  <strong>
+                  <strong className="text-sm sm:text-base">
                     Q3: How many analog input pins are there on Arduino Uno?
                   </strong>
                   <br />
-                  <span>A: 6 analog input pins (A0–A5).</span>
+                  <span className="text-xs sm:text-sm">A: 6 analog input pins (A0–A5).</span>
                 </li>
                 <li>
-                  <strong>
+                  <strong className="text-sm sm:text-base">
                     Q4: What is the operating voltage of Arduino Uno?
                   </strong>
                   <br />
-                  <span>A: 5V.</span>
+                  <span className="text-xs sm:text-sm">A: 5V.</span>
                 </li>
                 <li>
-                  <strong>Q5: Which USB connector does Arduino Uno use?</strong>
+                  <strong className="text-sm sm:text-base">Q5: Which USB connector does Arduino Uno use?</strong>
                   <br />
-                  <span>A: USB Type-B connector.</span>
+                  <span className="text-xs sm:text-sm">A: USB Type-B connector.</span>
                 </li>
                 <li>
-                  <strong>Q6: What is the clock speed of Arduino Uno?</strong>
+                  <strong className="text-sm sm:text-base">Q6: What is the clock speed of Arduino Uno?</strong>
                   <br />
-                  <span>A: 16 MHz.</span>
+                  <span className="text-xs sm:text-sm">A: 16 MHz.</span>
                 </li>
                 <li>
-                  <strong>Q7: How is Arduino Uno programmed?</strong>
+                  <strong className="text-sm sm:text-base">Q7: How is Arduino Uno programmed?</strong>
                   <br />
-                  <span>A: Using the Arduino IDE with a USB cable.</span>
+                  <span className="text-xs sm:text-sm">A: Using the Arduino IDE with a USB cable.</span>
                 </li>
                 <li>
-                  <strong>
+                  <strong className="text-sm sm:text-base">
                     Q8: What is the flash memory size of Arduino Uno?
                   </strong>
                   <br />
-                  <span>A: 32 KB (0.5 KB used by bootloader).</span>
+                  <span className="text-xs sm:text-sm">A: 32 KB (0.5 KB used by bootloader).</span>
                 </li>
                 <li>
-                  <strong>
+                  <strong className="text-sm sm:text-base">
                     Q9: Which communication protocols does Arduino Uno support?
                   </strong>
                   <br />
-                  <span>A: UART (Serial), I2C, and SPI.</span>
+                  <span className="text-xs sm:text-sm">A: UART (Serial), I2C, and SPI.</span>
                 </li>
                 <li>
-                  <strong>
+                  <strong className="text-sm sm:text-base">
                     Q10: Can Arduino Uno run without being connected to a PC?
                   </strong>
                   <br />
-                  <span>
+                  <span className="text-xs sm:text-sm">
                     A: Yes, it can run from an external 7–12V power supply.
                   </span>
                 </li>
               </ul>
             </div>
             {/* Next Button for pagination */}
-            <div className="flex justify-center mt-8">
+            <div className="flex justify-center mt-6 sm:mt-8">
               <button
                 onClick={() => navigate("/resources/questions/2")}
-                className="px-8 py-3 bg-accent text-white rounded-lg font-bold shadow-lg hover:bg-accent/90 hover:transform hover:scale-105 hover:shadow-xl active:scale-95 transition-all duration-200 flex items-center gap-2"
+                className="px-6 py-2 sm:px-8 sm:py-3 bg-accent text-white rounded-lg font-bold shadow-lg hover:bg-accent/90 hover:transform hover:scale-105 hover:shadow-xl active:scale-95 transition-all duration-200 flex items-center gap-2 text-sm sm:text-base"
               >
                 Next
                 <svg
-                  className="w-5 h-5"
+                  className="w-4 h-4 sm:w-5 sm:h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

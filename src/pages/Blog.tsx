@@ -250,14 +250,14 @@ const Blog = () => {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="pt-24 pb-20 bg-gradient-hero">
+      <section className="pt-20 sm:pt-24 pb-12 sm:pb-16 md:pb-20 bg-gradient-hero">
         <div className="container mx-auto px-4 text-center">
-          <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold text-surface-elevated mb-6">
+          <div className="max-w-3xl sm:max-w-4xl mx-auto">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-surface-elevated mb-4 sm:mb-6">
               Technical
               <span className="text-accent"> Insights</span>
             </h1>
-            <p className="text-xl text-surface-elevated/80 mb-8 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl text-surface-elevated/80 mb-6 sm:mb-8 max-w-xl sm:max-w-2xl mx-auto leading-relaxed">
               In-depth articles on embedded systems, IoT development, and
               emerging technologies in the world of connected devices.
             </p>
@@ -266,15 +266,15 @@ const Blog = () => {
       </section>
 
       {/* Search and Filter */}
-      <section className="py-8 bg-surface">
+      <section className="py-6 sm:py-8 bg-surface">
         <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto mb-8">
+          <div className="max-w-xl sm:max-w-2xl mx-auto mb-6 sm:mb-8">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 sm:w-5 sm:h-5" />
               <Input
                 type="text"
                 placeholder="Search articles..."
-                className="pl-10 pr-4 py-3 text-lg"
+                className="pl-10 pr-4 py-2 sm:py-3 text-base sm:text-lg"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
               />
@@ -288,8 +288,8 @@ const Blog = () => {
                 variant={category === selectedCategory ? "default" : "outline"}
                 className={
                   category === selectedCategory
-                    ? "bg-accent hover:bg-accent/90"
-                    : "hover:bg-accent hover:text-accent-foreground"
+                    ? "bg-accent hover:bg-accent/90 text-sm sm:text-base px-3 py-1 sm:px-4 sm:py-2"
+                    : "hover:bg-accent hover:text-accent-foreground text-sm sm:text-base px-3 py-1 sm:px-4 sm:py-2"
                 }
                 onClick={() => setSelectedCategory(category)}
               >
@@ -327,18 +327,18 @@ const Blog = () => {
             <>
               {featuredPosts.length > 0 && (
                 <>
-                  <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-3xl font-bold text-foreground">
+                  <div className="flex flex-col sm:flex-row items-center justify-between mb-6 sm:mb-8 gap-4">
+                    <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
                       Featured Articles
                     </h2>
                     {selectedCategory !== "All" && (
-                      <span className="text-muted-foreground">
+                      <span className="text-muted-foreground text-sm sm:text-base">
                         {featuredPosts.length}{" "}
                         {featuredPosts.length === 1 ? "article" : "articles"}
                       </span>
                     )}
                   </div>
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+                  <div className="grid grid-cols-1 gap-6 sm:gap-8 mb-12 sm:mb-16">
                     {featuredPosts.map((post, index) => (
                       <Card
                         key={index}
@@ -348,29 +348,29 @@ const Blog = () => {
                             : "opacity-70"
                         }`}
                       >
-                        <div className="p-8">
-                          <div className="mb-4 flex justify-between items-center">
-                            <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
+                        <div className="p-6 sm:p-8">
+                          <div className="mb-3 sm:mb-4 flex flex-wrap justify-between items-center gap-2">
+                            <span className="inline-block px-2 sm:px-3 py-1 bg-accent/10 text-accent text-xs sm:text-sm font-medium rounded-full">
                               {post.category}
                             </span>
                             {!post.available && (
-                              <span className="text-sm text-muted-foreground">
+                              <span className="text-xs sm:text-sm text-muted-foreground">
                                 Coming Soon
                               </span>
                             )}
                           </div>
 
-                          <h3 className="text-2xl font-semibold mb-4 text-foreground group-hover:text-accent transition-colors leading-tight">
+                          <h3 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-foreground group-hover:text-accent transition-colors leading-tight">
                             {post.title}
                           </h3>
 
-                          <p className="text-muted-foreground mb-6 leading-relaxed text-lg">
+                          <p className="text-muted-foreground mb-4 sm:mb-6 leading-relaxed text-base">
                             {post.excerpt}
                           </p>
 
-                          <div className="flex items-center justify-between text-sm text-muted-foreground mb-6">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6 gap-2">
                             <div className="flex items-center gap-1">
-                              <Calendar className="w-4 h-4" />
+                              <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                               <span>
                                 {new Date(post.date).toLocaleDateString(
                                   "en-US",
@@ -383,7 +383,7 @@ const Blog = () => {
                               </span>
                             </div>
                             <div className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
+                              <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                               <span>{post.readTime}</span>
                             </div>
                           </div>
@@ -392,22 +392,22 @@ const Blog = () => {
                             <Link to={`/blog/${post.slug}`}>
                               <Button
                                 variant="ghost"
-                                className="p-0 h-auto text-accent hover:text-accent hover:bg-transparent font-medium text-lg group/btn"
+                                className="p-0 h-auto text-accent hover:text-accent hover:bg-transparent font-medium text-base sm:text-lg group/btn"
                               >
                                 <span className="group-hover/btn:underline">
                                   Read Article
                                 </span>
-                                <ArrowRight className="ml-2 w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+                                <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:translate-x-1 transition-transform" />
                               </Button>
                             </Link>
                           ) : (
                             <Button
                               variant="ghost"
-                              className="p-0 h-auto text-muted-foreground font-medium text-lg cursor-not-allowed"
+                              className="p-0 h-auto text-muted-foreground font-medium text-base sm:text-lg cursor-not-allowed"
                               disabled
                             >
                               Coming Soon
-                              <ArrowRight className="ml-2 w-5 h-5" />
+                              <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
                             </Button>
                           )}
                         </div>
@@ -431,38 +431,38 @@ const Blog = () => {
                       </span>
                     )}
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {regularPosts.map((post, index) => (
                       <Card
                         key={index}
-                        className={`p-6 transition-all duration-150 group ${
+                        className={`p-4 sm:p-6 transition-all duration-150 group ${
                           post.available
                             ? "hover:shadow-medium cursor-pointer"
                             : "opacity-70"
                         }`}
                       >
-                        <div className="mb-4 flex justify-between items-center">
-                          <span className="inline-block px-3 py-1 bg-accent/10 text-accent text-sm font-medium rounded-full">
+                        <div className="mb-3 sm:mb-4 flex flex-wrap justify-between items-center gap-2">
+                          <span className="inline-block px-2 sm:px-3 py-1 bg-accent/10 text-accent text-xs sm:text-sm font-medium rounded-full">
                             {post.category}
                           </span>
                           {!post.available && (
-                            <span className="text-sm text-muted-foreground">
+                            <span className="text-xs sm:text-sm text-muted-foreground">
                               Coming Soon
                             </span>
                           )}
                         </div>
 
-                        <h3 className="text-xl font-semibold mb-3 text-foreground group-hover:text-accent transition-colors leading-tight">
+                        <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground group-hover:text-accent transition-colors leading-tight">
                           {post.title}
                         </h3>
 
-                        <p className="text-muted-foreground mb-4 leading-relaxed">
+                        <p className="text-muted-foreground mb-3 sm:mb-4 leading-relaxed text-sm sm:text-base">
                           {post.excerpt}
                         </p>
 
-                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4 gap-2">
                           <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
+                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                             <span>
                               {new Date(post.date).toLocaleDateString("en-US", {
                                 year: "numeric",
@@ -472,7 +472,7 @@ const Blog = () => {
                             </span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Clock className="w-4 h-4" />
+                            <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                             <span>{post.readTime}</span>
                           </div>
                         </div>
@@ -481,20 +481,20 @@ const Blog = () => {
                           <Link to={`/blog/${post.slug}`}>
                             <Button
                               variant="ghost"
-                              className="p-0 h-auto text-accent hover:text-accent/80 font-medium"
+                              className="p-0 h-auto text-accent hover:text-accent/80 font-medium text-sm sm:text-base"
                             >
                               Read Article
-                              <ArrowRight className="ml-1 w-4 h-4" />
+                              <ArrowRight className="ml-1 w-3 h-3 sm:w-4 sm:h-4" />
                             </Button>
                           </Link>
                         ) : (
                           <Button
                             variant="ghost"
-                            className="p-0 h-auto text-muted-foreground font-medium cursor-not-allowed"
+                            className="p-0 h-auto text-muted-foreground font-medium text-sm sm:text-base cursor-not-allowed"
                             disabled
                           >
                             Coming Soon
-                            <ArrowRight className="ml-1 w-4 h-4" />
+                            <ArrowRight className="ml-1 w-3 h-3 sm:w-4 sm:h-4" />
                           </Button>
                         )}
                       </Card>

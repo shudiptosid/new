@@ -17,7 +17,7 @@ const BlogPostDialog = ({ open, onOpenChange }: BlogPostDialogProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold mb-4">
+          <DialogTitle className="text-2xl font-bold mb-4 leading-relaxed">
             Optimizing Power Consumption in IoT Devices | Best Strategies for
             Energy Efficiency
           </DialogTitle>

@@ -196,6 +196,107 @@ All colors MUST be HSL.
     @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3;
   }
 
+  /* Responsive padding and margin utilities */
+  .p-safe {
+    @apply p-4 sm:p-6 md:p-8;
+  }
+  
+  .pt-safe {
+    @apply pt-4 sm:pt-6 md:pt-8;
+  }
+  
+  .pb-safe {
+    @apply pb-4 sm:pb-6 md:pb-8;
+  }
+  
+  .px-safe {
+    @apply px-4 sm:px-6 md:px-8;
+  }
+  
+  .py-safe {
+    @apply py-4 sm:py-6 md:py-8;
+  }
+
+  /* Responsive font sizes */
+  .text-responsive-sm {
+    @apply text-xs sm:text-sm;
+  }
+  
+  .text-responsive-base {
+    @apply text-sm sm:text-base;
+  }
+  
+  .text-responsive-lg {
+    @apply text-base sm:text-lg;
+  }
+  
+  .text-responsive-xl {
+    @apply text-lg sm:text-xl;
+  }
+  
+  .text-responsive-2xl {
+    @apply text-xl sm:text-2xl;
+  }
+  
+  .text-responsive-3xl {
+    @apply text-2xl sm:text-3xl;
+  }
+  
+  .text-responsive-4xl {
+    @apply text-3xl sm:text-4xl;
+  }
+  
+  .text-responsive-5xl {
+    @apply text-4xl sm:text-5xl;
+  }
+  
+  .text-responsive-6xl {
+    @apply text-5xl sm:text-6xl;
+  }
+
+  /* Responsive max-width containers */
+  .max-w-responsive {
+    @apply max-w-[95vw] sm:max-w-[90vw] md:max-w-2xl lg:max-w-4xl xl:max-w-6xl;
+  }
+
+  /* Responsive gap utilities */
+  .gap-responsive {
+    @apply gap-4 sm:gap-6 md:gap-8;
+  }
+  
+  .gap-x-responsive {
+    @apply gap-x-4 sm:gap-x-6 md:gap-x-8;
+  }
+  
+  .gap-y-responsive {
+    @apply gap-y-4 sm:gap-y-6 md:gap-y-8;
+  }
+
+  /* Responsive height utilities */
+  .h-screen-responsive {
+    @apply h-screen sm:h-auto;
+  }
+  
+  .min-h-screen-responsive {
+    @apply min-h-screen sm:min-h-[calc(100vh-100px)];
+  }
+
+  /* Responsive border radius */
+  .rounded-responsive {
+    @apply rounded-lg sm:rounded-xl;
+  }
+
+  /* Responsive shadow */
+  .shadow-responsive {
+    @apply shadow-sm sm:shadow-md md:shadow-lg;
+  }
+
+  /* Responsive transition */
+  .transition-responsive {
+    @apply transition-all duration-200 ease-in-out sm:duration-300;
+  }
+}
+
   /* Performance optimizations */
   .will-change-transform {
     will-change: transform;
@@ -481,22 +582,22 @@ All colors MUST be HSL.
 
     /* Larger text for readability on small screens */
     h1 {
-      font-size: 2rem !important;
+      font-size: 1.75rem !important;
       line-height: 1.2;
     }
 
     h2 {
-      font-size: 1.75rem !important;
-      line-height: 1.3;
-    }
-
-    h3 {
       font-size: 1.5rem !important;
       line-height: 1.3;
     }
 
-    h4 {
+    h3 {
       font-size: 1.25rem !important;
+      line-height: 1.3;
+    }
+
+    h4 {
+      font-size: 1.1rem !important;
       line-height: 1.4;
     }
 
@@ -536,6 +637,20 @@ All colors MUST be HSL.
       max-width: 30px !important;
       max-height: 30px !important;
     }
+
+    /* Specific fix for study materials scroll container on mobile */
+    .study-materials-container {
+      max-height: 300px !important;
+    }
+    
+    /* Responsive text sizes */
+    .text-sm { font-size: 0.8rem !important; }
+    .text-base { font-size: 0.9rem !important; }
+    .text-lg { font-size: 1rem !important; }
+    .text-xl { font-size: 1.1rem !important; }
+    .text-2xl { font-size: 1.25rem !important; }
+    .text-3xl { font-size: 1.5rem !important; }
+    .text-4xl { font-size: 1.75rem !important; }
   }
 
   /* Tablet optimizations (768px - 1023px) */
@@ -546,11 +661,11 @@ All colors MUST be HSL.
     }
 
     h1 {
-      font-size: 2.5rem !important;
+      font-size: 2.25rem !important;
     }
 
     h2 {
-      font-size: 2rem !important;
+      font-size: 1.875rem !important;
     }
 
     /* 2-column grid for tablets */
@@ -563,6 +678,11 @@ All colors MUST be HSL.
       max-width: 40px !important;
       max-height: 40px !important;
     }
+
+    /* Specific fix for study materials scroll container on tablet */
+    .study-materials-container {
+      max-height: 400px !important;
+    }
   }
 
   /* Desktop optimizations (1024px+) */
@@ -574,11 +694,11 @@ All colors MUST be HSL.
     }
 
     h1 {
-      font-size: 3.5rem !important;
+      font-size: 3rem !important;
     }
 
     h2 {
-      font-size: 2.5rem !important;
+      font-size: 2.25rem !important;
     }
 
     /* Larger hover effects on desktop */
@@ -592,6 +712,18 @@ All colors MUST be HSL.
       max-width: 50px !important;
       max-height: 50px !important;
     }
+
+    /* Specific fix for study materials scroll container on desktop */
+    .study-materials-container {
+      max-height: 500px !important;
+    }
+
+    /* Ensure study materials container allows scrolling */
+    .study-materials-content {
+      height: auto;
+      overflow-y: auto;
+      max-height: 200px;
+    }
   }
 
   /* Large desktop (1440px+) */
@@ -601,11 +733,16 @@ All colors MUST be HSL.
     }
 
     h1 {
-      font-size: 4rem !important;
+      font-size: 3.75rem !important;
     }
 
     h2 {
-      font-size: 3rem !important;
+      font-size: 2.75rem !important;
+    }
+
+    /* Additional height for study materials on large screens */
+    .study-materials-container {
+      max-height: 600px !important;
     }
   }
 
@@ -617,8 +754,24 @@ All colors MUST be HSL.
 
     /* Reduce vertical spacing in landscape */
     section {
-      padding-top: 2rem !important;
-      padding-bottom: 2rem !important;
+      padding-top: 1.5rem !important;
+      padding-bottom: 1.5rem !important;
+    }
+  }
+
+  /* Extra small devices (320px and below) */
+  @media (max-width: 320px) {
+    body {
+      font-size: 14px;
+    }
+    
+    h1 { font-size: 1.5rem !important; }
+    h2 { font-size: 1.25rem !important; }
+    h3 { font-size: 1.1rem !important; }
+    
+    .container {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
     }
   }
 
@@ -664,4 +817,3 @@ All colors MUST be HSL.
   @media (prefers-color-scheme: dark) {
     /* Add dark mode styles here if needed */
   }
-}

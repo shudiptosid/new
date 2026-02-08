@@ -14,9 +14,12 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
         console.log("Service Worker registered:", registration.scope);
 
         // Check for updates periodically
-        setInterval(() => {
-          registration.update();
-        }, 1000 * 60 * 60); // Check every hour
+        setInterval(
+          () => {
+            registration.update();
+          },
+          1000 * 60 * 60,
+        ); // Check every hour
       })
       .catch((error) => {
         console.error("Service Worker registration failed:", error);

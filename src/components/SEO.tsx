@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface SEOProps {
   title: string;
@@ -18,7 +18,7 @@ export const SEO: React.FC<SEOProps> = ({
   description,
   keywords,
   image = "/default-og-image.jpg",
-  url = "https://yourwebsite.com",
+  url = "https://circuit-crafters.vercel.app",
   type = "website",
   author = "Circuit Crafters",
   publishedTime,
@@ -27,11 +27,12 @@ export const SEO: React.FC<SEOProps> = ({
 }) => {
   const fullTitle = `${title} | Circuit Crafters - IoT & Electronics Resources`;
   const canonicalUrl = `${url}${window.location.pathname}`;
+  const prevCanonicalUrl = useRef<string | null>(null);
 
   // Create JSON-LD structured data for better SEO
   const structuredData = {
     "@context": "https://schema.org",
-    "@type": "WebPage",
+    "@type": type === "article" ? "Article" : "WebPage",
     name: fullTitle,
     description: description,
     url: canonicalUrl,
@@ -49,7 +50,7 @@ export const SEO: React.FC<SEOProps> = ({
       name: "Circuit Crafters",
       logo: {
         "@type": "ImageObject",
-        url: `${url}/logo.png`,
+        url: `${url}/favicon-32x32.png`,
       },
     },
   };
@@ -61,7 +62,7 @@ export const SEO: React.FC<SEOProps> = ({
     // Helper function to set or update meta tags
     const setMetaTag = (name: string, content: string, isProperty = false) => {
       const attribute = isProperty ? "property" : "name";
-      let element = document.querySelector(`meta[${attribute}="${name}"]`);
+      let element = document.querySelector(`meta[${attribute}="${name}"]`) as HTMLMetaElement;
 
       if (!element) {
         element = document.createElement("meta");
@@ -72,13 +73,18 @@ export const SEO: React.FC<SEOProps> = ({
     };
 
     // Set canonical URL
-    let canonical = document.querySelector('link[rel="canonical"]');
+    let canonical = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
     if (!canonical) {
       canonical = document.createElement("link");
       canonical.setAttribute("rel", "canonical");
       document.head.appendChild(canonical);
     }
-    canonical.setAttribute("href", canonicalUrl);
+    
+    // Only update canonical if it has changed
+    if (prevCanonicalUrl.current !== canonicalUrl) {
+      canonical.setAttribute("href", canonicalUrl);
+      prevCanonicalUrl.current = canonicalUrl;
+    }
 
     // Primary Meta Tags
     setMetaTag("title", fullTitle);
@@ -89,6 +95,7 @@ export const SEO: React.FC<SEOProps> = ({
     setMetaTag("language", "English");
     setMetaTag("revisit-after", "7 days");
     setMetaTag("category", category);
+    setMetaTag("viewport", "width=device-width, initial-scale=1.0");
 
     // Open Graph
     setMetaTag("og:type", type, true);
@@ -98,6 +105,8 @@ export const SEO: React.FC<SEOProps> = ({
     setMetaTag("og:image", image, true);
     setMetaTag("og:site_name", "Circuit Crafters", true);
     setMetaTag("og:locale", "en_US", true);
+    setMetaTag("og:image:width", "1200", true);
+    setMetaTag("og:image:height", "630", true);
 
     if (publishedTime) {
       setMetaTag("article:published_time", publishedTime, true);
@@ -114,19 +123,24 @@ export const SEO: React.FC<SEOProps> = ({
     setMetaTag("twitter:image", image);
 
     // Additional SEO Tags
-    setMetaTag("theme-color", "#3b82f6");
+    setMetaTag("theme-color", "#001a33");
     setMetaTag("apple-mobile-web-app-capable", "yes");
-    setMetaTag("apple-mobile-web-app-status-bar-style", "black");
+    setMetaTag("apple-mobile-web-app-status-bar-style", "black-translucent");
     setMetaTag("format-detection", "telephone=no");
 
     // Add JSON-LD structured data
-    let script = document.querySelector('script[type="application/ld+json"]');
+    let script = document.querySelector('script[type="application/ld+json"]') as HTMLScriptElement;
     if (!script) {
       script = document.createElement("script");
       script.setAttribute("type", "application/ld+json");
       document.head.appendChild(script);
     }
     script.textContent = JSON.stringify(structuredData);
+
+    // Cleanup function to prevent memory leaks
+    return () => {
+      // Clean up if needed
+    };
   }, [
     fullTitle,
     description,

@@ -26,10 +26,9 @@ const Index = () => {
         <div className="relative">
           {/* Background Image - new bg3.jpg */}
           <div
-            className="absolute inset-0 w-full h-full bg-cover bg-center bg-fixed"
+            className="absolute inset-0 w-full h-full bg-cover bg-center"
             style={{
               backgroundImage: `url(${backgroundImage})`,
-              backgroundAttachment: "fixed",
               opacity: 0.9, // Higher opacity for the new image to make it more visible
               backgroundSize: "cover",
             }}

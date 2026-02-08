@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect, lazy, Suspense } from "react";
+import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -258,15 +259,39 @@ export default function CostEstimator() {
     Record<string, number>
   >({});
 
-  // Load products data asynchronously
+  // Load products data from Supabase
   useEffect(() => {
     const loadData = async () => {
       try {
-        const data = await import("@/data/productsData.json");
-        setProductsData(data.default || []);
+        // Fetch from Supabase component_prices table
+        const { data, error } = await supabase
+          .from("component_prices")
+          .select("product_id, name, price, category, description")
+          .eq("is_active", true)
+          .order("serial_no", { ascending: true });
+
+        if (error) throw error;
+
+        // Map to match the expected format
+        const mappedData = (data || []).map((item) => ({
+          id: item.product_id,
+          name: item.name,
+          price: item.price,
+          category: item.category,
+          description: item.description || "",
+        }));
+
+        setProductsData(mappedData);
         setDataLoaded(true);
       } catch (error) {
-        console.error("Failed to load products data:", error);
+        console.error("Failed to load products data from Supabase:", error);
+        // Fallback to JSON file if Supabase fails
+        try {
+          const jsonData = await import("@/data/productsData.json");
+          setProductsData(jsonData.default || []);
+        } catch (jsonError) {
+          console.error("Failed to load from JSON fallback:", jsonError);
+        }
         setDataLoaded(true); // Still set to true to show the UI
       }
     };
