@@ -2,216 +2,98 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Calendar, Clock, Search } from "lucide-react";
+import {
+  ArrowRight,
+  Calendar,
+  Clock,
+  Search,
+  BookOpen,
+  TrendingUp,
+  Eye,
+  MessageSquare,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { useToast } from "@/hooks/use-toast";
+
+interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  read_time: string;
+  featured: boolean;
+  view_count: number;
+  created_at: string;
+  comment_count?: number;
+}
 
 const Blog = () => {
+  const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchInput, setSearchInput] = useState(""); // Immediate input state
-  const [searchQuery, setSearchQuery] = useState(""); // Debounced search state
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Preload BlogPost component when user lands on blog page
-  // This eliminates 1-1.5 sec loading delay when clicking "Read Article"
+  // Fetch blogs from database
   useEffect(() => {
-    // Prefetch the BlogPost chunk in the background
-    import("./BlogPost").catch(() => {
-      // Silently ignore preload errors
-    });
+    fetchBlogs();
   }, []);
+
+  const fetchBlogs = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("blogs")
+        .select(
+          `
+          *,
+          blog_comments(count)
+        `,
+        )
+        .eq("is_active", true)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      const blogsWithComments = data?.map((blog: any) => ({
+        id: blog.id,
+        slug: blog.slug,
+        title: blog.title,
+        excerpt: blog.excerpt,
+        category: blog.category,
+        read_time: blog.read_time,
+        featured: blog.featured,
+        view_count: blog.view_count,
+        created_at: blog.created_at,
+        comment_count: blog.blog_comments[0]?.count || 0,
+      }));
+
+      setPosts(blogsWithComments || []);
+    } catch (error: any) {
+      console.error("Error fetching blogs:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load blog posts",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Debounce search to reduce re-renders
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearchQuery(searchInput);
-    }, 100); // 100ms delay
+    }, 100);
 
     return () => clearTimeout(timer);
   }, [searchInput]);
-
-  const posts = [
-    {
-      slug: "power-consumption",
-      title: "Optimizing Power Consumption in IoT Devices",
-      excerpt:
-        "Master power optimization techniques to extend battery life 10-50x. Learn sleep modes, DVFS, low-power protocols, and energy harvesting for sustainable IoT devices.",
-      date: "2025-10-15",
-      readTime: "14 min read",
-      category: "Power Management",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "rtos",
-      title: "Real-Time Operating Systems (RTOS) for IoT: Complete Guide",
-      excerpt:
-        "Master RTOS for IoT with FreeRTOS & Zephyr. Learn task scheduling, inter-task communication, code examples, and build production-ready embedded systems.",
-      date: "2025-10-08",
-      readTime: "16 min read",
-      category: "RTOS",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "lorawan-networks",
-      title: "Building Resilient LoRaWAN Networks",
-      excerpt:
-        "Best practices for designing and deploying reliable long-range wireless sensor networks in challenging environments and remote locations.",
-      date: "2025-09-25",
-      readTime: "12 min read",
-      category: "Networking",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "debugging-embedded",
-      title: "Debugging Embedded Systems: A Complete Guide",
-      excerpt:
-        "Master essential debugging strategies, tools, and methodologies for Arduino, ESP32, and STM32 projects. Learn UART logging, IDE debugging, and hardware troubleshooting.",
-      date: "2025-10-12",
-      readTime: "15 min read",
-      category: "Development",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "edge-ai",
-      title: "Edge AI on Microcontrollers: TensorFlow Lite Micro Guide",
-      excerpt:
-        "Run machine learning on ESP32, Arduino, STM32. Master TensorFlow Lite Micro, quantization, model optimization, and deploy AI at the edge with complete examples.",
-      date: "2025-09-22",
-      readTime: "18 min read",
-      category: "AI/ML",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "mqtt-protocol",
-      title: "MQTT Protocol Deep Dive: Complete Guide for IoT Developers",
-      excerpt:
-        "Master MQTT messaging protocol for IoT. Learn QoS levels, retained messages, Last Will Testament, broker setup (Mosquitto, HiveMQ), and build production-ready ESP32 applications.",
-      date: "2025-10-05",
-      readTime: "16 min read",
-      category: "Protocols",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "iot-security",
-      title: "IoT Security Best Practices: Complete Guide for Embedded Systems",
-      excerpt:
-        "Master IoT security for production devices. Learn secure boot, TLS encryption, secure OTA updates, hardware security modules, authentication, and protect against common vulnerabilities.",
-      date: "2025-10-18",
-      readTime: "18 min read",
-      category: "Security",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "ble-basics",
-      title:
-        "BLE (Bluetooth Low Energy) Basics: Complete Guide for IoT Developers",
-      excerpt:
-        "Master Bluetooth Low Energy for IoT projects. Learn BLE fundamentals, GATT services, ESP32 implementation, beacons, mobile app integration, and build wireless connected devices.",
-      date: "2025-10-02",
-      readTime: "16 min read",
-      category: "Connectivity",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "ota-updates",
-      title:
-        "OTA Firmware Updates: Secure Over-the-Air Updates for IoT Devices",
-      excerpt:
-        "Master secure OTA firmware updates for ESP32, Arduino, STM32. Learn version management, rollback protection, delta updates, firmware signing, and deploy updates safely to production.",
-      date: "2025-09-28",
-      readTime: "17 min read",
-      category: "Development",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "node-red-dashboards",
-      title: "Node-RED IoT Dashboards: Build Real-Time Data Visualization",
-      excerpt:
-        "Master Node-RED for IoT dashboards. Learn flow-based programming, MQTT integration, dashboard widgets, database storage, ESP32 connectivity, and build production-ready monitoring systems.",
-      date: "2025-09-20",
-      readTime: "15 min read",
-      category: "Visualization",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "esp32-usb-driver",
-      title: "ESP32/ESP8266 USB Driver Installation: Fix Port Detection Issues",
-      excerpt:
-        "Fix ESP32/ESP8266 COM port not detected. Install CP2102, CH340, FTDI drivers on Windows, Mac, Linux. Complete troubleshooting guide with all backlinks.",
-      date: "2025-10-27",
-      readTime: "5 min read",
-      category: "Troubleshooting",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "esp32-getting-started",
-      title:
-        "ESP32 Getting Started Guide: Your First IoT Project in 30 Minutes",
-      excerpt:
-        "Complete beginner-friendly ESP32 tutorial. Learn setup, installation, first code upload, WiFi connection, and sensor integration in 30 minutes. Perfect for IoT beginners.",
-      date: "2025-11-24",
-      readTime: "10 min read",
-      category: "Tutorials",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "smart-greenhouse-diy",
-      title: "Build Your Own Smart Greenhouse: Complete Step-by-Step Guide",
-      excerpt:
-        "Build an automated smart greenhouse with temperature, humidity, soil moisture control. Complete tutorial with code, wiring, sensor integration, and cloud monitoring.",
-      date: "2025-11-22",
-      readTime: "20 min read",
-      category: "Projects",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "iot-sensors-guide",
-      title: "Top 10 IoT Sensors Every Developer Must Know (With Datasheets)",
-      excerpt:
-        "Complete guide to essential IoT sensors: DHT11, HC-SR04, PIR, Soil Moisture, Gas, GPS, and more. Includes datasheets, wiring, code examples, and real-world applications.",
-      date: "2025-11-18",
-      readTime: "15 min read",
-      category: "Sensors",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "arduino-vs-esp32",
-      title: "Arduino vs ESP32: Which Microcontroller Should You Choose?",
-      excerpt:
-        "Compare Arduino Uno and ESP32: performance, WiFi, price, GPIO pins, power consumption. Detailed guide to help you choose the right microcontroller for your IoT project.",
-      date: "2025-11-20",
-      readTime: "12 min read",
-      category: "Hardware",
-      featured: true,
-      available: true,
-    },
-    {
-      slug: "wifi-troubleshooting",
-      title:
-        "WiFi Connection Issues on ESP32/ESP8266: Complete Troubleshooting Guide",
-      excerpt:
-        "Solve ESP32 and ESP8266 WiFi connection problems: authentication failed, SSID not found, weak signal, disconnections. Includes code fixes and network configuration.",
-      date: "2025-11-15",
-      readTime: "13 min read",
-      category: "Troubleshooting",
-      featured: true,
-      available: true,
-    },
-  ];
 
   const categories = [
     "All",
@@ -228,6 +110,7 @@ const Blog = () => {
     "Projects",
     "Sensors",
     "Hardware",
+    "Troubleshooting",
   ];
 
   // Filter posts based on selected category and search query
@@ -242,267 +125,373 @@ const Blog = () => {
     return matchesCategory && matchesSearch;
   });
 
-  const featuredPosts = filteredPosts.filter((post) => post.featured);
-  const regularPosts = filteredPosts.filter((post) => !post.featured);
-
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 to-white">
       <Navigation />
 
-      {/* Hero Section */}
-      <section className="pt-20 sm:pt-24 pb-12 sm:pb-16 md:pb-20 bg-gradient-hero">
-        <div className="container mx-auto px-4 text-center">
-          <div className="max-w-3xl sm:max-w-4xl mx-auto">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-surface-elevated mb-4 sm:mb-6">
-              Technical
-              <span className="text-accent"> Insights</span>
+      {/* Hero Section - Academic & Professional with Circuit Animation */}
+      <section className="pt-24 pb-16 bg-gradient-to-br from-slate-800 via-slate-700 to-gray-800 text-white relative overflow-hidden">
+        {/* Animated Circuit Background */}
+        <div className="absolute inset-0 opacity-20">
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern
+                id="circuit"
+                x="0"
+                y="0"
+                width="200"
+                height="200"
+                patternUnits="userSpaceOnUse"
+              >
+                {/* Horizontal lines */}
+                <line
+                  x1="0"
+                  y1="50"
+                  x2="200"
+                  y2="50"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <line
+                  x1="0"
+                  y1="150"
+                  x2="200"
+                  y2="150"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                {/* Vertical lines */}
+                <line
+                  x1="50"
+                  y1="0"
+                  x2="50"
+                  y2="200"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <line
+                  x1="150"
+                  y1="0"
+                  x2="150"
+                  y2="200"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                {/* Circuit nodes */}
+                <circle cx="50" cy="50" r="4" fill="currentColor" />
+                <circle cx="150" cy="50" r="4" fill="currentColor" />
+                <circle cx="50" cy="150" r="4" fill="currentColor" />
+                <circle cx="150" cy="150" r="4" fill="currentColor" />
+                {/* Small components */}
+                <rect
+                  x="95"
+                  y="45"
+                  width="10"
+                  height="10"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+                <rect
+                  x="45"
+                  y="95"
+                  width="10"
+                  height="10"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                />
+              </pattern>
+            </defs>
+            <rect
+              width="100%"
+              height="100%"
+              fill="url(#circuit)"
+              className="animate-[slide_60s_linear_infinite]"
+            />
+          </svg>
+        </div>
+
+        {/* Floating Circuit Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {[...Array(6)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute opacity-10"
+              style={{
+                left: `${(i * 20) % 100}%`,
+                top: `${(i * 15) % 80}%`,
+                animation: `float ${20 + i * 5}s ease-in-out infinite`,
+                animationDelay: `${i * 2}s`,
+              }}
+            >
+              <svg
+                width="60"
+                height="60"
+                viewBox="0 0 60 60"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="30" cy="30" r="8" stroke="white" strokeWidth="2" />
+                <line
+                  x1="30"
+                  y1="0"
+                  x2="30"
+                  y2="22"
+                  stroke="white"
+                  strokeWidth="2"
+                />
+                <line
+                  x1="30"
+                  y1="38"
+                  x2="30"
+                  y2="60"
+                  stroke="white"
+                  strokeWidth="2"
+                />
+                <line
+                  x1="0"
+                  y1="30"
+                  x2="22"
+                  y2="30"
+                  stroke="white"
+                  strokeWidth="2"
+                />
+                <line
+                  x1="38"
+                  y1="30"
+                  x2="60"
+                  y2="30"
+                  stroke="white"
+                  strokeWidth="2"
+                />
+              </svg>
+            </div>
+          ))}
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-white/20">
+              <BookOpen className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                Technical Knowledge Base
+              </span>
+            </div>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+              IoT & Embedded Systems
+              <span className="block text-emerald-300 mt-2">
+                Research & Insights
+              </span>
             </h1>
-            <p className="text-lg sm:text-xl text-surface-elevated/80 mb-6 sm:mb-8 max-w-xl sm:max-w-2xl mx-auto leading-relaxed">
-              In-depth articles on embedded systems, IoT development, and
-              emerging technologies in the world of connected devices.
+            <p className="text-lg md:text-xl text-slate-200 mb-8 max-w-2xl mx-auto leading-relaxed">
+              Comprehensive articles on embedded systems, IoT protocols,
+              real-time operating systems, and cutting-edge technologies.
+              Written for students, educators, and industry professionals.
             </p>
+            <div className="flex flex-wrap justify-center gap-8 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                <span>Industry Best Practices</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                <span>Academic Research</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full"></div>
+                <span>Practical Tutorials</span>
+              </div>
+            </div>
           </div>
         </div>
+
+        {/* CSS Animation Keyframes */}
+        <style>{`
+          @keyframes slide {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100px, 100px); }
+          }
+          @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+          }
+        `}</style>
       </section>
 
-      {/* Search and Filter */}
-      <section className="py-6 sm:py-8 bg-surface">
+      {/* Search and Filter - Clean & Functional */}
+      <section className="py-8 bg-white border-b">
         <div className="container mx-auto px-4">
-          <div className="max-w-xl sm:max-w-2xl mx-auto mb-6 sm:mb-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 sm:w-5 sm:h-5" />
+          <div className="max-w-4xl mx-auto">
+            {/* Search Bar */}
+            <div className="relative mb-6">
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
                 type="text"
-                placeholder="Search articles..."
-                className="pl-10 pr-4 py-2 sm:py-3 text-base sm:text-lg"
+                placeholder="Search articles by title, topic, or keyword..."
+                className="pl-12 pr-4 py-3 text-base border-gray-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 rounded-lg"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
               />
             </div>
-          </div>
 
-          <div className="flex flex-wrap justify-center gap-2">
-            {categories.map((category) => (
-              <Button
-                key={category}
-                variant={category === selectedCategory ? "default" : "outline"}
-                className={
-                  category === selectedCategory
-                    ? "bg-accent hover:bg-accent/90 text-sm sm:text-base px-3 py-1 sm:px-4 sm:py-2"
-                    : "hover:bg-accent hover:text-accent-foreground text-sm sm:text-base px-3 py-1 sm:px-4 sm:py-2"
-                }
-                onClick={() => setSelectedCategory(category)}
-              >
-                {category}
-              </Button>
-            ))}
+            {/* Category Pills */}
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  onClick={() => setSelectedCategory(category)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                    category === selectedCategory
+                      ? "bg-emerald-600 text-white shadow-md"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Featured Posts */}
-      <section className="py-20 flex-grow">
+      {/* Articles Section */}
+      <section className="py-12 flex-grow">
         <div className="container mx-auto px-4">
-          {filteredPosts.length === 0 ? (
-            <div className="text-center py-20">
-              <h2 className="text-3xl font-bold text-foreground mb-4">
+          {loading ? (
+            <div className="max-w-2xl mx-auto text-center py-20">
+              <p className="text-gray-500">Loading blog posts...</p>
+            </div>
+          ) : filteredPosts.length === 0 ? (
+            <div className="max-w-2xl mx-auto text-center py-20">
+              <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                <Search className="w-8 h-8 text-gray-400" />
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-3">
                 No Articles Found
               </h2>
-              <p className="text-muted-foreground text-lg mb-6">
+              <p className="text-gray-600 mb-6">
                 {searchQuery
-                  ? `No articles match "${searchQuery}"`
-                  : `No articles in ${selectedCategory} category yet`}
+                  ? `No articles match "${searchQuery}". Try different keywords.`
+                  : `No articles in ${selectedCategory} category yet.`}
               </p>
               <Button
                 onClick={() => {
                   setSelectedCategory("All");
+                  setSearchInput("");
                   setSearchQuery("");
                 }}
-                className="bg-accent hover:bg-accent/90"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 Clear Filters
               </Button>
             </div>
           ) : (
-            <>
-              {featuredPosts.length > 0 && (
-                <>
-                  <div className="flex flex-col sm:flex-row items-center justify-between mb-6 sm:mb-8 gap-4">
-                    <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
-                      Featured Articles
-                    </h2>
-                    {selectedCategory !== "All" && (
-                      <span className="text-muted-foreground text-sm sm:text-base">
-                        {featuredPosts.length}{" "}
-                        {featuredPosts.length === 1 ? "article" : "articles"}
-                      </span>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-1 gap-6 sm:gap-8 mb-12 sm:mb-16">
-                    {featuredPosts.map((post, index) => (
-                      <Card
-                        key={index}
-                        className={`overflow-hidden transition-all duration-150 group ${
-                          post.available
-                            ? "hover:shadow-strong cursor-pointer"
-                            : "opacity-70"
-                        }`}
-                      >
-                        <div className="p-6 sm:p-8">
-                          <div className="mb-3 sm:mb-4 flex flex-wrap justify-between items-center gap-2">
-                            <span className="inline-block px-2 sm:px-3 py-1 bg-accent/10 text-accent text-xs sm:text-sm font-medium rounded-full">
-                              {post.category}
-                            </span>
-                            {!post.available && (
-                              <span className="text-xs sm:text-sm text-muted-foreground">
-                                Coming Soon
-                              </span>
-                            )}
-                          </div>
+            <div className="max-w-6xl mx-auto">
+              {/* Results Info */}
+              <div className="flex items-center justify-between mb-8 pb-4 border-b">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  {selectedCategory === "All"
+                    ? "All Articles"
+                    : selectedCategory}
+                </h2>
+                <div className="flex items-center gap-2 text-gray-600">
+                  <TrendingUp className="w-4 h-4" />
+                  <span className="text-sm font-medium">
+                    {filteredPosts.length}{" "}
+                    {filteredPosts.length === 1 ? "Article" : "Articles"}
+                  </span>
+                </div>
+              </div>
 
-                          <h3 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4 text-foreground group-hover:text-accent transition-colors leading-tight">
-                            {post.title}
-                          </h3>
-
-                          <p className="text-muted-foreground mb-4 sm:mb-6 leading-relaxed text-base">
-                            {post.excerpt}
-                          </p>
-
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm text-muted-foreground mb-4 sm:mb-6 gap-2">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
-                              <span>
-                                {new Date(post.date).toLocaleDateString(
-                                  "en-US",
-                                  {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                  }
-                                )}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                              <span>{post.readTime}</span>
-                            </div>
-                          </div>
-
-                          {post.available ? (
-                            <Link to={`/blog/${post.slug}`}>
-                              <Button
-                                variant="ghost"
-                                className="p-0 h-auto text-accent hover:text-accent hover:bg-transparent font-medium text-base sm:text-lg group/btn"
-                              >
-                                <span className="group-hover/btn:underline">
-                                  Read Article
-                                </span>
-                                <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover/btn:translate-x-1 transition-transform" />
-                              </Button>
-                            </Link>
-                          ) : (
-                            <Button
-                              variant="ghost"
-                              className="p-0 h-auto text-muted-foreground font-medium text-base sm:text-lg cursor-not-allowed"
-                              disabled
-                            >
-                              Coming Soon
-                              <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
-                            </Button>
-                          )}
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {/* All Articles */}
-              {regularPosts.length > 0 && (
-                <>
-                  <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-3xl font-bold text-foreground">
-                      All Articles
-                    </h2>
-                    {selectedCategory !== "All" && (
-                      <span className="text-muted-foreground">
-                        {regularPosts.length}{" "}
-                        {regularPosts.length === 1 ? "article" : "articles"}
-                      </span>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    {regularPosts.map((post, index) => (
-                      <Card
-                        key={index}
-                        className={`p-4 sm:p-6 transition-all duration-150 group ${
-                          post.available
-                            ? "hover:shadow-medium cursor-pointer"
-                            : "opacity-70"
-                        }`}
-                      >
-                        <div className="mb-3 sm:mb-4 flex flex-wrap justify-between items-center gap-2">
-                          <span className="inline-block px-2 sm:px-3 py-1 bg-accent/10 text-accent text-xs sm:text-sm font-medium rounded-full">
-                            {post.category}
+              {/* Grid Layout - 2 Columns */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {filteredPosts.map((post) => (
+                  <Card
+                    key={post.id}
+                    className="group bg-white border border-gray-200 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:border-emerald-300"
+                  >
+                    <div className="p-6">
+                      {/* Category & Featured Badge */}
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full">
+                          {post.category}
+                        </span>
+                        {post.featured && (
+                          <span className="text-xs font-medium text-yellow-600 bg-yellow-50 px-2 py-1 rounded">
+                            Featured
                           </span>
-                          {!post.available && (
-                            <span className="text-xs sm:text-sm text-muted-foreground">
-                              Coming Soon
-                            </span>
-                          )}
-                        </div>
+                        )}
+                      </div>
 
-                        <h3 className="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-foreground group-hover:text-accent transition-colors leading-tight">
-                          {post.title}
-                        </h3>
+                      {/* Title */}
+                      <h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-emerald-600 transition-colors leading-tight line-clamp-2">
+                        {post.title}
+                      </h3>
 
-                        <p className="text-muted-foreground mb-3 sm:mb-4 leading-relaxed text-sm sm:text-base">
-                          {post.excerpt}
-                        </p>
+                      {/* Excerpt */}
+                      <p className="text-gray-600 mb-4 leading-relaxed text-sm line-clamp-3">
+                        {post.excerpt}
+                      </p>
 
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4 gap-2">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
-                            <span>
-                              {new Date(post.date).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "long",
+                      {/* Meta Info */}
+                      <div className="flex items-center gap-4 text-xs text-gray-500 mb-4 pb-4 border-b border-gray-100">
+                        <div className="flex items-center gap-1.5">
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span>
+                            {new Date(post.created_at).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
                                 day: "numeric",
-                              })}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
-                            <span>{post.readTime}</span>
-                          </div>
+                                year: "numeric",
+                              },
+                            )}
+                          </span>
                         </div>
+                        <div className="flex items-center gap-1.5">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>{post.read_time}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <Eye className="w-3.5 h-3.5" />
+                          <span>{post.view_count}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <MessageSquare className="w-3.5 h-3.5" />
+                          <span>{post.comment_count || 0}</span>
+                        </div>
+                      </div>
 
-                        {post.available ? (
-                          <Link to={`/blog/${post.slug}`}>
-                            <Button
-                              variant="ghost"
-                              className="p-0 h-auto text-accent hover:text-accent/80 font-medium text-sm sm:text-base"
-                            >
-                              Read Article
-                              <ArrowRight className="ml-1 w-3 h-3 sm:w-4 sm:h-4" />
-                            </Button>
-                          </Link>
-                        ) : (
+                      {/* Action Buttons */}
+                      <div className="flex items-center justify-between gap-3">
+                        <Link to={`/blog/${post.slug}`} className="flex-1">
                           <Button
                             variant="ghost"
-                            className="p-0 h-auto text-muted-foreground font-medium text-sm sm:text-base cursor-not-allowed"
-                            disabled
+                            className="w-full justify-center text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 font-semibold text-sm group/btn"
                           >
-                            Coming Soon
-                            <ArrowRight className="ml-1 w-3 h-3 sm:w-4 sm:h-4" />
+                            <span className="group-hover/btn:underline">
+                              Read Article
+                            </span>
+                            <ArrowRight className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
                           </Button>
-                        )}
-                      </Card>
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
+                        </Link>
+                        <Link to={`/blog/${post.slug}#comments`}>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="text-gray-600 hover:text-emerald-600 hover:border-emerald-300"
+                          >
+                            <MessageSquare className="w-4 h-4 mr-1" />
+                            {post.comment_count || 0}
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </section>

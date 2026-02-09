@@ -98,14 +98,14 @@ const AdminPanel = () => {
       id: "mcu",
       name: "MCU",
       icon: Cpu,
-      color: "from-blue-500 to-blue-600",
+      color: "from-slate-600 to-slate-700",
       categories: ["Development Board"],
     },
     {
       id: "sensors",
       name: "Sensors",
       icon: Gauge,
-      color: "from-purple-500 to-purple-600",
+      color: "from-slate-500 to-slate-600",
       categories: [
         "Distance Sensor",
         "Environmental Sensor",
@@ -129,21 +129,21 @@ const AdminPanel = () => {
       id: "power",
       name: "Power",
       icon: Zap,
-      color: "from-yellow-500 to-yellow-600",
+      color: "from-slate-600 to-slate-700",
       categories: ["Power Supply", "Battery"],
     },
     {
       id: "actuators",
       name: "Actuators",
       icon: Package,
-      color: "from-green-500 to-green-600",
+      color: "from-slate-500 to-slate-600",
       categories: ["Motor", "Servo", "Pump"],
     },
     {
       id: "displays",
       name: "Displays",
       icon: Monitor,
-      color: "from-pink-500 to-pink-600",
+      color: "from-slate-600 to-slate-700",
       categories: ["LCD Display", "OLED Display", "TFT Display"],
     },
   ];
@@ -465,11 +465,11 @@ const AdminPanel = () => {
 
           {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-gradient-to-br from-blue-500 to-blue-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="bg-gradient-to-br from-slate-700 to-slate-800 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-blue-100 text-sm font-medium mb-1">
+                    <p className="text-slate-300 text-sm font-medium mb-1">
                       Total Requests
                     </p>
                     <h3 className="text-3xl font-bold">{stats.total}</h3>
@@ -481,11 +481,11 @@ const AdminPanel = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-yellow-500 to-yellow-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="bg-gradient-to-br from-blue-600 to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-yellow-100 text-sm font-medium mb-1">
+                    <p className="text-blue-100 text-sm font-medium mb-1">
                       Pending
                     </p>
                     <h3 className="text-3xl font-bold">{stats.pending}</h3>
@@ -497,11 +497,11 @@ const AdminPanel = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-purple-500 to-purple-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="bg-gradient-to-br from-slate-600 to-slate-700 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-purple-100 text-sm font-medium mb-1">
+                    <p className="text-slate-300 text-sm font-medium mb-1">
                       Under Review
                     </p>
                     <h3 className="text-3xl font-bold">{stats.underReview}</h3>
@@ -513,11 +513,11 @@ const AdminPanel = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-green-500 to-green-600 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="bg-gradient-to-br from-teal-600 to-teal-700 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-green-100 text-sm font-medium mb-1">
+                    <p className="text-teal-100 text-sm font-medium mb-1">
                       Solved
                     </p>
                     <h3 className="text-3xl font-bold">{stats.solved}</h3>
@@ -532,15 +532,57 @@ const AdminPanel = () => {
 
           {/* Price Manager Quick Access */}
           <Card
-            className="mb-8 bg-gradient-to-br from-orange-500 to-orange-600 text-white border-0 shadow-lg hover:shadow-xl transition-all cursor-pointer"
+            className="mb-8 bg-gradient-to-br from-blue-600 to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-all cursor-pointer"
             onClick={() => navigate("/admin/price-manager")}
           >
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-xl font-bold mb-1">💰 Price Manager</h3>
-                  <p className="text-orange-100 text-sm">
+                  <p className="text-blue-100 text-sm">
                     Manage component prices and inventory
+                  </p>
+                </div>
+                <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
+                  <ChevronRight className="h-6 w-6" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Questions Manager Quick Access */}
+          <Card
+            className="mb-8 bg-gradient-to-br from-slate-600 to-slate-700 text-white border-0 shadow-lg hover:shadow-xl transition-all cursor-pointer"
+            onClick={() => navigate("/admin/questions")}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold mb-1">
+                    🎯 Questions Manager
+                  </h3>
+                  <p className="text-slate-200 text-sm">
+                    Manage MCQ and short answer questions
+                  </p>
+                </div>
+                <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
+                  <ChevronRight className="h-6 w-6" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Blog Manager Quick Access */}
+          <Card
+            className="mb-8 bg-gradient-to-br from-teal-600 to-teal-700 text-white border-0 shadow-lg hover:shadow-xl transition-all cursor-pointer"
+            onClick={() => navigate("/admin/blog-manager")}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold mb-1">📝 Blog Manager</h3>
+                  <p className="text-teal-100 text-sm">
+                    Create, edit and manage blog posts with comments
                   </p>
                 </div>
                 <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
@@ -590,36 +632,36 @@ const AdminPanel = () => {
                 <TabsList className="w-full grid grid-cols-3 bg-transparent p-0 h-auto rounded-none">
                   <TabsTrigger
                     value="pending"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-yellow-50 dark:data-[state=active]:bg-yellow-900/20 py-4 transition-all"
+                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/20 py-4 transition-all"
                   >
                     <div className="flex items-center gap-2">
                       <Clock className="h-4 w-4" />
                       <span className="font-medium">Pending</span>
-                      <Badge className="bg-yellow-500 text-white hover:bg-yellow-600 ml-2">
+                      <Badge className="bg-blue-600 text-white hover:bg-blue-700 ml-2">
                         {stats.pending}
                       </Badge>
                     </div>
                   </TabsTrigger>
                   <TabsTrigger
                     value="under_review"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-purple-500 data-[state=active]:bg-purple-50 dark:data-[state=active]:bg-purple-900/20 py-4 transition-all"
+                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-slate-600 data-[state=active]:bg-slate-50 dark:data-[state=active]:bg-slate-900/20 py-4 transition-all"
                   >
                     <div className="flex items-center gap-2">
                       <Mail className="h-4 w-4" />
                       <span className="font-medium">Under Review</span>
-                      <Badge className="bg-purple-500 text-white hover:bg-purple-600 ml-2">
+                      <Badge className="bg-slate-600 text-white hover:bg-slate-700 ml-2">
                         {stats.underReview}
                       </Badge>
                     </div>
                   </TabsTrigger>
                   <TabsTrigger
                     value="solved"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-green-500 data-[state=active]:bg-green-50 dark:data-[state=active]:bg-green-900/20 py-4 transition-all"
+                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-teal-600 data-[state=active]:bg-teal-50 dark:data-[state=active]:bg-teal-900/20 py-4 transition-all"
                   >
                     <div className="flex items-center gap-2">
                       <CheckCircle className="h-4 w-4" />
                       <span className="font-medium">Solved</span>
-                      <Badge className="bg-green-500 text-white hover:bg-green-600 ml-2">
+                      <Badge className="bg-teal-600 text-white hover:bg-teal-700 ml-2">
                         {stats.solved}
                       </Badge>
                     </div>

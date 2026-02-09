@@ -28,6 +28,7 @@ const Resources = lazy(() => import("./pages/Resources"));
 const SortQuestionsPage2 = lazy(() => import("./pages/SortQuestionsPage2"));
 // Compressed blog version with all 10 articles (80% smaller than original)
 const BlogPost = lazy(() => import("./pages/BlogPost"));
+const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
 const ECEResources = lazy(() => import("./pages/ECEResources"));
 const CostEstimator = lazy(() => import("./pages/CostEstimator"));
 // Authentication pages
@@ -36,9 +37,13 @@ const Signup = lazy(() => import("./pages/Signup"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AdminPanel = lazy(() => import("./pages/AdminPanel"));
 const PriceManager = lazy(() => import("./components/PriceManager"));
+const BlogManager = lazy(() => import("./components/BlogManager"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const TestSupabase = lazy(() => import("./pages/TestSupabase"));
 const DebugAuth = lazy(() => import("./pages/DebugAuth"));
+const Quiz = lazy(() => import("./pages/Quiz"));
+const AdminQuestions = lazy(() => import("./pages/AdminQuestions"));
+const TestHistory = lazy(() => import("./components/TestHistory"));
 
 // Optimized QueryClient configuration
 const queryClient = new QueryClient({
@@ -55,7 +60,9 @@ const queryClient = new QueryClient({
 // Loading fallback component with smooth fade-in transition
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-[70vh] sm:min-h-screen animate-in fade-in duration-150">
-    <div className="animate-pulse text-primary text-lg sm:text-xl">Loading...</div>
+    <div className="animate-pulse text-primary text-lg sm:text-xl">
+      Loading...
+    </div>
   </div>
 );
 
@@ -74,7 +81,7 @@ const App = () => (
               <Route path="/services" element={<Services />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/contact" element={<Contact />} />
               <Route
                 path="/completed-projects"
@@ -87,6 +94,15 @@ const App = () => (
                 element={<SortQuestionsPage2 />}
               />
               <Route path="/cost-estimator" element={<CostEstimator />} />
+              <Route path="/quiz" element={<Quiz />} />
+              <Route
+                path="/test-history"
+                element={
+                  <ProtectedRoute>
+                    <TestHistory />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* Public Authentication routes - redirect to dashboard if already logged in */}
               <Route
@@ -133,6 +149,22 @@ const App = () => (
                 element={
                   <ProtectedRoute requireAdmin={true}>
                     <PriceManager />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/questions"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminQuestions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/blog-manager"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <BlogManager />
                   </ProtectedRoute>
                 }
               />

@@ -1,0 +1,136 @@
+[
+  {
+    "question_text": "What is the operating voltage of Arduino Uno?",
+    "question_type": "mcq",
+    "category": "Arduino",
+    "difficulty": "easy",
+    "explanation": "Arduino Uno operates at 5V logic level for digital pins",
+    "options": ["3.3V", "5V", "9V", "12V"],
+    "correct_answer": 1
+  },
+  {
+    "question_text": "What does PWM stand for?",
+    "question_type": "mcq",
+    "category": "Electronics",
+    "difficulty": "easy",
+    "options": [
+      "Pulse Width Modulation",
+      "Power Wave Management",
+      "Parallel Wire Mode",
+      "Programmable Width Module"
+    ],
+    "correct_answer": 0
+  },
+  {
+    "question_text": "Which pin on Arduino Uno is used for Serial communication (TX)?",
+    "question_type": "mcq",
+    "category": "Arduino",
+    "difficulty": "medium",
+    "explanation": "Pin 1 is TX (transmit) and Pin 0 is RX (receive) for serial communication",
+    "options": ["Pin 0", "Pin 1", "Pin 2", "Pin 3"],
+    "correct_answer": 1
+  },
+  {
+    "question_text": "What is the default baud rate for Arduino Serial communication?",
+    "question_type": "short_answer",
+    "category": "Arduino",
+    "difficulty": "medium",
+    "correct_answer": "9600",
+    "alternative_answers": ["9600 baud", "9600 bps"]
+  },
+  {
+    "question_text": "Which ESP32 chip supports Bluetooth 5.0?",
+    "question_type": "mcq",
+    "category": "ESP32",
+    "difficulty": "hard",
+    "options": ["ESP32-WROOM", "ESP32-C3", "ESP32-S3", "ESP32-S2"],
+    "correct_answer": 1
+  },
+  {
+    "question_text": "What is the maximum number of GPIO pins available on ESP8266?",
+    "question_type": "short_answer",
+    "category": "ESP8266",
+    "difficulty": "medium",
+    "correct_answer": "17",
+    "alternative_answers": ["17 pins", "seventeen"]
+  },
+  {
+    "question_text": "Which protocol is commonly used for communication between IoT devices?",
+    "question_type": "mcq",
+    "category": "IoT",
+    "difficulty": "easy",
+    "options": ["HTTP", "MQTT", "FTP", "SMTP"],
+    "correct_answer": 1
+  },
+  {
+    "question_text": "What does I2C stand for?",
+    "question_type": "short_answer",
+    "category": "Electronics",
+    "difficulty": "medium",
+    "correct_answer": "Inter-Integrated Circuit",
+    "alternative_answers": ["Inter Integrated Circuit", "I2C", "IIC"]
+  },
+  {
+    "question_text": "How many analog input pins does Arduino Uno have?",
+    "question_type": "mcq",
+    "category": "Arduino",
+    "difficulty": "easy",
+    "options": ["4", "6", "8", "10"],
+    "correct_answer": 1
+  },
+  {
+    "question_text": "What is the operating frequency of ESP32?",
+    "question_type": "mcq",
+    "category": "ESP32",
+    "difficulty": "hard",
+    "explanation": "ESP32 can operate from 80MHz to 240MHz",
+    "options": ["80MHz", "160MHz", "240MHz", "Up to 240MHz"],
+    "correct_answer": 3
+  },
+  {
+    "question_text": "Which sensor is used to measure temperature and humidity?",
+    "question_type": "mcq",
+    "category": "Sensors",
+    "difficulty": "easy",
+    "options": ["DHT11", "HC-SR04", "LDR", "PIR"],
+    "correct_answer": 0
+  },
+  {
+    "question_text": "What does LED stand for?",
+    "question_type": "short_answer",
+    "category": "Electronics",
+    "difficulty": "easy",
+    "correct_answer": "Light Emitting Diode",
+    "alternative_answers": ["Light-Emitting Diode", "LED"]
+  },
+  {
+    "question_text": "Which communication protocol uses only 2 wires (SDA and SCL)?",
+    "question_type": "mcq",
+    "category": "Electronics",
+    "difficulty": "medium",
+    "options": ["SPI", "I2C", "UART", "USB"],
+    "correct_answer": 1
+  },
+  {
+    "question_text": "What is the purpose of a pull-up resistor?",
+    "question_type": "mcq",
+    "category": "Circuit Design",
+    "difficulty": "hard",
+    "explanation": "Pull-up resistors ensure a known state when the switch is open",
+    "options": [
+      "To increase current",
+      "To ensure a HIGH state when input is floating",
+      "To reduce voltage",
+      "To protect LEDs"
+    ],
+    "correct_answer": 1
+  },
+  {
+    "question_text": "Which programming language is primarily used for Arduino?",
+    "question_type": "short_answer",
+    "category": "Programming",
+    "difficulty": "easy",
+    "correct_answer": "C++",
+    "alternative_answers": ["C", "Arduino C", "C/C++"]
+  }
+]

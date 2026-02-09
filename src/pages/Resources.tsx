@@ -34,6 +34,8 @@ import {
 import { SensorDialog } from "@/components/SensorDialog";
 import { supabase } from "@/lib/supabaseClient";
 import { useToast } from "@/hooks/use-toast";
+import { useQuestions } from "@/hooks/useQuestions";
+import { QuestionWithOptions } from "@/types/question.types";
 
 // Import Sensor Images
 import ultrasonicImg from "@/assets/Sensor/HC-SR04.png";
@@ -424,7 +426,8 @@ const sensorsData = [
       "IMU sensor",
       "drone stabilization",
     ],
-    datasheet: "https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf",
+    datasheet:
+      "https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf",
   },
   {
     id: 8,
@@ -1283,8 +1286,7 @@ const sensorsData = [
       "BH1750",
       "auto brightness",
     ],
-    datasheet:
-      "https://www.rohm.com/datasheet/BH1750FVI/bh1750fvi-e.pdf",
+    datasheet: "https://www.rohm.com/datasheet/BH1750FVI/bh1750fvi-e.pdf",
   },
   {
     id: 40,
@@ -1489,6 +1491,69 @@ const Resources = () => {
   const [materials, setMaterials] = useState<StudyMaterial[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [loadingMaterials, setLoadingMaterials] = useState(false);
+  const {
+    questions,
+    loading: loadingQuestions,
+    fetchQuestions,
+  } = useQuestions();
+  const [sortQuestions, setSortQuestions] = useState<QuestionWithOptions[]>([]);
+  const [selectedQuestionCategories, setSelectedQuestionCategories] = useState<
+    string[]
+  >([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const QUESTIONS_PER_PAGE = 10;
+
+  // Available categories (without "All Categories")
+  const questionCategories = [
+    "Arduino",
+    "ESP32",
+    "ESP8266",
+    "Raspberry Pi",
+    "IoT",
+    "Electronics",
+    "Sensors",
+    "Programming",
+    "Circuit Design",
+    "Embedded Systems",
+    "Other",
+  ];
+
+  // Fetch questions on mount
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
+  // Filter short answer questions
+  useEffect(() => {
+    if (questions.length > 0) {
+      const shortAnswerQuestions = questions.filter(
+        (q) => q.question_type === "short_answer" && q.is_active,
+      );
+      setSortQuestions(shortAnswerQuestions);
+    }
+  }, [questions]);
+
+  // Handle category selection (max 3)
+  const toggleCategory = (category: string) => {
+    setSelectedQuestionCategories((prev) => {
+      if (prev.includes(category)) {
+        // Remove if already selected
+        return prev.filter((c) => c !== category);
+      } else if (prev.length < 3) {
+        // Add if less than 3 selected
+        return [...prev, category];
+      } else {
+        // Show toast if trying to select more than 3
+        toast({
+          title: "Maximum 3 categories",
+          description: "You can select up to 3 categories at a time",
+          variant: "destructive",
+        });
+        return prev;
+      }
+    });
+    setCurrentPage(1); // Reset to first page
+  };
 
   // Fetch materials from Supabase when category is selected
   const fetchMaterials = async (category: string) => {
@@ -1566,7 +1631,7 @@ const Resources = () => {
           "microcontroller tutorials",
           "Arduino programming",
           "sensor applications",
-          "robotics sensors"
+          "robotics sensors",
         ]}
         image="/resources-og-image.jpg"
         type="website"
@@ -1834,112 +1899,228 @@ const Resources = () => {
           {/* Sensors and Actuators Section */}
           <SensorsAndActuatorsSection />
 
-          {/* Sort Question Section at the bottom */}
-          <div className="mt-6 sm:mt-8 flex flex-col items-center px-4">
-            <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-3 sm:mb-4 text-center">
-              Sort Question
+          {/* Sort Questions Section - Database Backed with Multi-Select Categories */}
+          <div className="max-w-6xl mx-auto mb-12 px-4">
+            <h3 className="text-2xl sm:text-3xl font-bold text-center text-foreground mb-6">
+              Sort Questions
             </h3>
-            <div className="max-w-full sm:max-w-2xl w-full bg-white/90 rounded-lg sm:rounded-xl shadow-lg border-2 border-accent/20 p-4 sm:p-6 flex flex-col items-center hover:bg-white/95 transition-colors duration-150">
-              <p className="text-muted-foreground text-center mb-2 text-sm sm:text-base">
-                Here you can find a collection of important sort questions for
-                your studies and board preparation.
-              </p>
-              <ul className="list-none pl-4 sm:pl-6 text-left w-full space-y-3 sm:space-y-4">
-                <li className="border-b border-accent/10 pb-2 sm:pb-3 hover:bg-accent/5 p-2 rounded-lg transition-colors">
-                  <strong className="text-primary text-sm sm:text-base">
-                    Q1: What is Arduino Uno?
-                  </strong>
-                  <br />
-                  <span className="text-muted-foreground text-xs sm:text-sm">
-                    A: Arduino Uno is an open-source microcontroller board based
-                    on the ATmega328P chip.
+
+            {/* Category Pills - Multi-Select */}
+            <div className="bg-white/90 rounded-xl shadow-md border border-accent/20 p-6 mb-6">
+              <label className="block text-sm font-semibold text-foreground mb-3">
+                Select Categories (up to 3):
+              </label>
+              <div className="flex flex-wrap gap-3 justify-center">
+                {questionCategories.map((cat) => {
+                  const isSelected = selectedQuestionCategories.includes(cat);
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => toggleCategory(cat)}
+                      className={`px-5 py-2 rounded-full font-medium text-sm transition-all duration-200 shadow-sm ${
+                        isSelected
+                          ? "bg-accent text-white shadow-md scale-105 ring-2 ring-accent/50"
+                          : "bg-white text-gray-700 hover:bg-accent/10 hover:shadow-md"
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  );
+                })}
+              </div>
+              {selectedQuestionCategories.length > 0 && (
+                <div className="mt-4 text-center text-sm text-muted-foreground">
+                  Selected:{" "}
+                  <span className="font-semibold text-accent">
+                    {selectedQuestionCategories.join(", ")}
                   </span>
-                </li>
-                <li>
-                  <strong className="text-sm sm:text-base">
-                    Q2: How many digital I/O pins does Arduino Uno have?
-                  </strong>
-                  <br />
-                  <span className="text-xs sm:text-sm">
-                    A: 14 digital I/O pins (of which 6 can be used as PWM
-                    outputs).
-                  </span>
-                </li>
-                <li>
-                  <strong className="text-sm sm:text-base">
-                    Q3: How many analog input pins are there on Arduino Uno?
-                  </strong>
-                  <br />
-                  <span className="text-xs sm:text-sm">A: 6 analog input pins (A0–A5).</span>
-                </li>
-                <li>
-                  <strong className="text-sm sm:text-base">
-                    Q4: What is the operating voltage of Arduino Uno?
-                  </strong>
-                  <br />
-                  <span className="text-xs sm:text-sm">A: 5V.</span>
-                </li>
-                <li>
-                  <strong className="text-sm sm:text-base">Q5: Which USB connector does Arduino Uno use?</strong>
-                  <br />
-                  <span className="text-xs sm:text-sm">A: USB Type-B connector.</span>
-                </li>
-                <li>
-                  <strong className="text-sm sm:text-base">Q6: What is the clock speed of Arduino Uno?</strong>
-                  <br />
-                  <span className="text-xs sm:text-sm">A: 16 MHz.</span>
-                </li>
-                <li>
-                  <strong className="text-sm sm:text-base">Q7: How is Arduino Uno programmed?</strong>
-                  <br />
-                  <span className="text-xs sm:text-sm">A: Using the Arduino IDE with a USB cable.</span>
-                </li>
-                <li>
-                  <strong className="text-sm sm:text-base">
-                    Q8: What is the flash memory size of Arduino Uno?
-                  </strong>
-                  <br />
-                  <span className="text-xs sm:text-sm">A: 32 KB (0.5 KB used by bootloader).</span>
-                </li>
-                <li>
-                  <strong className="text-sm sm:text-base">
-                    Q9: Which communication protocols does Arduino Uno support?
-                  </strong>
-                  <br />
-                  <span className="text-xs sm:text-sm">A: UART (Serial), I2C, and SPI.</span>
-                </li>
-                <li>
-                  <strong className="text-sm sm:text-base">
-                    Q10: Can Arduino Uno run without being connected to a PC?
-                  </strong>
-                  <br />
-                  <span className="text-xs sm:text-sm">
-                    A: Yes, it can run from an external 7–12V power supply.
-                  </span>
-                </li>
-              </ul>
+                  <button
+                    onClick={() => {
+                      setSelectedQuestionCategories([]);
+                      setCurrentPage(1);
+                    }}
+                    className="ml-3 text-red-500 hover:text-red-700 font-medium"
+                  >
+                    Clear All
+                  </button>
+                </div>
+              )}
             </div>
-            {/* Next Button for pagination */}
-            <div className="flex justify-center mt-6 sm:mt-8">
-              <button
-                onClick={() => navigate("/resources/questions/2")}
-                className="px-6 py-2 sm:px-8 sm:py-3 bg-accent text-white rounded-lg font-bold shadow-lg hover:bg-accent/90 hover:transform hover:scale-105 hover:shadow-xl active:scale-95 transition-all duration-200 flex items-center gap-2 text-sm sm:text-base"
-              >
-                Next
-                <svg
-                  className="w-4 h-4 sm:w-5 sm:h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
+
+            {/* Questions Display */}
+            <div className="bg-white/90 rounded-xl shadow-lg border-2 border-accent/20 p-6">
+              {loadingQuestions ? (
+                <p className="text-center text-muted-foreground py-8">
+                  Loading questions...
+                </p>
+              ) : (
+                (() => {
+                  // Filter by selected categories or show random if none selected
+                  let filteredQuestions;
+                  if (selectedQuestionCategories.length === 0) {
+                    // Show random questions when no category selected
+                    const shuffled = [...sortQuestions].sort(
+                      () => 0.5 - Math.random(),
+                    );
+                    filteredQuestions = shuffled.slice(0, 50); // Show 50 random questions
+                  } else {
+                    // Filter by selected categories
+                    filteredQuestions = sortQuestions.filter((q) =>
+                      selectedQuestionCategories.includes(q.category),
+                    );
+                  }
+
+                  // Calculate pagination
+                  const totalPages = Math.ceil(
+                    filteredQuestions.length / QUESTIONS_PER_PAGE,
+                  );
+                  const startIndex = (currentPage - 1) * QUESTIONS_PER_PAGE;
+                  const endIndex = startIndex + QUESTIONS_PER_PAGE;
+                  const currentQuestions = filteredQuestions.slice(
+                    startIndex,
+                    endIndex,
+                  );
+
+                  // Generate page numbers
+                  const getPageNumbers = () => {
+                    const pages: (number | string)[] = [];
+                    const maxPagesToShow = 7;
+
+                    if (totalPages <= maxPagesToShow) {
+                      for (let i = 1; i <= totalPages; i++) pages.push(i);
+                    } else {
+                      if (currentPage <= 3) {
+                        for (let i = 1; i <= 5; i++) pages.push(i);
+                        pages.push("...");
+                        pages.push(totalPages);
+                      } else if (currentPage >= totalPages - 2) {
+                        pages.push(1);
+                        pages.push("...");
+                        for (let i = totalPages - 4; i <= totalPages; i++)
+                          pages.push(i);
+                      } else {
+                        pages.push(1);
+                        pages.push("...");
+                        for (let i = currentPage - 1; i <= currentPage + 1; i++)
+                          pages.push(i);
+                        pages.push("...");
+                        pages.push(totalPages);
+                      }
+                    }
+                    return pages;
+                  };
+
+                  return filteredQuestions.length === 0 ? (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground italic">
+                        No sort questions available yet. Admin can add questions
+                        from the admin panel.
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mb-4 text-center">
+                        <p className="text-sm text-muted-foreground">
+                          {selectedQuestionCategories.length === 0 ? (
+                            <span className="text-accent font-medium">
+                              Showing random questions
+                            </span>
+                          ) : (
+                            <span>
+                              Filtered by:{" "}
+                              <span className="font-semibold text-accent">
+                                {selectedQuestionCategories.join(", ")}
+                              </span>
+                            </span>
+                          )}
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Total: {filteredQuestions.length} questions | Page{" "}
+                          {currentPage} of {totalPages}
+                        </p>
+                      </div>
+
+                      <ul className="space-y-4 mb-6">
+                        {currentQuestions.map((question, index) => (
+                          <li
+                            key={question.id}
+                            className="border-b border-accent/10 pb-3 last:border-0"
+                          >
+                            <div className="flex items-start gap-2">
+                              <span className="font-bold text-primary text-sm mt-0.5">
+                                Q{startIndex + index + 1}:
+                              </span>
+                              <div className="flex-1">
+                                <p className="text-sm font-medium text-foreground">
+                                  {question.question_text}
+                                </p>
+                                <p className="text-sm text-muted-foreground mt-1">
+                                  A:{" "}
+                                  {question.short_answer?.correct_answer ||
+                                    "N/A"}
+                                </p>
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary mt-2 inline-block">
+                                  {question.category}
+                                </span>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+
+                      {/* Numbered Pagination */}
+                      {totalPages > 1 && (
+                        <div className="flex justify-center items-center gap-2 flex-wrap">
+                          <button
+                            onClick={() =>
+                              setCurrentPage((prev) => Math.max(prev - 1, 1))
+                            }
+                            disabled={currentPage === 1}
+                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium text-sm hover:bg-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            Previous
+                          </button>
+
+                          {getPageNumbers().map((page, index) =>
+                            page === "..." ? (
+                              <span
+                                key={`ellipsis-${index}`}
+                                className="px-2 text-gray-500"
+                              >
+                                ...
+                              </span>
+                            ) : (
+                              <button
+                                key={page}
+                                onClick={() => setCurrentPage(page as number)}
+                                className={`px-3 sm:px-4 py-2 rounded-lg font-medium text-sm transition ${
+                                  currentPage === page
+                                    ? "bg-accent text-white shadow-md"
+                                    : "bg-white text-gray-700 hover:bg-accent/20"
+                                }`}
+                              >
+                                {page}
+                              </button>
+                            ),
+                          )}
+
+                          <button
+                            onClick={() =>
+                              setCurrentPage((prev) =>
+                                Math.min(prev + 1, totalPages),
+                              )
+                            }
+                            disabled={currentPage === totalPages}
+                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium text-sm hover:bg-gray-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            Next
+                          </button>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()
+              )}
             </div>
           </div>
         </section>

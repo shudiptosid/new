@@ -20,6 +20,8 @@ import {
   MapPin,
   Send,
   Phone,
+  Sparkles,
+  BarChart3,
 } from "lucide-react";
 
 // Service categories with questionnaires
@@ -277,7 +279,7 @@ const Dashboard = () => {
               Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
             },
             body: JSON.stringify(adminEmailData),
-          }
+          },
         );
 
         const result = await response.json();
@@ -303,7 +305,7 @@ const Dashboard = () => {
           wantsConsultation
             ? "\n\nWe'll contact you to schedule your free consultation call!"
             : ""
-        }`
+        }`,
       );
 
       // Reset form
@@ -315,7 +317,7 @@ const Dashboard = () => {
       alert(
         `❌ Failed to submit request: ${
           error.message || "Unknown error"
-        }\n\nPlease try again or contact support.`
+        }\n\nPlease try again or contact support.`,
       );
     } finally {
       setIsSubmitting(false);
@@ -476,6 +478,31 @@ const Dashboard = () => {
                 >
                   Edit Profile
                 </Button>
+
+                {/* Take Quiz Button */}
+                <button
+                  onClick={() => navigate("/quiz")}
+                  className="relative w-full mt-4 px-4 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 group overflow-hidden"
+                >
+                  {/* Animated background shine effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
+
+                  <div className="relative flex items-center justify-center gap-2">
+                    <Sparkles className="w-5 h-5 animate-pulse" />
+                    <span>Take Quiz</span>
+                    <Sparkles className="w-5 h-5 animate-pulse" />
+                  </div>
+                </button>
+
+                {/* Test History Button */}
+                <Button
+                  onClick={() => navigate("/test-history")}
+                  variant="outline"
+                  className="w-full mt-3 border-[#DCDCDC] hover:border-[#000000] hover:bg-[#F5F5F5] transition-all"
+                >
+                  <BarChart3 className="w-5 h-5 mr-2" />
+                  My Test History
+                </Button>
               </Card>
             </div>
 
@@ -540,7 +567,7 @@ const Dashboard = () => {
                 <Card className="p-8 bg-surface-elevated/95 backdrop-blur-sm border-border shadow-xl">
                   {(() => {
                     const selectedCat = categories.find(
-                      (c) => c.id === selectedCategory
+                      (c) => c.id === selectedCategory,
                     );
                     if (!selectedCat) return null;
 
