@@ -1817,6 +1817,22 @@ const Resources = () => {
                 <Card className="p-3 sm:p-4 md:p-5 lg:p-6 flex flex-col min-h-[280px] sm:min-h-[300px] md:min-h-[320px] w-full shadow-lg border-2 border-accent/20 hover:border-accent/60 hover:bg-white/95 transition-all duration-150 group bg-white/90 backdrop-blur-md relative overflow-hidden">
                   {/* Decorative accent shape in card */}
                   <div className="absolute -top-8 -right-8 w-16 sm:w-20 md:w-24 h-16 sm:h-20 md:h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
+
+                  {/* Vertical Quiz Button - Right Side */}
+                  <button
+                    onClick={() => navigate("/quiz")}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 text-teal-600 px-2 py-4 rounded-l-lg shadow-md border-2 border-dashed border-teal-400 hover:bg-teal-500 hover:text-white hover:border-solid transition-all duration-300 z-10 flex items-center justify-center group"
+                    style={{
+                      writingMode: "vertical-rl",
+                      textOrientation: "mixed",
+                    }}
+                    title="Take Quiz"
+                  >
+                    <span className="text-xs font-bold tracking-wider group-hover:tracking-widest transition-all">
+                      ✨ QUIZ
+                    </span>
+                  </button>
+
                   <div className="flex flex-col items-center">
                     <img
                       src={boardImg}
@@ -1900,49 +1916,91 @@ const Resources = () => {
           <SensorsAndActuatorsSection />
 
           {/* Sort Questions Section - Database Backed with Multi-Select Categories */}
-          <div className="max-w-6xl mx-auto mb-12 px-4">
-            <h3 className="text-2xl sm:text-3xl font-bold text-center text-foreground mb-6">
-              Sort Questions
-            </h3>
+          <div className="max-w-6xl mx-auto mb-12 px-3 sm:px-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 mb-6">
+              <h3 className="text-2xl sm:text-3xl font-bold text-center text-foreground bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
+                Sort Questions
+              </h3>
+              <button
+                onClick={() => navigate("/quiz")}
+                className="flex items-center gap-2 px-4 sm:px-5 py-2 text-sm sm:text-base bg-transparent text-teal-600 dark:text-teal-400 font-semibold rounded-full border-2 border-dashed border-teal-400 hover:bg-teal-500 hover:text-white hover:border-solid hover:scale-105 active:scale-95 transition-all duration-300 shadow-sm hover:shadow-lg"
+              >
+                <span className="text-lg">🎯</span>
+                <span className="whitespace-nowrap">Take MCQ Quiz</span>
+              </button>
+            </div>
 
             {/* Category Pills - Multi-Select */}
-            <div className="bg-white/90 rounded-xl shadow-md border border-accent/20 p-6 mb-6">
-              <label className="block text-sm font-semibold text-foreground mb-3">
-                Select Categories (up to 3):
-              </label>
-              <div className="flex flex-wrap gap-3 justify-center">
+            <div className="bg-white/90 dark:bg-slate-800/90 rounded-2xl shadow-sm border border-accent/10 p-4 sm:p-6 mb-6">
+              <div className="text-center mb-4">
+                <label className="text-sm font-medium text-foreground/80 mb-1 block">
+                  Select up to 3 Categories
+                </label>
+                <p className="text-xs text-muted-foreground">
+                  {selectedQuestionCategories.length}/3 selected
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-2 sm:gap-3 justify-center items-center max-w-4xl mx-auto">
                 {questionCategories.map((cat) => {
                   const isSelected = selectedQuestionCategories.includes(cat);
+                  const isDisabled =
+                    !isSelected && selectedQuestionCategories.length >= 3;
+
                   return (
                     <button
                       key={cat}
                       onClick={() => toggleCategory(cat)}
-                      className={`px-5 py-2 rounded-full font-medium text-sm transition-all duration-200 shadow-sm ${
-                        isSelected
-                          ? "bg-accent text-white shadow-md scale-105 ring-2 ring-accent/50"
-                          : "bg-white text-gray-700 hover:bg-accent/10 hover:shadow-md"
-                      }`}
+                      disabled={isDisabled}
+                      className={`
+                        relative min-w-[80px] sm:min-w-[100px] px-3 sm:px-4 py-2 sm:py-2.5
+                        rounded-full font-medium text-xs sm:text-sm
+                        transition-all duration-300 ease-out
+                        border-2
+                        ${
+                          isSelected
+                            ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white border-transparent shadow-lg shadow-teal-500/30 scale-105 hover:scale-110 hover:shadow-xl hover:shadow-teal-500/40"
+                            : isDisabled
+                              ? "bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-slate-600 cursor-not-allowed opacity-50"
+                              : "bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-slate-600 hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 hover:scale-105 hover:shadow-md active:scale-95"
+                        }
+                      `}
                     >
+                      {isSelected && (
+                        <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-teal-600 text-xs font-bold shadow-md">
+                          ✓
+                        </span>
+                      )}
                       {cat}
                     </button>
                   );
                 })}
               </div>
+
               {selectedQuestionCategories.length > 0 && (
-                <div className="mt-4 text-center text-sm text-muted-foreground">
-                  Selected:{" "}
-                  <span className="font-semibold text-accent">
-                    {selectedQuestionCategories.join(", ")}
-                  </span>
-                  <button
-                    onClick={() => {
-                      setSelectedQuestionCategories([]);
-                      setCurrentPage(1);
-                    }}
-                    className="ml-3 text-red-500 hover:text-red-700 font-medium"
-                  >
-                    Clear All
-                  </button>
+                <div className="mt-5 pt-4 border-t border-accent/10 text-center">
+                  <div className="flex flex-wrap gap-2 justify-center items-center">
+                    <span className="text-xs text-muted-foreground">
+                      Active filters:
+                    </span>
+                    {selectedQuestionCategories.map((cat) => (
+                      <span
+                        key={cat}
+                        className="inline-flex items-center gap-1 px-2 py-1 bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 rounded-full text-xs font-medium"
+                      >
+                        {cat}
+                      </span>
+                    ))}
+                    <button
+                      onClick={() => {
+                        setSelectedQuestionCategories([]);
+                        setCurrentPage(1);
+                      }}
+                      className="ml-2 px-3 py-1 text-xs font-medium text-red-600 dark:text-red-400 hover:text-white hover:bg-red-500 dark:hover:bg-red-600 rounded-full border border-red-300 dark:border-red-500 hover:border-transparent transition-all duration-200"
+                    >
+                      Clear All ✕
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

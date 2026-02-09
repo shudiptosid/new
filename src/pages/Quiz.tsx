@@ -52,6 +52,14 @@ const Quiz = () => {
   const [questionTimer, setQuestionTimer] = useState(30); // 30 seconds per question
   const [timerActive, setTimerActive] = useState(false);
 
+  // Exam Mode State
+  const [showExamModal, setShowExamModal] = useState(false);
+  const [examCategory, setExamCategory] = useState<string>('random');
+  const [examDifficulty, setExamDifficulty] = useState<'easy' | 'medium' | 'hard' | 'mixed'>('mixed');
+  const [examQuestionCount, setExamQuestionCount] = useState(25);
+  const [examMode, setExamMode] = useState(false);
+  const [shuffledQuestions, setShuffledQuestions] = useState<QuestionWithOptions[]>([]);
+
   useEffect(() => {
     checkAuth();
     loadCategories();
@@ -101,6 +109,73 @@ const Quiz = () => {
     await fetchQuestions();
   };
 
+  // Fisher-Yates Shuffle Algorithm - for true randomization
+  const shuffleQuestions = (questions: QuestionWithOptions[]): QuestionWithOptions[] => {
+    const shuffled = [...questions];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  };
+
+  // Start Exam with category selection and shuffle
+  const startExam = async () => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Login Required",
+        description: "Please sign in to take exams and track your progress.",
+        variant: "destructive",
+      });
+      navigate("/login");
+      return;
+    }
+
+    let questionsToUse: QuestionWithOptions[] = [];
+
+    // 1. Filter by Category
+    if (examCategory === 'random') {
+      await fetchQuestions();
+      questionsToUse = allQuestions.filter(q => q.is_active);
+    } else {
+      await fetchQuestionsByCategory(examCategory);
+      questionsToUse = allQuestions.filter(q => q.category === examCategory && q.is_active);
+    }
+
+    // 2. Filter by Difficulty
+    if (examDifficulty !== 'mixed') {
+      questionsToUse = questionsToUse.filter(q => q.difficulty === examDifficulty);
+    }
+
+    if (questionsToUse.length === 0) {
+      toast({
+        title: "No Questions Found",
+        description: `No ${examDifficulty !== 'mixed' ? examDifficulty : ''} questions found for this selection. Try satisfying criteria.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // 3. Shuffle
+    questionsToUse = shuffleQuestions(questionsToUse);
+
+    // 4. Take only the requested count
+    const limitedQuestions = questionsToUse.slice(0, examQuestionCount);
+    setShuffledQuestions(limitedQuestions);
+
+    setExamMode(true);
+    setSelectedCategory(examCategory === 'random' ? 'Random Mix' : examCategory);
+    setShowExamModal(false);
+    setQuizStarted(true);
+    setCurrentQuestionIndex(0);
+    setSelectedAnswers({});
+    setQuizCompleted(false);
+    setScore(0);
+    setStartTime(Date.now());
+    setQuestionTimer(30);
+    setTimerActive(true);
+  };
+
   const startQuiz = async (category?: string) => {
     if (category) {
       await fetchQuestionsByCategory(category);
@@ -108,6 +183,7 @@ const Quiz = () => {
     } else {
       await fetchQuestions();
     }
+    setExamMode(false);
     setQuizStarted(true);
     setCurrentQuestionIndex(0);
     setSelectedAnswers({});
@@ -126,7 +202,8 @@ const Quiz = () => {
   };
 
   const handleNext = () => {
-    if (currentQuestionIndex < allQuestions.length - 1) {
+    const questions = examMode ? shuffledQuestions : allQuestions;
+    if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
       setQuestionTimer(30); // Reset timer for next question
     } else {
@@ -144,7 +221,8 @@ const Quiz = () => {
   const handleSubmitQuiz = async () => {
     setTimerActive(false); // Stop the timer
 
-    if (Object.keys(selectedAnswers).length < allQuestions.length) {
+    const questions = examMode ? shuffledQuestions : allQuestions;
+    if (Object.keys(selectedAnswers).length < questions.length) {
       if (!confirm("You haven't answered all questions. Submit anyway?")) {
         setTimerActive(true); // Resume timer if user cancels
         return;
@@ -160,7 +238,7 @@ const Quiz = () => {
     let finalScore = 0;
 
     // Calculate score with negative marking
-    allQuestions.forEach((question) => {
+    questions.forEach((question) => {
       const userAnswer = selectedAnswers[question.id];
 
       if (!userAnswer) {
@@ -218,7 +296,7 @@ const Quiz = () => {
       try {
         await saveQuizAttempt(
           selectedCategory || undefined,
-          allQuestions.length,
+          questions.length,
           correctCount,
           timeInSeconds,
         );
@@ -238,8 +316,12 @@ const Quiz = () => {
     return `${mins}:${secs.toString().padStart(2, "0")}`;
   };
 
-  const currentQuestion = allQuestions[currentQuestionIndex];
-  const progress = ((currentQuestionIndex + 1) / allQuestions.length) * 100;
+  // Use shuffled questions in exam mode, allQuestions otherwise
+  const activeQuestions = examMode ? shuffledQuestions : allQuestions;
+  const currentQuestion = activeQuestions[currentQuestionIndex];
+  const progress = activeQuestions.length > 0
+    ? ((currentQuestionIndex + 1) / activeQuestions.length) * 100
+    : 0;
 
   // Category Selection Screen
   if (!quizStarted) {
@@ -269,7 +351,18 @@ const Quiz = () => {
             </button>
 
             <button
-              onClick={() => startQuiz()}
+              onClick={() => {
+                if (!isAuthenticated) {
+                  toast({
+                    title: "Login Required",
+                    description: "Please sign in to take exams.",
+                    variant: "destructive",
+                  });
+                  navigate("/login");
+                } else {
+                  setShowExamModal(true);
+                }
+              }}
               className="w-full flex items-center gap-3 px-4 py-3 text-white hover:bg-white hover:text-black rounded-lg transition-all"
             >
               <BookOpen className="w-5 h-5" />
@@ -305,6 +398,116 @@ const Quiz = () => {
           </div>
         </aside>
 
+        {/* Exam Modal */}
+        {showExamModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+              {/* Modal Header */}
+              <div className="bg-[#111111] text-white p-6">
+                <h3 className="text-2xl font-bold">Start New Exam</h3>
+                <p className="text-white/70 mt-1">Configure your exam settings</p>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 space-y-6">
+                {/* Category Selection */}
+                <div>
+                  <label className="block text-sm font-semibold text-[#000000] mb-2">
+                    Select Category
+                  </label>
+                  <select
+                    value={examCategory}
+                    onChange={(e) => setExamCategory(e.target.value)}
+                    className="w-full p-3 border-2 border-[#E0E0E0] rounded-xl focus:border-[#000000] focus:outline-none transition-colors bg-white"
+                  >
+                    <option value="random">🎲 Random Mix (All Categories)</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        📚 {cat} ({allQuestions.filter(q => q.category === cat && q.is_active).length} questions)
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Question Count */}
+                <div>
+                  <label className="block text-sm font-semibold text-[#000000] mb-2">
+                    Number of Questions
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[10, 25, 50, 100].map((count) => (
+                      <button
+                        key={count}
+                        onClick={() => setExamQuestionCount(count)}
+                        className={`py-3 rounded-xl font-semibold transition-all ${examQuestionCount === count
+                          ? 'bg-[#111111] text-white'
+                          : 'bg-[#F5F5F5] text-[#000000] hover:bg-[#E5E5E5]'
+                          }`}
+                      >
+                        {count}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Difficulty Level */}
+                <div>
+                  <label className="block text-sm font-semibold text-[#000000] mb-2">
+                    Difficulty Level
+                  </label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {(['easy', 'medium', 'hard', 'mixed'] as const).map((diff) => (
+                      <button
+                        key={diff}
+                        onClick={() => setExamDifficulty(diff)}
+                        className={`py-3 rounded-xl font-semibold capitalize transition-all ${examDifficulty === diff
+                          ? 'bg-[#111111] text-white'
+                          : 'bg-[#F5F5F5] text-[#000000] hover:bg-[#E5E5E5]'
+                          }`}
+                      >
+                        {diff}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Info Box */}
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="text-xl">💡</span>
+                    <div className="text-sm text-blue-800">
+                      <p className="font-semibold mb-1">Exam Features</p>
+                      <ul className="space-y-1 text-blue-700">
+                        <li>• 30 seconds per question</li>
+                        <li>• -0.25 marks for wrong answers</li>
+                        <li>• Questions are shuffled randomly</li>
+                        <li>• Progress is saved automatically</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-6 pt-0 flex gap-3">
+                <button
+                  onClick={() => setShowExamModal(false)}
+                  className="flex-1 py-3 border-2 border-[#E0E0E0] text-[#000000] rounded-xl font-semibold hover:bg-[#F5F5F5] transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={startExam}
+                  className="flex-1 py-3 bg-[#111111] text-white rounded-xl font-semibold hover:bg-[#333333] transition-all flex items-center justify-center gap-2"
+                >
+                  Start Exam
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Main Content Area - White Background */}
         <main className="flex-1 flex flex-col">
           {/* Header */}
@@ -321,112 +524,191 @@ const Quiz = () => {
 
           {/* Category Selection Content */}
           <div className="flex-1 p-8 overflow-y-auto">
-            <div className="max-w-5xl mx-auto">
-              {/* Welcome Card */}
-              <div className="bg-white rounded-lg border border-[#E0E0E0] p-8 mb-8">
-                <h2 className="text-2xl font-bold text-[#000000] mb-2">
-                  Choose a Category
-                </h2>
-                <p className="text-[#777777] mb-6">
-                  Select a topic to start your quiz or choose "All Questions"
-                  for a comprehensive test
-                </p>
+            <div className="max-w-6xl mx-auto">
 
-                {/* Category Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* All Questions - Featured */}
-                  <button
-                    onClick={() => startQuiz()}
-                    className="col-span-1 md:col-span-3 p-8 bg-[#000000] text-white rounded-lg hover:bg-[#333333] transition-all group"
-                  >
-                    <div className="flex items-center justify-center gap-4">
-                      <div className="text-4xl">🌐</div>
+              {/* Hero Section */}
+              <div className="text-center mb-12">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white text-sm font-medium rounded-full mb-4">
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                  {allQuestions.filter((q) => q.is_active).length} Questions Available
+                </div>
+                <h2 className="text-4xl font-bold text-[#000000] mb-4">
+                  Start Your Practice Session
+                </h2>
+                <p className="text-[#777777] text-lg max-w-2xl mx-auto">
+                  Choose a category below to test your knowledge. Each quiz includes timed questions with instant feedback.
+                </p>
+              </div>
+
+              {/* Featured: All Questions Card */}
+              <div className="mb-8">
+                <button
+                  onClick={() => startQuiz()}
+                  className="w-full p-8 bg-[#111111] text-white rounded-2xl hover:bg-[#222222] transition-all duration-300 group relative overflow-hidden"
+                >
+                  {/* Background Pattern */}
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full translate-y-1/2 -translate-x-1/2"></div>
+                  </div>
+
+                  <div className="relative flex items-center justify-between">
+                    <div className="flex items-center gap-6">
+                      <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur group-hover:bg-white/20 transition-all">
+                        <span className="text-3xl">🎯</span>
+                      </div>
                       <div className="text-left">
-                        <h3 className="text-2xl font-bold mb-1">
-                          All Questions
-                        </h3>
-                        <p className="text-[#E5E5E5] text-sm">
-                          Complete quiz with all available questions
-                        </p>
+                        <h3 className="text-2xl font-bold mb-1">Complete Quiz Challenge</h3>
+                        <p className="text-white/70">Test yourself with all {allQuestions.filter((q) => q.is_active).length} questions across all categories</p>
                       </div>
                     </div>
-                  </button>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <div className="text-3xl font-bold">{allQuestions.filter((q) => q.is_active).length}</div>
+                        <div className="text-sm text-white/60">Questions</div>
+                      </div>
+                      <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                    </div>
+                  </div>
+                </button>
+              </div>
 
-                  {/* Category Cards */}
-                  {categories.map((category) => (
+              {/* Category Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-bold text-[#000000]">Browse by Category</h3>
+                <span className="text-sm text-[#777777]">{categories.length} categories available</span>
+              </div>
+
+              {/* Category Grid - Redesigned Cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {categories.map((category, index) => {
+                  const categoryQuestions = allQuestions.filter((q) => q.category === category && q.is_active);
+                  const questionCount = categoryQuestions.length;
+                  const easyCount = categoryQuestions.filter(q => q.difficulty === 'easy').length;
+                  const mediumCount = categoryQuestions.filter(q => q.difficulty === 'medium').length;
+                  const hardCount = categoryQuestions.filter(q => q.difficulty === 'hard').length;
+
+                  // Different accent colors for each category
+                  const colors = [
+                    { bg: 'bg-blue-50', border: 'border-blue-200', accent: 'bg-blue-500', text: 'text-blue-600', icon: '💻' },
+                    { bg: 'bg-emerald-50', border: 'border-emerald-200', accent: 'bg-emerald-500', text: 'text-emerald-600', icon: '🌐' },
+                    { bg: 'bg-purple-50', border: 'border-purple-200', accent: 'bg-purple-500', text: 'text-purple-600', icon: '⚡' },
+                    { bg: 'bg-orange-50', border: 'border-orange-200', accent: 'bg-orange-500', text: 'text-orange-600', icon: '🔧' },
+                    { bg: 'bg-rose-50', border: 'border-rose-200', accent: 'bg-rose-500', text: 'text-rose-600', icon: '📡' },
+                    { bg: 'bg-cyan-50', border: 'border-cyan-200', accent: 'bg-cyan-500', text: 'text-cyan-600', icon: '🎓' },
+                  ];
+                  const color = colors[index % colors.length];
+
+                  return (
                     <button
                       key={category}
                       onClick={() => startQuiz(category)}
-                      className="p-6 bg-white border border-[#DCDCDC] rounded-lg hover:bg-[#F5F5F5] hover:border-[#000000] transition-all group"
+                      className={`p-6 ${color.bg} border-2 ${color.border} rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group text-left relative overflow-hidden`}
                     >
-                      <div className="text-4xl mb-4">📚</div>
-                      <h3 className="text-xl font-bold text-[#000000] mb-2">
+                      {/* Top Bar Accent */}
+                      <div className={`absolute top-0 left-0 right-0 h-1 ${color.accent}`}></div>
+
+                      {/* Header Row */}
+                      <div className="flex items-start justify-between mb-4">
+                        <div className={`w-12 h-12 ${color.accent} rounded-xl flex items-center justify-center text-white text-xl shadow-sm`}>
+                          {color.icon}
+                        </div>
+                        <div className={`px-3 py-1 bg-white rounded-full text-sm font-semibold ${color.text} shadow-sm`}>
+                          {questionCount} Qs
+                        </div>
+                      </div>
+
+                      {/* Category Name */}
+                      <h4 className="text-xl font-bold text-[#000000] mb-1 group-hover:text-[#333333]">
                         {category}
-                      </h3>
-                      <p className="text-[#777777] text-sm">
-                        {
-                          allQuestions.filter(
-                            (q) => q.category === category && q.is_active,
-                          ).length
-                        }{" "}
-                        Questions
-                      </p>
+                      </h4>
+                      <p className="text-sm text-[#777777] mb-3">{questionCount} Questions</p>
+
+                      {/* Difficulty Breakdown */}
+                      <div className="flex gap-3 mb-4">
+                        {easyCount > 0 && (
+                          <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">
+                            {easyCount} Easy
+                          </span>
+                        )}
+                        {mediumCount > 0 && (
+                          <span className="text-xs px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full">
+                            {mediumCount} Medium
+                          </span>
+                        )}
+                        {hardCount > 0 && (
+                          <span className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded-full">
+                            {hardCount} Hard
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Progress Bar (placeholder) */}
+                      <div className="h-2 bg-white rounded-full overflow-hidden">
+                        <div className={`h-full ${color.accent} w-0 group-hover:w-full transition-all duration-500`}></div>
+                      </div>
+
+                      {/* Start CTA */}
+                      <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/50">
+                        <span className="text-sm text-[#777777]">Start Quiz</span>
+                        <ArrowRight className={`w-5 h-5 ${color.text} group-hover:translate-x-1 transition-transform`} />
+                      </div>
                     </button>
-                  ))}
-                </div>
+                  );
+                })}
               </div>
 
-              {/* Info Card */}
+              {/* Sign In Prompt (if not authenticated) */}
               {!isAuthenticated && (
-                <div className="bg-white rounded-lg border border-[#E0E0E0] p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="text-3xl">💡</div>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-[#000000] mb-2">
-                        Track Your Progress
-                      </h3>
-                      <p className="text-[#777777] mb-4">
-                        Sign in to save your quiz attempts, view detailed
-                        analytics, and track your learning progress over time.
-                      </p>
-                      <button
-                        onClick={() => navigate("/login")}
-                        className="px-6 py-2 bg-[#000000] text-white rounded-lg hover:bg-[#333333] transition-all font-medium"
-                      >
-                        Sign In Now
-                      </button>
+                <div className="mt-8 bg-[#FAFAFA] border-2 border-dashed border-[#E0E0E0] rounded-xl p-8">
+                  <div className="flex items-center gap-6">
+                    <div className="w-14 h-14 bg-black rounded-xl flex items-center justify-center text-white text-2xl">
+                      🔐
                     </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-[#000000] text-lg mb-1">
+                        Unlock Progress Tracking
+                      </h3>
+                      <p className="text-[#777777]">
+                        Sign in to save your quiz history, track performance analytics, and compete on leaderboards.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => navigate("/login")}
+                      className="px-6 py-3 bg-[#000000] text-white rounded-xl font-semibold hover:bg-[#333333] transition-all whitespace-nowrap"
+                    >
+                      Sign In
+                    </button>
                   </div>
                 </div>
               )}
 
-              {/* Stats Preview (if categories exist) */}
+              {/* Quick Stats Footer */}
               {categories.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
-                  <div className="bg-white rounded-lg border border-[#E0E0E0] p-6 text-center">
-                    <div className="text-3xl font-bold text-[#000000] mb-1">
+                <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-white rounded-xl border border-[#E0E0E0] p-5 text-center">
+                    <div className="text-3xl font-bold text-[#000000]">
                       {allQuestions.filter((q) => q.is_active).length}
                     </div>
-                    <div className="text-[#777777] text-sm">
-                      Total Questions
-                    </div>
+                    <div className="text-sm text-[#777777] mt-1">Total Questions</div>
                   </div>
-                  <div className="bg-white rounded-lg border border-[#E0E0E0] p-6 text-center">
-                    <div className="text-3xl font-bold text-[#000000] mb-1">
+                  <div className="bg-white rounded-xl border border-[#E0E0E0] p-5 text-center">
+                    <div className="text-3xl font-bold text-[#000000]">
                       {categories.length}
                     </div>
-                    <div className="text-[#777777] text-sm">Categories</div>
+                    <div className="text-sm text-[#777777] mt-1">Categories</div>
                   </div>
-                  <div className="bg-white rounded-lg border border-[#E0E0E0] p-6 text-center">
-                    <div className="text-3xl font-bold text-[#000000] mb-1">
-                      {
-                        allQuestions.filter(
-                          (q) => q.difficulty === "easy" && q.is_active,
-                        ).length
-                      }
-                      +
+                  <div className="bg-white rounded-xl border border-[#E0E0E0] p-5 text-center">
+                    <div className="text-3xl font-bold text-[#000000]">
+                      30<span className="text-lg font-normal">s</span>
                     </div>
-                    <div className="text-[#777777] text-sm">Easy Questions</div>
+                    <div className="text-sm text-[#777777] mt-1">Per Question</div>
+                  </div>
+                  <div className="bg-white rounded-xl border border-[#E0E0E0] p-5 text-center">
+                    <div className="text-3xl font-bold text-[#000000]">
+                      -0.25
+                    </div>
+                    <div className="text-sm text-[#777777] mt-1">Wrong Penalty</div>
                   </div>
                 </div>
               )}
@@ -439,7 +721,7 @@ const Quiz = () => {
 
   // Quiz Completed Screen
   if (quizCompleted) {
-    const percentage = ((score / allQuestions.length) * 100).toFixed(1);
+    const percentage = (activeQuestions.length > 0 ? (score / activeQuestions.length) * 100 : 0).toFixed(1);
     const passed = parseFloat(percentage) >= 50;
 
     return (
@@ -554,7 +836,7 @@ const Quiz = () => {
 
                 <div className="bg-[#FAFAFA] border border-[#E0E0E0] rounded-lg p-8 mb-6">
                   <div className="text-6xl font-bold text-[#000000] mb-2">
-                    {score}/{allQuestions.length}
+                    {score}/{activeQuestions.length}
                   </div>
                   <div className="text-2xl text-[#777777] mb-4">
                     {percentage}% Correct
@@ -590,7 +872,7 @@ const Quiz = () => {
                   Answer Review
                 </h3>
                 <div className="space-y-4">
-                  {allQuestions.map((question, index) => {
+                  {activeQuestions.map((question, index) => {
                     const userAnswer = selectedAnswers[question.id];
                     let correctAnswer = "";
                     let isCorrect = false;
@@ -610,7 +892,7 @@ const Quiz = () => {
                         question.short_answer.alternative_answers || [];
                       isCorrect =
                         userAnswer?.toLowerCase().trim() ===
-                          correctAnswer.toLowerCase().trim() ||
+                        correctAnswer.toLowerCase().trim() ||
                         alternatives.some(
                           (alt) =>
                             alt.toLowerCase().trim() ===
@@ -621,9 +903,8 @@ const Quiz = () => {
                     return (
                       <div
                         key={question.id}
-                        className={`bg-white rounded-lg border-2 p-6 ${
-                          isCorrect ? "border-[#000000]" : "border-[#777777]"
-                        }`}
+                        className={`bg-white rounded-lg border-2 p-6 ${isCorrect ? "border-[#000000]" : "border-[#777777]"
+                          }`}
                       >
                         <div className="flex items-start gap-4">
                           <span className="text-3xl">
@@ -780,27 +1061,25 @@ const Quiz = () => {
                 {selectedCategory || "Practice Quiz"}
               </h1>
               <p className="text-[#777777] mt-1">
-                Question {currentQuestionIndex + 1} of {allQuestions.length}
+                Question {currentQuestionIndex + 1} of {activeQuestions.length}
               </p>
             </div>
             <div className="flex items-center gap-6">
               {/* Question Timer - 30 seconds countdown */}
               <div
-                className={`flex flex-col items-center p-4 rounded-lg ${
-                  questionTimer <= 10
-                    ? "bg-red-50 border-2 border-red-500"
-                    : "bg-blue-50 border-2 border-blue-500"
-                }`}
+                className={`flex flex-col items-center p-4 rounded-lg ${questionTimer <= 10
+                  ? "bg-red-50 border-2 border-red-500"
+                  : "bg-blue-50 border-2 border-blue-500"
+                  }`}
               >
                 <div className="text-sm font-semibold text-[#777777] mb-1">
                   Time Left
                 </div>
                 <div
-                  className={`text-4xl font-bold ${
-                    questionTimer <= 10
-                      ? "text-red-600 animate-pulse"
-                      : "text-blue-600"
-                  }`}
+                  className={`text-4xl font-bold ${questionTimer <= 10
+                    ? "text-red-600 animate-pulse"
+                    : "text-blue-600"
+                    }`}
                 >
                   {questionTimer}s
                 </div>
@@ -859,12 +1138,11 @@ const Quiz = () => {
                             option.option_text,
                           )
                         }
-                        className={`w-full p-5 text-left rounded-lg border transition-all ${
-                          selectedAnswers[currentQuestion.id] ===
+                        className={`w-full p-5 text-left rounded-lg border transition-all ${selectedAnswers[currentQuestion.id] ===
                           option.option_text
-                            ? "border-[#000000] bg-[#EAEAEA] font-bold"
-                            : "border-[#DCDCDC] hover:bg-[#F5F5F5]"
-                        }`}
+                          ? "border-[#000000] bg-[#EAEAEA] font-bold"
+                          : "border-[#DCDCDC] hover:bg-[#F5F5F5]"
+                          }`}
                       >
                         <span className="font-bold mr-4 text-[#000000]">
                           {String.fromCharCode(65 + index)}.
@@ -904,11 +1182,11 @@ const Quiz = () => {
               </button>
 
               <div className="text-sm text-[#777777] font-medium">
-                {Object.keys(selectedAnswers).length}/{allQuestions.length}{" "}
+                {Object.keys(selectedAnswers).length}/{activeQuestions.length}{" "}
                 answered
               </div>
 
-              {currentQuestionIndex === allQuestions.length - 1 ? (
+              {currentQuestionIndex === activeQuestions.length - 1 ? (
                 <button
                   onClick={handleSubmitQuiz}
                   className="px-8 py-3 bg-[#000000] text-white rounded-lg font-semibold hover:bg-[#333333] transition-all flex items-center gap-2"
@@ -937,13 +1215,12 @@ const Quiz = () => {
                   <button
                     key={q.id}
                     onClick={() => setCurrentQuestionIndex(index)}
-                    className={`aspect-square rounded-lg font-bold text-sm transition-all ${
-                      index === currentQuestionIndex
-                        ? "bg-[#000000] text-white"
-                        : selectedAnswers[q.id]
-                          ? "bg-[#777777] text-white"
-                          : "bg-[#E5E5E5] hover:bg-[#DCDCDC] text-[#000000]"
-                    }`}
+                    className={`aspect-square rounded-lg font-bold text-sm transition-all ${index === currentQuestionIndex
+                      ? "bg-[#000000] text-white"
+                      : selectedAnswers[q.id]
+                        ? "bg-[#777777] text-white"
+                        : "bg-[#E5E5E5] hover:bg-[#DCDCDC] text-[#000000]"
+                      }`}
                   >
                     {index + 1}
                   </button>

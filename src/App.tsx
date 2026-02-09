@@ -43,6 +43,7 @@ const TestSupabase = lazy(() => import("./pages/TestSupabase"));
 const DebugAuth = lazy(() => import("./pages/DebugAuth"));
 const Quiz = lazy(() => import("./pages/Quiz"));
 const AdminQuestions = lazy(() => import("./pages/AdminQuestions"));
+const AdminMCQQuestions = lazy(() => import("./pages/AdminMCQQuestions"));
 const TestHistory = lazy(() => import("./components/TestHistory"));
 
 // Optimized QueryClient configuration
@@ -157,6 +158,14 @@ const App = () => (
                 element={
                   <ProtectedRoute requireAdmin={true}>
                     <AdminQuestions />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/mcq-questions"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminMCQQuestions />
                   </ProtectedRoute>
                 }
               />

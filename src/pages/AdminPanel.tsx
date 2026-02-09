@@ -434,11 +434,10 @@ const AdminPanel = () => {
                 {componentCategories.map((category) => (
                   <Card
                     key={category.id}
-                    className={`cursor-pointer transition-all duration-150 hover:scale-105 hover:shadow-xl ${
-                      selectedCategory === category.id
+                    className={`cursor-pointer transition-all duration-150 hover:scale-105 hover:shadow-xl ${selectedCategory === category.id
                         ? "ring-2 ring-accent"
                         : ""
-                    }`}
+                      }`}
                     onClick={() => handleCategoryClick(category)}
                   >
                     <CardContent className="p-4">
@@ -550,7 +549,29 @@ const AdminPanel = () => {
             </CardContent>
           </Card>
 
-          {/* Questions Manager Quick Access */}
+          {/* MCQ Manager Quick Access */}
+          <Card
+            className="mb-8 bg-gradient-to-br from-purple-600 to-purple-700 text-white border-0 shadow-lg hover:shadow-xl transition-all cursor-pointer"
+            onClick={() => navigate("/admin/mcq-questions")}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-bold mb-1">
+                    📝 MCQ Manager
+                  </h3>
+                  <p className="text-purple-100 text-sm">
+                    Dedicated MCQ exam setup and upload
+                  </p>
+                </div>
+                <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
+                  <ChevronRight className="h-6 w-6" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Sort Questions Manager Quick Access */}
           <Card
             className="mb-8 bg-gradient-to-br from-slate-600 to-slate-700 text-white border-0 shadow-lg hover:shadow-xl transition-all cursor-pointer"
             onClick={() => navigate("/admin/questions")}
@@ -559,10 +580,10 @@ const AdminPanel = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-xl font-bold mb-1">
-                    🎯 Questions Manager
+                    🎯 Sort Questions
                   </h3>
                   <p className="text-slate-200 text-sm">
-                    Manage MCQ and short answer questions
+                    Manage sort answers and general questions
                   </p>
                 </div>
                 <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
@@ -1212,8 +1233,7 @@ const AdminPanel = () => {
                             onClick={() => {
                               // You can add download/export functionality here
                               alert(
-                                `Total: ₹${calculateTotal()}\nItems: ${
-                                  Object.values(selectedItems).length
+                                `Total: ₹${calculateTotal()}\nItems: ${Object.values(selectedItems).length
                                 }`,
                               );
                             }}
