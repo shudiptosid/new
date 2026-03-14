@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
@@ -1503,20 +1503,19 @@ const Resources = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const QUESTIONS_PER_PAGE = 10;
 
-  // Available categories (without "All Categories")
-  const questionCategories = [
-    "Arduino",
-    "ESP32",
-    "ESP8266",
-    "Raspberry Pi",
-    "IoT",
-    "Electronics",
-    "Sensors",
-    "Programming",
-    "Circuit Design",
-    "Embedded Systems",
-    "Other",
-  ];
+  // Extract unique categories dynamically from actual questions
+  const questionCategories = useMemo(() => {
+    const uniqueCategories = [
+      ...new Set(
+        sortQuestions
+          .filter((q) => q.question_type === "short_answer" && q.is_active)
+          .map((q) => q.category),
+      ),
+    ]
+      .filter(Boolean)
+      .sort();
+    return uniqueCategories;
+  }, [sortQuestions]);
 
   // Fetch questions on mount
   useEffect(() => {
@@ -1818,21 +1817,6 @@ const Resources = () => {
                   {/* Decorative accent shape in card */}
                   <div className="absolute -top-8 -right-8 w-16 sm:w-20 md:w-24 h-16 sm:h-20 md:h-24 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition -z-10" />
 
-                  {/* Vertical Quiz Button - Right Side */}
-                  <button
-                    onClick={() => navigate("/quiz")}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/80 text-teal-600 px-2 py-4 rounded-l-lg shadow-md border-2 border-dashed border-teal-400 hover:bg-teal-500 hover:text-white hover:border-solid transition-all duration-300 z-10 flex items-center justify-center group"
-                    style={{
-                      writingMode: "vertical-rl",
-                      textOrientation: "mixed",
-                    }}
-                    title="Take Quiz"
-                  >
-                    <span className="text-xs font-bold tracking-wider group-hover:tracking-widest transition-all">
-                      ✨ QUIZ
-                    </span>
-                  </button>
-
                   <div className="flex flex-col items-center">
                     <img
                       src={boardImg}
@@ -1921,60 +1905,65 @@ const Resources = () => {
               <h3 className="text-2xl sm:text-3xl font-bold text-center text-foreground bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent">
                 Sort Questions
               </h3>
-              <button
-                onClick={() => navigate("/quiz")}
-                className="flex items-center gap-2 px-4 sm:px-5 py-2 text-sm sm:text-base bg-transparent text-teal-600 dark:text-teal-400 font-semibold rounded-full border-2 border-dashed border-teal-400 hover:bg-teal-500 hover:text-white hover:border-solid hover:scale-105 active:scale-95 transition-all duration-300 shadow-sm hover:shadow-lg"
-              >
-                <span className="text-lg">🎯</span>
-                <span className="whitespace-nowrap">Take MCQ Quiz</span>
-              </button>
             </div>
 
-            {/* Category Pills - Multi-Select */}
+            {/* Category Pills - Multi-Select - Scalable for 25+ Categories */}
             <div className="bg-white/90 dark:bg-slate-800/90 rounded-2xl shadow-sm border border-accent/10 p-4 sm:p-6 mb-6">
               <div className="text-center mb-4">
                 <label className="text-sm font-medium text-foreground/80 mb-1 block">
                   Select up to 3 Categories
                 </label>
                 <p className="text-xs text-muted-foreground">
-                  {selectedQuestionCategories.length}/3 selected
+                  {selectedQuestionCategories.length}/3 selected •{" "}
+                  {questionCategories.length} categories available
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-2 sm:gap-3 justify-center items-center max-w-4xl mx-auto">
-                {questionCategories.map((cat) => {
-                  const isSelected = selectedQuestionCategories.includes(cat);
-                  const isDisabled =
-                    !isSelected && selectedQuestionCategories.length >= 3;
+              {/* Scrollable Category Container */}
+              <div className="max-h-[400px] overflow-y-auto overflow-x-hidden px-2 custom-scrollbar">
+                <div className="flex flex-wrap gap-2 sm:gap-3 justify-center items-center max-w-5xl mx-auto">
+                  {questionCategories.length === 0 ? (
+                    <p className="text-sm text-muted-foreground italic py-4">
+                      No categories found. Admin can add questions with
+                      categories.
+                    </p>
+                  ) : (
+                    questionCategories.map((cat) => {
+                      const isSelected =
+                        selectedQuestionCategories.includes(cat);
+                      const isDisabled =
+                        !isSelected && selectedQuestionCategories.length >= 3;
 
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() => toggleCategory(cat)}
-                      disabled={isDisabled}
-                      className={`
-                        relative min-w-[80px] sm:min-w-[100px] px-3 sm:px-4 py-2 sm:py-2.5
-                        rounded-full font-medium text-xs sm:text-sm
-                        transition-all duration-300 ease-out
-                        border-2
-                        ${
-                          isSelected
-                            ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white border-transparent shadow-lg shadow-teal-500/30 scale-105 hover:scale-110 hover:shadow-xl hover:shadow-teal-500/40"
-                            : isDisabled
-                              ? "bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-slate-600 cursor-not-allowed opacity-50"
-                              : "bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-slate-600 hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 hover:scale-105 hover:shadow-md active:scale-95"
-                        }
-                      `}
-                    >
-                      {isSelected && (
-                        <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-teal-600 text-xs font-bold shadow-md">
-                          ✓
-                        </span>
-                      )}
-                      {cat}
-                    </button>
-                  );
-                })}
+                      return (
+                        <button
+                          key={cat}
+                          onClick={() => toggleCategory(cat)}
+                          disabled={isDisabled}
+                          className={`
+                            relative min-w-[80px] sm:min-w-[100px] px-3 sm:px-4 py-2 sm:py-2.5
+                            rounded-full font-medium text-xs sm:text-sm
+                            transition-all duration-300 ease-out
+                            border-2
+                            ${
+                              isSelected
+                                ? "bg-gradient-to-r from-teal-500 to-cyan-500 text-white border-transparent shadow-lg shadow-teal-500/30 scale-105 hover:scale-110 hover:shadow-xl hover:shadow-teal-500/40"
+                                : isDisabled
+                                  ? "bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-gray-500 border-gray-200 dark:border-slate-600 cursor-not-allowed opacity-50"
+                                  : "bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-slate-600 hover:border-teal-400 hover:text-teal-600 dark:hover:text-teal-400 hover:scale-105 hover:shadow-md active:scale-95"
+                            }
+                          `}
+                        >
+                          {isSelected && (
+                            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-teal-600 text-xs font-bold shadow-md">
+                              ✓
+                            </span>
+                          )}
+                          {cat}
+                        </button>
+                      );
+                    })
+                  )}
+                </div>
               </div>
 
               {selectedQuestionCategories.length > 0 && (
@@ -2077,27 +2066,6 @@ const Resources = () => {
                     </div>
                   ) : (
                     <>
-                      <div className="mb-4 text-center">
-                        <p className="text-sm text-muted-foreground">
-                          {selectedQuestionCategories.length === 0 ? (
-                            <span className="text-accent font-medium">
-                              Showing random questions
-                            </span>
-                          ) : (
-                            <span>
-                              Filtered by:{" "}
-                              <span className="font-semibold text-accent">
-                                {selectedQuestionCategories.join(", ")}
-                              </span>
-                            </span>
-                          )}
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Total: {filteredQuestions.length} questions | Page{" "}
-                          {currentPage} of {totalPages}
-                        </p>
-                      </div>
-
                       <ul className="space-y-4 mb-6">
                         {currentQuestions.map((question, index) => (
                           <li

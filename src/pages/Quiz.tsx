@@ -54,11 +54,33 @@ const Quiz = () => {
 
   // Exam Mode State
   const [showExamModal, setShowExamModal] = useState(false);
-  const [examCategory, setExamCategory] = useState<string>('random');
-  const [examDifficulty, setExamDifficulty] = useState<'easy' | 'medium' | 'hard' | 'mixed'>('mixed');
+  const [examCategory, setExamCategory] = useState<string>("random");
+  const [examDifficulty, setExamDifficulty] = useState<
+    "easy" | "medium" | "hard" | "mixed"
+  >("mixed");
   const [examQuestionCount, setExamQuestionCount] = useState(25);
   const [examMode, setExamMode] = useState(false);
-  const [shuffledQuestions, setShuffledQuestions] = useState<QuestionWithOptions[]>([]);
+  const [shuffledQuestions, setShuffledQuestions] = useState<
+    QuestionWithOptions[]
+  >([]);
+
+  // Practice Mode State
+  const [showPracticeModal, setShowPracticeModal] = useState(false);
+  const [practiceCategories, setPracticeCategories] = useState<string[]>([]);
+  const [practiceQuestionCount, setPracticeQuestionCount] =
+    useState<number>(10);
+  const [practiceTimePerQuestion, setPracticeTimePerQuestion] =
+    useState<number>(30);
+  const [practiceNegativeMarking, setPracticeNegativeMarking] =
+    useState<boolean>(false);
+  const [practiceMode, setPracticeMode] = useState(false);
+  const [wrongAnswers, setWrongAnswers] = useState<
+    Array<{
+      question: QuestionWithOptions;
+      userAnswer: string;
+      correctAnswer: string;
+    }>
+  >([]);
 
   useEffect(() => {
     checkAuth();
@@ -89,10 +111,16 @@ const Quiz = () => {
   // Reset timer when question changes
   useEffect(() => {
     if (quizStarted && !quizCompleted) {
-      setQuestionTimer(30);
+      const timerValue = practiceMode ? practiceTimePerQuestion : 30;
+      setQuestionTimer(timerValue);
       setTimerActive(true);
     }
-  }, [currentQuestionIndex, quizStarted]);
+  }, [
+    currentQuestionIndex,
+    quizStarted,
+    practiceMode,
+    practiceTimePerQuestion,
+  ]);
 
   const checkAuth = async () => {
     const { data } = await supabase.auth.getUser();
@@ -110,13 +138,127 @@ const Quiz = () => {
   };
 
   // Fisher-Yates Shuffle Algorithm - for true randomization
-  const shuffleQuestions = (questions: QuestionWithOptions[]): QuestionWithOptions[] => {
+  const shuffleQuestions = (
+    questions: QuestionWithOptions[],
+  ): QuestionWithOptions[] => {
     const shuffled = [...questions];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
     return shuffled;
+  };
+
+  // Round-Robin Algorithm - for multi-category practice
+  const selectQuestionsRoundRobin = (
+    categoriesSelected: string[],
+    totalCount: number,
+  ): QuestionWithOptions[] => {
+    const selectedQuestions: QuestionWithOptions[] = [];
+    const categoryQuestions: { [key: string]: QuestionWithOptions[] } = {};
+
+    // Group questions by category
+    categoriesSelected.forEach((cat) => {
+      categoryQuestions[cat] = allQuestions.filter(
+        (q) => q.category === cat && q.is_active,
+      );
+    });
+
+    // Round-robin selection
+    let categoryIndex = 0;
+    while (
+      selectedQuestions.length < totalCount &&
+      categoriesSelected.length > 0
+    ) {
+      const currentCategory = categoriesSelected[categoryIndex];
+      const availableQuestions = categoryQuestions[currentCategory];
+
+      if (availableQuestions && availableQuestions.length > 0) {
+        // Pick and remove a random question from this category
+        const randomIndex = Math.floor(
+          Math.random() * availableQuestions.length,
+        );
+        selectedQuestions.push(availableQuestions[randomIndex]);
+        availableQuestions.splice(randomIndex, 1);
+      }
+
+      categoryIndex = (categoryIndex + 1) % categoriesSelected.length;
+
+      // Check if we've exhausted all categories
+      const hasQuestionsLeft = categoriesSelected.some(
+        (cat) => categoryQuestions[cat] && categoryQuestions[cat].length > 0,
+      );
+      if (!hasQuestionsLeft) break;
+    }
+
+    return selectedQuestions;
+  };
+
+  // Start Practice Mode
+  const startPractice = async () => {
+    let questionsToUse: QuestionWithOptions[] = [];
+
+    // Load all questions
+    await fetchQuestions();
+
+    if (practiceCategories.length === 0) {
+      // Random mix - all categories
+      questionsToUse = shuffleQuestions(
+        allQuestions.filter((q) => q.is_active),
+      );
+    } else {
+      // Use round-robin for selected categories
+      questionsToUse = selectQuestionsRoundRobin(
+        practiceCategories,
+        practiceQuestionCount,
+      );
+    }
+
+    // Limit to requested count
+    const limitedQuestions = questionsToUse.slice(0, practiceQuestionCount);
+
+    if (limitedQuestions.length === 0) {
+      toast({
+        title: "No Questions Found",
+        description: "No questions available for the selected categories.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setShuffledQuestions(limitedQuestions);
+    setPracticeMode(true);
+    setSelectedCategory(
+      practiceCategories.length === 0
+        ? "Random Mix"
+        : practiceCategories.join(", "),
+    );
+    setShowPracticeModal(false);
+    setQuizStarted(true);
+    setCurrentQuestionIndex(0);
+    setSelectedAnswers({});
+    setQuizCompleted(false);
+    setScore(0);
+    setWrongAnswers([]);
+    setStartTime(Date.now());
+    setQuestionTimer(practiceTimePerQuestion); // Use custom time
+    setTimerActive(true);
+
+    toast({
+      title: "Practice Started! 🎯",
+      description: `${limitedQuestions.length} questions ready. Good luck!`,
+    });
+  };
+
+  // Toggle category in practice mode
+  const togglePracticeCategory = (category: string) => {
+    setPracticeCategories((prev) => {
+      if (prev.includes(category)) {
+        return prev.filter((c) => c !== category);
+      } else {
+        return [...prev, category];
+      }
+    });
   };
 
   // Start Exam with category selection and shuffle
@@ -134,23 +276,27 @@ const Quiz = () => {
     let questionsToUse: QuestionWithOptions[] = [];
 
     // 1. Filter by Category
-    if (examCategory === 'random') {
+    if (examCategory === "random") {
       await fetchQuestions();
-      questionsToUse = allQuestions.filter(q => q.is_active);
+      questionsToUse = allQuestions.filter((q) => q.is_active);
     } else {
       await fetchQuestionsByCategory(examCategory);
-      questionsToUse = allQuestions.filter(q => q.category === examCategory && q.is_active);
+      questionsToUse = allQuestions.filter(
+        (q) => q.category === examCategory && q.is_active,
+      );
     }
 
     // 2. Filter by Difficulty
-    if (examDifficulty !== 'mixed') {
-      questionsToUse = questionsToUse.filter(q => q.difficulty === examDifficulty);
+    if (examDifficulty !== "mixed") {
+      questionsToUse = questionsToUse.filter(
+        (q) => q.difficulty === examDifficulty,
+      );
     }
 
     if (questionsToUse.length === 0) {
       toast({
         title: "No Questions Found",
-        description: `No ${examDifficulty !== 'mixed' ? examDifficulty : ''} questions found for this selection. Try satisfying criteria.`,
+        description: `No ${examDifficulty !== "mixed" ? examDifficulty : ""} questions found for this selection. Try satisfying criteria.`,
         variant: "destructive",
       });
       return;
@@ -164,7 +310,9 @@ const Quiz = () => {
     setShuffledQuestions(limitedQuestions);
 
     setExamMode(true);
-    setSelectedCategory(examCategory === 'random' ? 'Random Mix' : examCategory);
+    setSelectedCategory(
+      examCategory === "random" ? "Random Mix" : examCategory,
+    );
     setShowExamModal(false);
     setQuizStarted(true);
     setCurrentQuestionIndex(0);
@@ -202,10 +350,12 @@ const Quiz = () => {
   };
 
   const handleNext = () => {
-    const questions = examMode ? shuffledQuestions : allQuestions;
+    const questions =
+      examMode || practiceMode ? shuffledQuestions : allQuestions;
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
-      setQuestionTimer(30); // Reset timer for next question
+      const timerValue = practiceMode ? practiceTimePerQuestion : 30;
+      setQuestionTimer(timerValue); // Reset timer for next question
     } else {
       // Last question - submit automatically
       handleSubmitQuiz();
@@ -221,7 +371,8 @@ const Quiz = () => {
   const handleSubmitQuiz = async () => {
     setTimerActive(false); // Stop the timer
 
-    const questions = examMode ? shuffledQuestions : allQuestions;
+    const questions =
+      examMode || practiceMode ? shuffledQuestions : allQuestions;
     if (Object.keys(selectedAnswers).length < questions.length) {
       if (!confirm("You haven't answered all questions. Submit anyway?")) {
         setTimerActive(true); // Resume timer if user cancels
@@ -236,6 +387,11 @@ const Quiz = () => {
     let correctCount = 0;
     let wrongCount = 0;
     let finalScore = 0;
+    const wrongAnswersList: Array<{
+      question: QuestionWithOptions;
+      userAnswer: string;
+      correctAnswer: string;
+    }> = [];
 
     // Calculate score with negative marking
     questions.forEach((question) => {
@@ -247,22 +403,23 @@ const Quiz = () => {
       }
 
       let isCorrect = false;
+      let correctAnswer = "";
 
       if (question.question_type === "mcq") {
         const correctOption = question.mcq_options?.find(
           (opt) => opt.is_correct,
         );
-        isCorrect = correctOption?.option_text === userAnswer;
+        correctAnswer = correctOption?.option_text || "";
+        isCorrect = correctAnswer === userAnswer;
       } else if (
         question.question_type === "short_answer" &&
         question.short_answer
       ) {
-        const correctAnswer = question.short_answer.correct_answer
-          .toLowerCase()
-          .trim();
+        correctAnswer = question.short_answer.correct_answer;
+        const correctAnswerLower = correctAnswer.toLowerCase().trim();
         const alternatives = question.short_answer.alternative_answers || [];
         isCorrect =
-          userAnswer.toLowerCase().trim() === correctAnswer ||
+          userAnswer.toLowerCase().trim() === correctAnswerLower ||
           alternatives.some(
             (alt) =>
               alt.toLowerCase().trim() === userAnswer.toLowerCase().trim(),
@@ -274,7 +431,22 @@ const Quiz = () => {
         finalScore += 1; // +1 for correct answer
       } else {
         wrongCount++;
-        finalScore -= 0.25; // -0.25 for wrong answer
+        // Apply negative marking based on mode
+        if (practiceMode) {
+          // Only apply negative marking if user enabled it
+          if (practiceNegativeMarking) {
+            finalScore -= 0.25;
+          }
+          // Track wrong answers for practice mode
+          wrongAnswersList.push({
+            question,
+            userAnswer,
+            correctAnswer,
+          });
+        } else {
+          // Exam mode always has negative marking
+          finalScore -= 0.25;
+        }
       }
 
       // Save individual question progress (if authenticated)
@@ -287,6 +459,9 @@ const Quiz = () => {
 
     // Ensure score doesn't go below 0
     finalScore = Math.max(0, finalScore);
+
+    // Store wrong answers for display
+    setWrongAnswers(wrongAnswersList);
 
     setScore(finalScore);
     setQuizCompleted(true);
@@ -317,11 +492,13 @@ const Quiz = () => {
   };
 
   // Use shuffled questions in exam mode, allQuestions otherwise
-  const activeQuestions = examMode ? shuffledQuestions : allQuestions;
+  const activeQuestions =
+    examMode || practiceMode ? shuffledQuestions : allQuestions;
   const currentQuestion = activeQuestions[currentQuestionIndex];
-  const progress = activeQuestions.length > 0
-    ? ((currentQuestionIndex + 1) / activeQuestions.length) * 100
-    : 0;
+  const progress =
+    activeQuestions.length > 0
+      ? ((currentQuestionIndex + 1) / activeQuestions.length) * 100
+      : 0;
 
   // Category Selection Screen
   if (!quizStarted) {
@@ -345,9 +522,12 @@ const Quiz = () => {
               <span>Dashboard</span>
             </button>
 
-            <button className="w-full flex items-center gap-3 px-4 py-3 bg-white text-black rounded-lg font-semibold">
+            <button
+              onClick={() => setShowPracticeModal(true)}
+              className="w-full flex items-center gap-3 px-4 py-3 bg-white text-black rounded-lg font-semibold"
+            >
               <FileText className="w-5 h-5" />
-              <span>Quiz Builder</span>
+              <span>Practice</span>
             </button>
 
             <button
@@ -405,7 +585,9 @@ const Quiz = () => {
               {/* Modal Header */}
               <div className="bg-[#111111] text-white p-6">
                 <h3 className="text-2xl font-bold">Start New Exam</h3>
-                <p className="text-white/70 mt-1">Configure your exam settings</p>
+                <p className="text-white/70 mt-1">
+                  Configure your exam settings
+                </p>
               </div>
 
               {/* Modal Body */}
@@ -420,10 +602,18 @@ const Quiz = () => {
                     onChange={(e) => setExamCategory(e.target.value)}
                     className="w-full p-3 border-2 border-[#E0E0E0] rounded-xl focus:border-[#000000] focus:outline-none transition-colors bg-white"
                   >
-                    <option value="random">🎲 Random Mix (All Categories)</option>
+                    <option value="random">
+                      🎲 Random Mix (All Categories)
+                    </option>
                     {categories.map((cat) => (
                       <option key={cat} value={cat}>
-                        📚 {cat} ({allQuestions.filter(q => q.category === cat && q.is_active).length} questions)
+                        📚 {cat} (
+                        {
+                          allQuestions.filter(
+                            (q) => q.category === cat && q.is_active,
+                          ).length
+                        }{" "}
+                        questions)
                       </option>
                     ))}
                   </select>
@@ -439,10 +629,11 @@ const Quiz = () => {
                       <button
                         key={count}
                         onClick={() => setExamQuestionCount(count)}
-                        className={`py-3 rounded-xl font-semibold transition-all ${examQuestionCount === count
-                          ? 'bg-[#111111] text-white'
-                          : 'bg-[#F5F5F5] text-[#000000] hover:bg-[#E5E5E5]'
-                          }`}
+                        className={`py-3 rounded-xl font-semibold transition-all ${
+                          examQuestionCount === count
+                            ? "bg-[#111111] text-white"
+                            : "bg-[#F5F5F5] text-[#000000] hover:bg-[#E5E5E5]"
+                        }`}
                       >
                         {count}
                       </button>
@@ -456,18 +647,21 @@ const Quiz = () => {
                     Difficulty Level
                   </label>
                   <div className="grid grid-cols-4 gap-2">
-                    {(['easy', 'medium', 'hard', 'mixed'] as const).map((diff) => (
-                      <button
-                        key={diff}
-                        onClick={() => setExamDifficulty(diff)}
-                        className={`py-3 rounded-xl font-semibold capitalize transition-all ${examDifficulty === diff
-                          ? 'bg-[#111111] text-white'
-                          : 'bg-[#F5F5F5] text-[#000000] hover:bg-[#E5E5E5]'
+                    {(["easy", "medium", "hard", "mixed"] as const).map(
+                      (diff) => (
+                        <button
+                          key={diff}
+                          onClick={() => setExamDifficulty(diff)}
+                          className={`py-3 rounded-xl font-semibold capitalize transition-all ${
+                            examDifficulty === diff
+                              ? "bg-[#111111] text-white"
+                              : "bg-[#F5F5F5] text-[#000000] hover:bg-[#E5E5E5]"
                           }`}
-                      >
-                        {diff}
-                      </button>
-                    ))}
+                        >
+                          {diff}
+                        </button>
+                      ),
+                    )}
                   </div>
                 </div>
 
@@ -508,6 +702,280 @@ const Quiz = () => {
           </div>
         )}
 
+        {/* Practice Modal */}
+        {showPracticeModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
+              {/* Modal Header */}
+              <div className="bg-gradient-to-r from-[#111111] to-[#333333] p-6 text-white">
+                <h2 className="text-2xl font-bold flex items-center gap-3">
+                  <span className="text-3xl">🎯</span>
+                  Practice Mode
+                </h2>
+                <p className="text-white/80 mt-1 text-sm">
+                  Customize your practice session
+                </p>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-6 space-y-6">
+                {/* Category Multi-Select */}
+                <div>
+                  <label className="block text-sm font-semibold text-[#000000] mb-3">
+                    Select Categories{" "}
+                    <span className="text-[#777777] font-normal">
+                      (Select multiple or leave empty for random mix)
+                    </span>
+                  </label>
+                  <div className="max-h-[200px] overflow-y-auto p-3 bg-[#F5F5F5] rounded-xl border-2 border-[#E0E0E0]">
+                    <div className="flex flex-wrap gap-2">
+                      {categories.map((cat) => {
+                        const isSelected = practiceCategories.includes(cat);
+                        const questionCount = allQuestions.filter(
+                          (q) => q.category === cat && q.is_active,
+                        ).length;
+
+                        return (
+                          <button
+                            key={cat}
+                            onClick={() => togglePracticeCategory(cat)}
+                            className={`px-4 py-2 rounded-lg font-medium transition-all text-sm ${
+                              isSelected
+                                ? "bg-[#111111] text-white shadow-lg scale-105"
+                                : "bg-white text-[#000000] hover:bg-gray-100 border border-[#E0E0E0]"
+                            }`}
+                          >
+                            {cat}{" "}
+                            <span className="text-xs opacity-70">
+                              ({questionCount})
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="mt-2 text-xs text-[#777777]">
+                    {practiceCategories.length === 0 ? (
+                      <span className="text-blue-600 font-medium">
+                        📝 Random Mix - Questions from all categories
+                      </span>
+                    ) : (
+                      <span>
+                        ✅ {practiceCategories.length}{" "}
+                        {practiceCategories.length === 1
+                          ? "category"
+                          : "categories"}{" "}
+                        selected
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Question Count Input */}
+                <div>
+                  <label className="block text-sm font-semibold text-[#000000] mb-2">
+                    Number of Questions
+                  </label>
+                  <div className="flex items-center gap-3">
+                    {/* Quick select buttons */}
+                    <div className="flex gap-2">
+                      {[10, 20, 30, 50].map((count) => (
+                        <button
+                          key={count}
+                          onClick={() => setPracticeQuestionCount(count)}
+                          className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                            practiceQuestionCount === count
+                              ? "bg-[#111111] text-white"
+                              : "bg-[#F5F5F5] text-[#000000] hover:bg-[#E5E5E5]"
+                          }`}
+                        >
+                          {count}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Custom input */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-[#777777]">or</span>
+                      <input
+                        type="number"
+                        min="1"
+                        max="200"
+                        value={practiceQuestionCount}
+                        onChange={(e) =>
+                          setPracticeQuestionCount(
+                            Math.max(1, parseInt(e.target.value) || 1),
+                          )
+                        }
+                        className="w-20 px-3 py-2 border-2 border-[#E0E0E0] rounded-lg focus:border-[#000000] focus:outline-none text-center font-semibold"
+                        placeholder="Custom"
+                      />
+                    </div>
+                  </div>
+                  <p className="mt-2 text-xs text-[#777777]">
+                    Total available:{" "}
+                    {practiceCategories.length === 0
+                      ? allQuestions.filter((q) => q.is_active).length
+                      : allQuestions.filter(
+                          (q) =>
+                            practiceCategories.includes(q.category) &&
+                            q.is_active,
+                        ).length}{" "}
+                    questions
+                  </p>
+                </div>
+
+                {/* Time Per Question */}
+                <div>
+                  <label className="block text-sm font-semibold text-[#000000] mb-2">
+                    Time Per Question (seconds)
+                  </label>
+                  <div className="flex items-center gap-3">
+                    {/* Quick select buttons */}
+                    <div className="flex gap-2">
+                      {[15, 30, 60, 120].map((time) => (
+                        <button
+                          key={time}
+                          onClick={() => setPracticeTimePerQuestion(time)}
+                          className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+                            practiceTimePerQuestion === time
+                              ? "bg-[#111111] text-white"
+                              : "bg-[#F5F5F5] text-[#000000] hover:bg-[#E5E5E5]"
+                          }`}
+                        >
+                          {time}s
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Custom input */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-[#777777]">or</span>
+                      <input
+                        type="number"
+                        min="10"
+                        max="300"
+                        value={practiceTimePerQuestion}
+                        onChange={(e) =>
+                          setPracticeTimePerQuestion(
+                            Math.max(10, parseInt(e.target.value) || 30),
+                          )
+                        }
+                        className="w-20 px-3 py-2 border-2 border-[#E0E0E0] rounded-lg focus:border-[#000000] focus:outline-none text-center font-semibold"
+                        placeholder="Custom"
+                      />
+                      <span className="text-sm text-[#777777]">sec</span>
+                    </div>
+                  </div>
+                  <p className="mt-2 text-xs text-[#777777]">
+                    ⏱️ Choose how much time you need per question
+                  </p>
+                </div>
+
+                {/* Negative Marking Toggle */}
+                <div>
+                  <div className="flex items-center justify-between p-4 bg-[#F5F5F5] rounded-xl border-2 border-[#E0E0E0]">
+                    <div className="flex-1">
+                      <label className="block text-sm font-semibold text-[#000000] mb-1">
+                        Negative Marking
+                      </label>
+                      <p className="text-xs text-[#777777]">
+                        Deduct 0.25 marks for wrong answers (Makes it more
+                        challenging!)
+                      </p>
+                    </div>
+                    <button
+                      onClick={() =>
+                        setPracticeNegativeMarking(!practiceNegativeMarking)
+                      }
+                      className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
+                        practiceNegativeMarking ? "bg-[#111111]" : "bg-gray-300"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                          practiceNegativeMarking
+                            ? "translate-x-7"
+                            : "translate-x-1"
+                        }`}
+                      />
+                    </button>
+                  </div>
+                  <p className="mt-2 text-xs text-center">
+                    {practiceNegativeMarking ? (
+                      <span className="text-orange-600 font-medium">
+                        ⚡ Negative marking enabled - Challenge mode!
+                      </span>
+                    ) : (
+                      <span className="text-green-600 font-medium">
+                        ✨ No pressure - Practice freely!
+                      </span>
+                    )}
+                  </p>
+                </div>
+
+                {/* Info Box */}
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl p-4">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">💡</span>
+                    <div className="text-sm text-purple-800">
+                      <p className="font-semibold mb-2">
+                        Practice Mode - Your Way!
+                      </p>
+                      <ul className="space-y-1 text-purple-700">
+                        <li>
+                          • <strong>Fully Customizable:</strong> Choose
+                          categories, questions, time & difficulty
+                        </li>
+                        <li>
+                          • <strong>Round-Robin Selection:</strong> Even
+                          distribution across categories
+                        </li>
+                        <li>
+                          • <strong>Detailed Results:</strong> See correct
+                          answers for wrong questions
+                        </li>
+                        <li>
+                          • <strong>No Pressure:</strong> Practice at your own
+                          pace, your way
+                        </li>
+                        <li>
+                          • <strong>Progress Saved:</strong> All results tracked
+                          in test history
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-6 pt-0 flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowPracticeModal(false);
+                    setPracticeCategories([]);
+                    setPracticeQuestionCount(10);
+                    setPracticeTimePerQuestion(30);
+                    setPracticeNegativeMarking(false);
+                  }}
+                  className="flex-1 py-3 border-2 border-[#E0E0E0] text-[#000000] rounded-xl font-semibold hover:bg-[#F5F5F5] transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={startPractice}
+                  className="flex-1 py-3 bg-gradient-to-r from-[#111111] to-[#333333] text-white rounded-xl font-semibold hover:from-[#222222] hover:to-[#444444] transition-all flex items-center justify-center gap-2 shadow-lg"
+                >
+                  <span className="text-xl">🚀</span>
+                  Start Practice
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Main Content Area - White Background */}
         <main className="flex-1 flex flex-col">
           {/* Header */}
@@ -525,26 +993,27 @@ const Quiz = () => {
           {/* Category Selection Content */}
           <div className="flex-1 p-8 overflow-y-auto">
             <div className="max-w-6xl mx-auto">
-
               {/* Hero Section */}
               <div className="text-center mb-12">
                 <div className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white text-sm font-medium rounded-full mb-4">
                   <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                  {allQuestions.filter((q) => q.is_active).length} Questions Available
+                  {allQuestions.filter((q) => q.is_active).length} Questions
+                  Available
                 </div>
                 <h2 className="text-4xl font-bold text-[#000000] mb-4">
                   Start Your Practice Session
                 </h2>
                 <p className="text-[#777777] text-lg max-w-2xl mx-auto">
-                  Choose a category below to test your knowledge. Each quiz includes timed questions with instant feedback.
+                  Choose a category below to test your knowledge. Each quiz
+                  includes timed questions with instant feedback.
                 </p>
               </div>
 
-              {/* Featured: All Questions Card */}
+              {/* Featured: Practice Mode Card */}
               <div className="mb-8">
                 <button
-                  onClick={() => startQuiz()}
-                  className="w-full p-8 bg-[#111111] text-white rounded-2xl hover:bg-[#222222] transition-all duration-300 group relative overflow-hidden"
+                  onClick={() => setShowPracticeModal(true)}
+                  className="w-full p-8 bg-gradient-to-r from-[#111111] via-[#222222] to-[#111111] text-white rounded-2xl hover:from-[#222222] hover:via-[#333333] hover:to-[#222222] transition-all duration-300 group relative overflow-hidden shadow-xl hover:shadow-2xl"
                 >
                   {/* Background Pattern */}
                   <div className="absolute inset-0 opacity-10">
@@ -558,14 +1027,21 @@ const Quiz = () => {
                         <span className="text-3xl">🎯</span>
                       </div>
                       <div className="text-left">
-                        <h3 className="text-2xl font-bold mb-1">Complete Quiz Challenge</h3>
-                        <p className="text-white/70">Test yourself with all {allQuestions.filter((q) => q.is_active).length} questions across all categories</p>
+                        <h3 className="text-2xl font-bold mb-1">
+                          Test Yourself
+                        </h3>
+                        <p className="text-white/70">
+                          Complete quiz challenge - Customize your practice
+                          session
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-right">
-                        <div className="text-3xl font-bold">{allQuestions.filter((q) => q.is_active).length}</div>
-                        <div className="text-sm text-white/60">Questions</div>
+                        <div className="text-3xl font-bold">
+                          {allQuestions.filter((q) => q.is_active).length}
+                        </div>
+                        <div className="text-sm text-white/60">Available</div>
                       </div>
                       <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
                     </div>
@@ -575,27 +1051,75 @@ const Quiz = () => {
 
               {/* Category Header */}
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-[#000000]">Browse by Category</h3>
-                <span className="text-sm text-[#777777]">{categories.length} categories available</span>
+                <h3 className="text-xl font-bold text-[#000000]">
+                  Browse by Category
+                </h3>
+                <span className="text-sm text-[#777777]">
+                  {categories.length} categories available
+                </span>
               </div>
 
               {/* Category Grid - Redesigned Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 {categories.map((category, index) => {
-                  const categoryQuestions = allQuestions.filter((q) => q.category === category && q.is_active);
+                  const categoryQuestions = allQuestions.filter(
+                    (q) => q.category === category && q.is_active,
+                  );
                   const questionCount = categoryQuestions.length;
-                  const easyCount = categoryQuestions.filter(q => q.difficulty === 'easy').length;
-                  const mediumCount = categoryQuestions.filter(q => q.difficulty === 'medium').length;
-                  const hardCount = categoryQuestions.filter(q => q.difficulty === 'hard').length;
+                  const easyCount = categoryQuestions.filter(
+                    (q) => q.difficulty === "easy",
+                  ).length;
+                  const mediumCount = categoryQuestions.filter(
+                    (q) => q.difficulty === "medium",
+                  ).length;
+                  const hardCount = categoryQuestions.filter(
+                    (q) => q.difficulty === "hard",
+                  ).length;
 
                   // Different accent colors for each category
                   const colors = [
-                    { bg: 'bg-blue-50', border: 'border-blue-200', accent: 'bg-blue-500', text: 'text-blue-600', icon: '💻' },
-                    { bg: 'bg-emerald-50', border: 'border-emerald-200', accent: 'bg-emerald-500', text: 'text-emerald-600', icon: '🌐' },
-                    { bg: 'bg-purple-50', border: 'border-purple-200', accent: 'bg-purple-500', text: 'text-purple-600', icon: '⚡' },
-                    { bg: 'bg-orange-50', border: 'border-orange-200', accent: 'bg-orange-500', text: 'text-orange-600', icon: '🔧' },
-                    { bg: 'bg-rose-50', border: 'border-rose-200', accent: 'bg-rose-500', text: 'text-rose-600', icon: '📡' },
-                    { bg: 'bg-cyan-50', border: 'border-cyan-200', accent: 'bg-cyan-500', text: 'text-cyan-600', icon: '🎓' },
+                    {
+                      bg: "bg-blue-50",
+                      border: "border-blue-200",
+                      accent: "bg-blue-500",
+                      text: "text-blue-600",
+                      icon: "💻",
+                    },
+                    {
+                      bg: "bg-emerald-50",
+                      border: "border-emerald-200",
+                      accent: "bg-emerald-500",
+                      text: "text-emerald-600",
+                      icon: "🌐",
+                    },
+                    {
+                      bg: "bg-purple-50",
+                      border: "border-purple-200",
+                      accent: "bg-purple-500",
+                      text: "text-purple-600",
+                      icon: "⚡",
+                    },
+                    {
+                      bg: "bg-orange-50",
+                      border: "border-orange-200",
+                      accent: "bg-orange-500",
+                      text: "text-orange-600",
+                      icon: "🔧",
+                    },
+                    {
+                      bg: "bg-rose-50",
+                      border: "border-rose-200",
+                      accent: "bg-rose-500",
+                      text: "text-rose-600",
+                      icon: "📡",
+                    },
+                    {
+                      bg: "bg-cyan-50",
+                      border: "border-cyan-200",
+                      accent: "bg-cyan-500",
+                      text: "text-cyan-600",
+                      icon: "🎓",
+                    },
                   ];
                   const color = colors[index % colors.length];
 
@@ -606,14 +1130,20 @@ const Quiz = () => {
                       className={`p-6 ${color.bg} border-2 ${color.border} rounded-xl hover:shadow-lg hover:scale-[1.02] transition-all duration-300 group text-left relative overflow-hidden`}
                     >
                       {/* Top Bar Accent */}
-                      <div className={`absolute top-0 left-0 right-0 h-1 ${color.accent}`}></div>
+                      <div
+                        className={`absolute top-0 left-0 right-0 h-1 ${color.accent}`}
+                      ></div>
 
                       {/* Header Row */}
                       <div className="flex items-start justify-between mb-4">
-                        <div className={`w-12 h-12 ${color.accent} rounded-xl flex items-center justify-center text-white text-xl shadow-sm`}>
+                        <div
+                          className={`w-12 h-12 ${color.accent} rounded-xl flex items-center justify-center text-white text-xl shadow-sm`}
+                        >
                           {color.icon}
                         </div>
-                        <div className={`px-3 py-1 bg-white rounded-full text-sm font-semibold ${color.text} shadow-sm`}>
+                        <div
+                          className={`px-3 py-1 bg-white rounded-full text-sm font-semibold ${color.text} shadow-sm`}
+                        >
                           {questionCount} Qs
                         </div>
                       </div>
@@ -622,7 +1152,9 @@ const Quiz = () => {
                       <h4 className="text-xl font-bold text-[#000000] mb-1 group-hover:text-[#333333]">
                         {category}
                       </h4>
-                      <p className="text-sm text-[#777777] mb-3">{questionCount} Questions</p>
+                      <p className="text-sm text-[#777777] mb-3">
+                        {questionCount} Questions
+                      </p>
 
                       {/* Difficulty Breakdown */}
                       <div className="flex gap-3 mb-4">
@@ -645,13 +1177,19 @@ const Quiz = () => {
 
                       {/* Progress Bar (placeholder) */}
                       <div className="h-2 bg-white rounded-full overflow-hidden">
-                        <div className={`h-full ${color.accent} w-0 group-hover:w-full transition-all duration-500`}></div>
+                        <div
+                          className={`h-full ${color.accent} w-0 group-hover:w-full transition-all duration-500`}
+                        ></div>
                       </div>
 
                       {/* Start CTA */}
                       <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/50">
-                        <span className="text-sm text-[#777777]">Start Quiz</span>
-                        <ArrowRight className={`w-5 h-5 ${color.text} group-hover:translate-x-1 transition-transform`} />
+                        <span className="text-sm text-[#777777]">
+                          Start Quiz
+                        </span>
+                        <ArrowRight
+                          className={`w-5 h-5 ${color.text} group-hover:translate-x-1 transition-transform`}
+                        />
                       </div>
                     </button>
                   );
@@ -670,7 +1208,8 @@ const Quiz = () => {
                         Unlock Progress Tracking
                       </h3>
                       <p className="text-[#777777]">
-                        Sign in to save your quiz history, track performance analytics, and compete on leaderboards.
+                        Sign in to save your quiz history, track performance
+                        analytics, and compete on leaderboards.
                       </p>
                     </div>
                     <button
@@ -690,25 +1229,33 @@ const Quiz = () => {
                     <div className="text-3xl font-bold text-[#000000]">
                       {allQuestions.filter((q) => q.is_active).length}
                     </div>
-                    <div className="text-sm text-[#777777] mt-1">Total Questions</div>
+                    <div className="text-sm text-[#777777] mt-1">
+                      Total Questions
+                    </div>
                   </div>
                   <div className="bg-white rounded-xl border border-[#E0E0E0] p-5 text-center">
                     <div className="text-3xl font-bold text-[#000000]">
                       {categories.length}
                     </div>
-                    <div className="text-sm text-[#777777] mt-1">Categories</div>
+                    <div className="text-sm text-[#777777] mt-1">
+                      Categories
+                    </div>
                   </div>
                   <div className="bg-white rounded-xl border border-[#E0E0E0] p-5 text-center">
                     <div className="text-3xl font-bold text-[#000000]">
                       30<span className="text-lg font-normal">s</span>
                     </div>
-                    <div className="text-sm text-[#777777] mt-1">Per Question</div>
+                    <div className="text-sm text-[#777777] mt-1">
+                      Per Question
+                    </div>
                   </div>
                   <div className="bg-white rounded-xl border border-[#E0E0E0] p-5 text-center">
                     <div className="text-3xl font-bold text-[#000000]">
                       -0.25
                     </div>
-                    <div className="text-sm text-[#777777] mt-1">Wrong Penalty</div>
+                    <div className="text-sm text-[#777777] mt-1">
+                      Wrong Penalty
+                    </div>
                   </div>
                 </div>
               )}
@@ -721,7 +1268,9 @@ const Quiz = () => {
 
   // Quiz Completed Screen
   if (quizCompleted) {
-    const percentage = (activeQuestions.length > 0 ? (score / activeQuestions.length) * 100 : 0).toFixed(1);
+    const percentage = (
+      activeQuestions.length > 0 ? (score / activeQuestions.length) * 100 : 0
+    ).toFixed(1);
     const passed = parseFloat(percentage) >= 50;
 
     return (
@@ -745,11 +1294,15 @@ const Quiz = () => {
             </button>
 
             <button
-              onClick={() => navigate("/quiz")}
+              onClick={() => {
+                setQuizCompleted(false);
+                setQuizStarted(false);
+                navigate("/quiz");
+              }}
               className="w-full flex items-center gap-3 px-4 py-3 bg-white text-black rounded-lg font-semibold"
             >
               <FileText className="w-5 h-5" />
-              <span>Quiz Builder</span>
+              <span>Practice</span>
             </button>
 
             <button
@@ -866,6 +1419,102 @@ const Quiz = () => {
                 </div>
               </div>
 
+              {/* Wrong Answers Section - Practice Mode Only */}
+              {practiceMode && wrongAnswers.length > 0 && (
+                <div className="mt-8 mb-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                      <span className="text-2xl">❌</span>
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-[#000000]">
+                        Questions You Got Wrong
+                      </h3>
+                      <p className="text-sm text-[#777777]">
+                        {wrongAnswers.length}{" "}
+                        {wrongAnswers.length === 1 ? "question" : "questions"}{" "}
+                        to review
+                      </p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    {wrongAnswers.map((item, index) => (
+                      <div
+                        key={item.question.id}
+                        className="bg-gradient-to-r from-red-50 to-orange-50 rounded-xl border-2 border-red-200 p-6 shadow-sm hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="w-10 h-10 bg-red-500 text-white rounded-lg flex items-center justify-center font-bold shrink-0">
+                            {index + 1}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-bold text-[#000000] mb-4 text-lg">
+                              {item.question.question_text}
+                            </p>
+
+                            {/* User's Wrong Answer */}
+                            <div className="bg-white/70 rounded-lg p-4 mb-3 border-l-4 border-red-400">
+                              <p className="text-sm">
+                                <span className="text-red-600 font-semibold text-xs uppercase tracking-wide">
+                                  Your Answer:
+                                </span>
+                                <br />
+                                <span className="text-[#000000] font-medium mt-1 block">
+                                  {item.userAnswer}
+                                </span>
+                              </p>
+                            </div>
+
+                            {/* Correct Answer */}
+                            <div className="bg-green-50 rounded-lg p-4 border-l-4 border-green-500">
+                              <p className="text-sm">
+                                <span className="text-green-700 font-semibold text-xs uppercase tracking-wide">
+                                  Correct Answer:
+                                </span>
+                                <br />
+                                <span className="text-[#000000] font-bold mt-1 block">
+                                  {item.correctAnswer}
+                                </span>
+                              </p>
+                            </div>
+
+                            {/* Category & Difficulty Badge */}
+                            <div className="flex gap-2 mt-4">
+                              <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                                {item.question.category}
+                              </span>
+                              <span
+                                className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
+                                  item.question.difficulty === "easy"
+                                    ? "bg-green-100 text-green-700"
+                                    : item.question.difficulty === "medium"
+                                      ? "bg-yellow-100 text-yellow-700"
+                                      : "bg-red-100 text-red-700"
+                                }`}
+                              >
+                                {item.question.difficulty}
+                              </span>
+                            </div>
+
+                            {/* Explanation if available */}
+                            {item.question.explanation && (
+                              <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <p className="text-xs text-blue-700 font-semibold mb-1">
+                                  💡 EXPLANATION:
+                                </p>
+                                <p className="text-sm text-[#000000]">
+                                  {item.question.explanation}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Answer Review */}
               <div className="mt-8">
                 <h3 className="text-2xl font-bold text-[#000000] mb-6">
@@ -892,7 +1541,7 @@ const Quiz = () => {
                         question.short_answer.alternative_answers || [];
                       isCorrect =
                         userAnswer?.toLowerCase().trim() ===
-                        correctAnswer.toLowerCase().trim() ||
+                          correctAnswer.toLowerCase().trim() ||
                         alternatives.some(
                           (alt) =>
                             alt.toLowerCase().trim() ===
@@ -903,8 +1552,9 @@ const Quiz = () => {
                     return (
                       <div
                         key={question.id}
-                        className={`bg-white rounded-lg border-2 p-6 ${isCorrect ? "border-[#000000]" : "border-[#777777]"
-                          }`}
+                        className={`bg-white rounded-lg border-2 p-6 ${
+                          isCorrect ? "border-[#000000]" : "border-[#777777]"
+                        }`}
                       >
                         <div className="flex items-start gap-4">
                           <span className="text-3xl">
@@ -997,9 +1647,22 @@ const Quiz = () => {
             <span>Dashboard</span>
           </button>
 
-          <button className="w-full flex items-center gap-3 px-4 py-3 bg-white text-black rounded-lg font-semibold">
+          <button
+            onClick={() => {
+              if (
+                confirm(
+                  "Exit current quiz and start practice mode? Your progress will be lost.",
+                )
+              ) {
+                setQuizCompleted(false);
+                setQuizStarted(false);
+                setShowPracticeModal(true);
+              }
+            }}
+            className="w-full flex items-center gap-3 px-4 py-3 bg-white text-black rounded-lg font-semibold"
+          >
             <FileText className="w-5 h-5" />
-            <span>Quiz Builder</span>
+            <span>Practice</span>
           </button>
 
           <button
@@ -1067,19 +1730,21 @@ const Quiz = () => {
             <div className="flex items-center gap-6">
               {/* Question Timer - 30 seconds countdown */}
               <div
-                className={`flex flex-col items-center p-4 rounded-lg ${questionTimer <= 10
-                  ? "bg-red-50 border-2 border-red-500"
-                  : "bg-blue-50 border-2 border-blue-500"
-                  }`}
+                className={`flex flex-col items-center p-4 rounded-lg ${
+                  questionTimer <= 10
+                    ? "bg-red-50 border-2 border-red-500"
+                    : "bg-blue-50 border-2 border-blue-500"
+                }`}
               >
                 <div className="text-sm font-semibold text-[#777777] mb-1">
                   Time Left
                 </div>
                 <div
-                  className={`text-4xl font-bold ${questionTimer <= 10
-                    ? "text-red-600 animate-pulse"
-                    : "text-blue-600"
-                    }`}
+                  className={`text-4xl font-bold ${
+                    questionTimer <= 10
+                      ? "text-red-600 animate-pulse"
+                      : "text-blue-600"
+                  }`}
                 >
                   {questionTimer}s
                 </div>
@@ -1138,11 +1803,12 @@ const Quiz = () => {
                             option.option_text,
                           )
                         }
-                        className={`w-full p-5 text-left rounded-lg border transition-all ${selectedAnswers[currentQuestion.id] ===
+                        className={`w-full p-5 text-left rounded-lg border transition-all ${
+                          selectedAnswers[currentQuestion.id] ===
                           option.option_text
-                          ? "border-[#000000] bg-[#EAEAEA] font-bold"
-                          : "border-[#DCDCDC] hover:bg-[#F5F5F5]"
-                          }`}
+                            ? "border-[#000000] bg-[#EAEAEA] font-bold"
+                            : "border-[#DCDCDC] hover:bg-[#F5F5F5]"
+                        }`}
                       >
                         <span className="font-bold mr-4 text-[#000000]">
                           {String.fromCharCode(65 + index)}.
@@ -1178,7 +1844,9 @@ const Quiz = () => {
                 className="px-6 py-3 border border-[#DCDCDC] text-[#999999] rounded-lg font-medium opacity-40 cursor-not-allowed"
               >
                 <ArrowLeft className="w-4 h-4 inline mr-2" />
-                Previous (Disabled)
+                {practiceMode
+                  ? "Previous (Disabled in Practice)"
+                  : "Previous (Disabled)"}
               </button>
 
               <div className="text-sm text-[#777777] font-medium">
@@ -1205,28 +1873,49 @@ const Quiz = () => {
               )}
             </div>
 
-            {/* Quick Navigation Grid */}
-            <div className="bg-white rounded-lg border border-[#E0E0E0] p-6">
-              <h3 className="text-sm font-bold text-[#000000] mb-4">
-                Quick Navigation
-              </h3>
-              <div className="grid grid-cols-10 gap-2">
-                {allQuestions.map((q, index) => (
-                  <button
-                    key={q.id}
-                    onClick={() => setCurrentQuestionIndex(index)}
-                    className={`aspect-square rounded-lg font-bold text-sm transition-all ${index === currentQuestionIndex
-                      ? "bg-[#000000] text-white"
-                      : selectedAnswers[q.id]
-                        ? "bg-[#777777] text-white"
-                        : "bg-[#E5E5E5] hover:bg-[#DCDCDC] text-[#000000]"
+            {/* Quick Navigation Grid - Hidden in Practice Mode */}
+            {!practiceMode && (
+              <div className="bg-white rounded-lg border border-[#E0E0E0] p-6">
+                <h3 className="text-sm font-bold text-[#000000] mb-4">
+                  Quick Navigation
+                </h3>
+                <div className="grid grid-cols-10 gap-2">
+                  {allQuestions.map((q, index) => (
+                    <button
+                      key={q.id}
+                      onClick={() => setCurrentQuestionIndex(index)}
+                      className={`aspect-square rounded-lg font-bold text-sm transition-all ${
+                        index === currentQuestionIndex
+                          ? "bg-[#000000] text-white"
+                          : selectedAnswers[q.id]
+                            ? "bg-[#777777] text-white"
+                            : "bg-[#E5E5E5] hover:bg-[#DCDCDC] text-[#000000]"
                       }`}
-                  >
-                    {index + 1}
-                  </button>
-                ))}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+
+            {/* Practice Mode Info */}
+            {practiceMode && (
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200 p-6">
+                <div className="flex items-center gap-3">
+                  <span className="text-3xl">🎯</span>
+                  <div>
+                    <h3 className="text-sm font-bold text-[#000000] mb-1">
+                      Practice Mode - Sequential Flow
+                    </h3>
+                    <p className="text-xs text-[#777777]">
+                      Answer questions one by one. Use Next button to proceed.
+                      Focus on learning!
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </main>

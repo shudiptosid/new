@@ -38,8 +38,8 @@ const Navigation = () => {
       href: "/resources",
     },
     {
-      label: "Quiz",
-      href: "/quiz",
+      label: "Careers",
+      href: "/careers",
     },
     {
       label: "Contact",
@@ -99,14 +99,13 @@ const Navigation = () => {
               <Link
                 key={item.href}
                 to={item.href}
-                className={`transition-all duration-200 text-sm px-3 py-1.5 rounded-md font-medium ${item.href === "/cost-estimator"
-                  ? "bg-green-600 text-white font-semibold hover:bg-green-700 shadow-md"
-                  : item.href === "/quiz"
-                    ? "text-teal-600 font-semibold border-b-2 border-dashed border-teal-400 hover:border-solid hover:border-teal-600 pb-0.5"
+                className={`transition-all duration-200 text-sm px-3 py-1.5 rounded-md font-medium ${
+                  item.href === "/cost-estimator"
+                    ? "bg-green-600 text-white font-semibold hover:bg-green-700 shadow-md"
                     : location.pathname === item.href
                       ? "text-accent font-semibold"
                       : "text-foreground hover:text-accent"
-                  }`}
+                }`}
               >
                 {item.label}
               </Link>
@@ -214,12 +213,13 @@ const Navigation = () => {
                 <Link
                   key={item.href}
                   to={item.href}
-                  className={`py-2 px-4 rounded-md transition-all ${item.href === "/cost-estimator"
-                    ? "bg-accent text-white font-semibold shadow-md"
-                    : location.pathname === item.href
-                      ? "bg-accent/10 text-accent font-semibold"
-                      : "text-foreground hover:bg-accent/5"
-                    }`}
+                  className={`py-2 px-4 rounded-md transition-all ${
+                    item.href === "/cost-estimator"
+                      ? "bg-accent text-white font-semibold shadow-md"
+                      : location.pathname === item.href
+                        ? "bg-accent/10 text-accent font-semibold"
+                        : "text-foreground hover:bg-accent/5"
+                  }`}
                 >
                   {item.label}
                 </Link>

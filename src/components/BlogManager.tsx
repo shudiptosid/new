@@ -11,19 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  MessageSquare,
-  Save,
-  X,
-  Bold,
-  Italic,
-} from "lucide-react";
+import { Plus, Edit, Trash2, Eye, MessageSquare, Save, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabaseClient";
+import RichTextEditor from "@/components/RichTextEditor";
 
 interface Blog {
   id: string;
@@ -39,6 +30,12 @@ interface Blog {
   created_at: string;
   updated_at: string;
   comment_count?: number;
+  keywords?: string[];
+  meta_description?: string;
+  og_image?: string;
+  og_image_alt?: string;
+  author_name?: string;
+  tags?: string[];
 }
 
 const BlogManager = () => {
@@ -55,6 +52,10 @@ const BlogManager = () => {
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [featured, setFeatured] = useState(false);
+  const [keywords, setKeywords] = useState("");
+  const [metaDescription, setMetaDescription] = useState("");
+  const [ogImage, setOgImage] = useState("");
+  const [tags, setTags] = useState("");
 
   const categories = [
     "Power Management",
@@ -148,45 +149,59 @@ const BlogManager = () => {
       setLoading(true);
       const slug = generateSlug(title);
       const readTime = calculateReadTime(content);
+      
+      // Process SEO fields
+      const keywordsArray = keywords
+        .split(",")
+        .map((k) => k.trim())
+        .filter((k) => k);
+      const tagsArray = tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter((t) => t);
+      const finalMetaDesc = metaDescription || excerpt.substring(0, 155) + "...";
+      const finalOgImage = ogImage || "/default-blog-og-image.jpg";
+
+      const blogData = {
+        title,
+        slug,
+        excerpt,
+        content,
+        category,
+        read_time: readTime,
+        featured,
+        keywords: keywordsArray.length > 0 ? keywordsArray : [
+          "IoT", "Embedded Systems", "Electronics", category
+        ],
+        meta_description: finalMetaDesc,
+        og_image: finalOgImage,
+        og_image_alt: `${title} - Circuit Crafters Blog`,
+        author_name: "Circuit Crafters Team",
+        tags: tagsArray,
+      };
 
       if (editingBlog) {
         // Update existing blog
         const { error } = await supabase
           .from("blogs")
-          .update({
-            title,
-            slug,
-            excerpt,
-            content,
-            category,
-            read_time: readTime,
-            featured,
-          })
+          .update(blogData)
           .eq("id", editingBlog.id);
 
         if (error) throw error;
 
         toast({
           title: "Success",
-          description: "Blog updated successfully",
+          description: "Blog updated successfully with SEO optimization",
         });
       } else {
         // Create new blog
-        const { error } = await supabase.from("blogs").insert({
-          title,
-          slug,
-          excerpt,
-          content,
-          category,
-          read_time: readTime,
-          featured,
-        });
+        const { error } = await supabase.from("blogs").insert(blogData);
 
         if (error) throw error;
 
         toast({
           title: "Success",
-          description: "Blog created successfully",
+          description: "Blog created successfully with SEO optimization",
         });
       }
 
@@ -210,6 +225,10 @@ const BlogManager = () => {
     setContent(blog.content);
     setCategory(blog.category);
     setFeatured(blog.featured);
+    setKeywords(blog.keywords?.join(", ") || "");
+    setMetaDescription(blog.meta_description || "");
+    setOgImage(blog.og_image || "");
+    setTags(blog.tags?.join(", ") || "");
     setShowEditor(true);
   };
 
@@ -242,42 +261,24 @@ const BlogManager = () => {
     setContent("");
     setCategory("");
     setFeatured(false);
+    setKeywords("");
+    setMetaDescription("");
+    setOgImage("");
+    setTags("");
     setEditingBlog(null);
     setShowEditor(false);
   };
 
-  const applyFormatting = (format: "bold" | "italic") => {
-    const textarea = document.getElementById(
-      "blog-content",
-    ) as HTMLTextAreaElement;
-    if (!textarea) return;
-
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = content.substring(start, end);
-
-    if (!selectedText) {
-      toast({
-        title: "Select Text",
-        description: "Please select text to format",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    let formattedText = "";
-    if (format === "bold") {
-      formattedText = `**${selectedText}**`;
-    } else if (format === "italic") {
-      formattedText = `*${selectedText}*`;
-    }
-
-    const newContent =
-      content.substring(0, start) + formattedText + content.substring(end);
-    setContent(newContent);
+  // Calculate word count from HTML content
+  const getWordCount = (html: string) => {
+    const text = html
+      .replace(/<[^>]*>/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    return text ? text.split(/\s+/).length : 0;
   };
 
-  const wordCount = content.trim().split(/\s+/).length;
+  const wordCount = getWordCount(content);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -350,74 +351,130 @@ const BlogManager = () => {
               />
             </div>
 
+            {/* SEO Section */}
+            <div className="border-t pt-6 space-y-4">
+              <h3 className="text-lg font-bold text-emerald-600">SEO Optimization</h3>
+              
+              {/* Meta Description */}
+              <div>
+                <label className="block text-sm font-semibold mb-2">
+                  Meta Description (SEO)
+                </label>
+                <Textarea
+                  value={metaDescription}
+                  onChange={(e) => setMetaDescription(e.target.value)}
+                  placeholder="Optimized description for search engines (150-160 chars). Leave blank to auto-generate from excerpt."
+                  rows={2}
+                  className="text-base"
+                  maxLength={160}
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  {metaDescription.length}/160 characters • Appears in search results
+                </p>
+              </div>
+
+              {/* Keywords */}
+              <div>
+                <label className="block text-sm font-semibold mb-2">
+                  SEO Keywords
+                </label>
+                <Input
+                  value={keywords}
+                  onChange={(e) => setKeywords(e.target.value)}
+                  placeholder="IoT, ESP32, Arduino, Sensors, Embedded Systems (comma-separated)"
+                  className="text-base"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 Add 5-10 relevant keywords separated by commas for better search rankings
+                </p>
+              </div>
+
+              {/* Tags */}
+              <div>
+                <label className="block text-sm font-semibold mb-2">
+                  Tags
+                </label>
+                <Input
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  placeholder="tutorial, beginner-friendly, advanced (comma-separated)"
+                  className="text-base"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Tags help readers find related content
+                </p>
+              </div>
+
+              {/* OG Image */}
+              <div>
+                <label className="block text-sm font-semibold mb-2">
+                  Social Media Image (Open Graph)
+                </label>
+                <Input
+                  value={ogImage}
+                  onChange={(e) => setOgImage(e.target.value)}
+                  placeholder="/images/blog-featured.jpg or https://example.com/image.jpg"
+                  className="text-base"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  📱 Image for Facebook, Twitter, LinkedIn previews (1200x630px recommended)
+                </p>
+              </div>
+            </div>
+
             {/* Content Editor */}
             <div>
               <div className="flex justify-between items-center mb-2">
                 <label className="block text-sm font-semibold">
                   Content <span className="text-red-500">*</span>
                 </label>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => applyFormatting("bold")}
-                    title="Bold (select text first)"
-                  >
-                    <Bold className="w-4 h-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => applyFormatting("italic")}
-                    title="Italic (select text first)"
-                  >
-                    <Italic className="w-4 h-4" />
-                  </Button>
-                  <span
-                    className={`text-sm font-medium ${
-                      wordCount > 1500 ? "text-red-500" : "text-gray-600"
-                    }`}
-                  >
-                    {wordCount}/1500 words
-                  </span>
-                </div>
+                <span
+                  className={`text-sm font-medium ${
+                    wordCount > 1500 ? "text-red-500" : "text-gray-600"
+                  }`}
+                >
+                  {wordCount}/1500 words
+                </span>
               </div>
-              <Textarea
-                id="blog-content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="Write your blog content here (max 1500 words)..."
-                rows={15}
-                className="text-base font-mono"
+              <RichTextEditor
+                content={content}
+                onChange={setContent}
+                placeholder="Write your blog content here... Use the toolbar for formatting options."
               />
-              <p className="text-xs text-gray-500 mt-1">
-                Formatting: **bold text**, *italic text*
+              <p className="text-xs text-gray-500 mt-2">
+                💡 Use the toolbar to format text, add headings, lists, links,
+                images, and more. Maximum 1500 words recommended for optimal
+                readability.
               </p>
             </div>
 
-            {/* Featured Checkbox */}
+            {/* Featured Toggle */}
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
                 id="featured"
                 checked={featured}
                 onChange={(e) => setFeatured(e.target.checked)}
-                className="w-4 h-4"
+                className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
               />
               <label htmlFor="featured" className="text-sm font-medium">
-                Mark as Featured
+                Mark as Featured Article
               </label>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-3">
+            <div className="flex gap-3 pt-4">
               <Button
                 onClick={handleSave}
-                disabled={loading || wordCount > 1500}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+                disabled={loading}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white flex-1"
               >
                 <Save className="w-4 h-4 mr-2" />
-                {editingBlog ? "Update Blog" : "Publish Blog"}
+                {loading
+                  ? "Saving..."
+                  : editingBlog
+                    ? "Update Blog"
+                    : "Publish Blog"}
               </Button>
               <Button variant="outline" onClick={resetForm}>
                 Cancel

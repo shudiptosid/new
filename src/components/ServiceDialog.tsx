@@ -423,6 +423,172 @@ const FirmwareDevelopmentContent = () => (
   </div>
 );
 
+const ModelingAndPrintingContent = () => (
+  <div className="space-y-6">
+    <h2 className="text-xl font-bold bg-accent/10 text-accent p-4 rounded-lg">
+      3D Modeling and Printing: Faster Product Realization
+    </h2>
+
+    <p className="text-foreground/80 leading-relaxed italic font-bold">
+      "From concept sketch to physical part, our 3D modeling and printing
+      service helps you build enclosures, mounts, mechanical interfaces, and
+      proof-of-concept parts quickly. We focus on practical geometry, material
+      suitability, and manufacturable design so your prototypes are useful, not
+      just visual."
+    </p>
+
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-accent">1. 3D CAD Modeling</h3>
+        <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+          <li>
+            <span className="font-medium">What we design:</span> Enclosures,
+            brackets, housings, panel mounts, and custom interfaces for embedded
+            and IoT devices.
+          </li>
+          <li>
+            <span className="font-medium">What you get:</span> Dimensionally
+            accurate 3D models ready for prototyping and iteration.
+          </li>
+        </ul>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-accent">
+          2. Design for Printability
+        </h3>
+        <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+          <li>
+            <span className="font-medium">Our process:</span> We optimize wall
+            thickness, overhangs, support strategy, tolerances, and joining
+            points for reliable print outcomes.
+          </li>
+          <li>
+            <span className="font-medium">What you get:</span> Designs that
+            print cleanly and reduce rework during physical prototyping.
+          </li>
+        </ul>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-accent">
+          3. Rapid Prototype Printing
+        </h3>
+        <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+          <li>
+            <span className="font-medium">What we provide:</span> Fast print
+            cycles for concept validation and iterative testing.
+          </li>
+          <li>
+            <span className="font-medium">What you get:</span> Physical parts
+            for real-world fitting, assembly checks, and stakeholder demos.
+          </li>
+        </ul>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-accent">
+          4. Mechanical Fit Validation
+        </h3>
+        <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+          <li>
+            <span className="font-medium">Validation scope:</span> PCB fit,
+            connector access, airflow, mounting alignment, and assembly
+            clearances.
+          </li>
+          <li>
+            <span className="font-medium">What you get:</span> Reduced risk of
+            integration issues before moving to final production design.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+);
+
+const AIMLContent = () => (
+  <div className="space-y-6">
+    <h2 className="text-xl font-bold bg-accent/10 text-accent p-4 rounded-lg">
+      AI&ML: Intelligence for Embedded and IoT Systems
+    </h2>
+
+    <p className="text-foreground/80 leading-relaxed italic font-bold">
+      "We help you apply AI and machine learning to practical engineering
+      problems, from predictive analytics to vision-assisted automation. Our
+      focus is not just building models, but making them run reliably in
+      real-world systems including edge devices and connected platforms."
+    </p>
+
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-accent">
+          1. Edge Model Integration
+        </h3>
+        <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+          <li>
+            <span className="font-medium">What we integrate:</span> Compact
+            inference pipelines on resource-constrained boards and embedded
+            targets.
+          </li>
+          <li>
+            <span className="font-medium">What you get:</span> Faster local
+            decisions, lower cloud dependency, and improved responsiveness.
+          </li>
+        </ul>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-accent">
+          2. Computer Vision Workflows
+        </h3>
+        <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+          <li>
+            <span className="font-medium">Use cases:</span> Object detection,
+            quality checks, scene monitoring, and event-based vision alerts.
+          </li>
+          <li>
+            <span className="font-medium">What you get:</span> Deployable vision
+            modules aligned with your hardware and runtime constraints.
+          </li>
+        </ul>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-accent">
+          3. Data Preparation and Training Support
+        </h3>
+        <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+          <li>
+            <span className="font-medium">Our support:</span> Dataset
+            structuring, feature preparation, model baseline selection, and
+            training workflows.
+          </li>
+          <li>
+            <span className="font-medium">What you get:</span> A stable model
+            development pipeline with reproducible results.
+          </li>
+        </ul>
+      </div>
+
+      <div className="space-y-4">
+        <h3 className="text-lg font-bold text-accent">
+          4. Inference and Runtime Optimization
+        </h3>
+        <ul className="list-disc list-inside space-y-2 text-foreground/80 ml-4">
+          <li>
+            <span className="font-medium">Optimization focus:</span> Latency,
+            memory footprint, quantization strategy, and runtime stability.
+          </li>
+          <li>
+            <span className="font-medium">What you get:</span> Better model
+            performance on your target platform without unnecessary overhead.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+);
+
 const ServiceDialog = ({ title, children }: ServiceDialogProps) => {
   const getContent = () => {
     switch (title) {
@@ -434,6 +600,10 @@ const ServiceDialog = ({ title, children }: ServiceDialogProps) => {
         return <PrototypingContent />;
       case "Firmware Development":
         return <FirmwareDevelopmentContent />;
+      case "3D Modeling and Printing":
+        return <ModelingAndPrintingContent />;
+      case "AI&ML":
+        return <AIMLContent />;
       default:
         return <div>Content coming soon...</div>;
     }

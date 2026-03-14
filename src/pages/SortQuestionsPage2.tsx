@@ -5,7 +5,6 @@ import { Card } from "@/components/ui/card";
 import booksImg from "@/assets/books.png";
 import boardImg from "@/assets/board.png";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 import { useQuestions } from "@/hooks/useQuestions";
 import { Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -32,7 +31,6 @@ const QUESTIONS_PER_PAGE = 10;
 
 const SortQuestionsPage2 = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const { questions, loading, fetchQuestions } = useQuestions();
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,25 +40,28 @@ const SortQuestionsPage2 = () => {
   }, []);
 
   // Filter only short answer questions
-  const shortAnswerQuestions = useMemo(() =>
-    questions.filter(q => q.question_type === 'short_answer'),
-    [questions]
+  const shortAnswerQuestions = useMemo(
+    () => questions.filter((q) => q.question_type === "short_answer"),
+    [questions],
   );
 
   // Derive stats for categories
   const categoryStats = useMemo(() => {
-    const stats: Record<string, { total: number; easy: number; medium: number; hard: number }> = {};
+    const stats: Record<
+      string,
+      { total: number; easy: number; medium: number; hard: number }
+    > = {};
 
     // Initialize stats for known categories
-    shortAnswerQuestions.forEach(q => {
+    shortAnswerQuestions.forEach((q) => {
       const cat = q.category || "Uncategorized";
       if (!stats[cat]) {
         stats[cat] = { total: 0, easy: 0, medium: 0, hard: 0 };
       }
       stats[cat].total++;
-      if (q.difficulty === 'easy') stats[cat].easy++;
-      if (q.difficulty === 'medium') stats[cat].medium++;
-      if (q.difficulty === 'hard') stats[cat].hard++;
+      if (q.difficulty === "easy") stats[cat].easy++;
+      if (q.difficulty === "medium") stats[cat].medium++;
+      if (q.difficulty === "hard") stats[cat].hard++;
     });
 
     return stats;
@@ -110,21 +111,11 @@ const SortQuestionsPage2 = () => {
     return pages;
   };
 
-  const handleQuizClick = () => {
-    if (user) {
-      navigate("/quiz");
-    } else {
-      sessionStorage.setItem("redirectAfterLogin", "/quiz");
-      navigate("/login");
-    }
-  };
-
   return (
     <div className="min-h-screen">
       <Navigation />
       <section className="relative min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-slate-100 to-blue-100 overflow-hidden">
         <div className="container mx-auto px-4 relative z-10 pt-8 pb-12">
-
           {/* Header Section */}
           <div className="mx-auto mb-12 max-w-2xl rounded-2xl bg-white/80 shadow-xl border-2 border-accent/30 p-6 flex flex-col items-center backdrop-blur-md">
             <h2 className="text-4xl font-extrabold text-center mb-4">
@@ -226,57 +217,66 @@ const SortQuestionsPage2 = () => {
                     setSelectedCategory("All Categories");
                     setCurrentPage(1);
                   }}
-                  className={`flex flex-col items-center p-3 rounded-xl border-2 transition-all min-w-[120px] ${selectedCategory === "All Categories"
-                    ? "bg-primary text-white border-primary shadow-lg scale-105"
-                    : "bg-white text-gray-700 border-gray-200 hover:border-primary/50 hover:bg-gray-50"
-                    }`}
+                  className={`flex flex-col items-center p-3 rounded-xl border-2 transition-all min-w-[120px] ${
+                    selectedCategory === "All Categories"
+                      ? "bg-primary text-white border-primary shadow-lg scale-105"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-primary/50 hover:bg-gray-50"
+                  }`}
                 >
                   <span className="font-bold text-lg mb-1">All</span>
-                  <Badge variant="secondary" className="bg-black/20 text-current hover:bg-black/30">
+                  <Badge
+                    variant="secondary"
+                    className="bg-black/20 text-current hover:bg-black/30"
+                  >
                     {shortAnswerQuestions.length}
                   </Badge>
                 </button>
 
                 {/* Individual Category Buttons */}
-                {Object.keys(categoryStats).sort().map((cat) => {
-                  const stats = categoryStats[cat];
-                  const isSelected = selectedCategory === cat;
+                {Object.keys(categoryStats)
+                  .sort()
+                  .map((cat) => {
+                    const stats = categoryStats[cat];
+                    const isSelected = selectedCategory === cat;
 
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() => {
-                        setSelectedCategory(cat);
-                        setCurrentPage(1);
-                      }}
-                      className={`flex flex-col items-start p-3 rounded-xl border-2 transition-all min-w-[140px] ${isSelected
-                        ? "bg-white border-primary shadow-lg ring-2 ring-primary/20"
-                        : "bg-white border-gray-200 hover:border-primary/50 hover:bg-gray-50"
+                    return (
+                      <button
+                        key={cat}
+                        onClick={() => {
+                          setSelectedCategory(cat);
+                          setCurrentPage(1);
+                        }}
+                        className={`flex flex-col items-start p-3 rounded-xl border-2 transition-all min-w-[140px] ${
+                          isSelected
+                            ? "bg-white border-primary shadow-lg ring-2 ring-primary/20"
+                            : "bg-white border-gray-200 hover:border-primary/50 hover:bg-gray-50"
                         }`}
-                    >
-                      <div className="flex justify-between w-full items-center mb-2">
-                        <span className={`font-bold ${isSelected ? 'text-primary' : 'text-gray-800'}`}>
-                          {cat}
-                        </span>
-                        <span className="text-xs font-mono bg-gray-100 px-2 py-0.5 rounded-full text-gray-600">
-                          {stats.total}
-                        </span>
-                      </div>
+                      >
+                        <div className="flex justify-between w-full items-center mb-2">
+                          <span
+                            className={`font-bold ${isSelected ? "text-primary" : "text-gray-800"}`}
+                          >
+                            {cat}
+                          </span>
+                          <span className="text-xs font-mono bg-gray-100 px-2 py-0.5 rounded-full text-gray-600">
+                            {stats.total}
+                          </span>
+                        </div>
 
-                      <div className="flex gap-1 text-[10px] w-full justify-between opacity-80">
-                        <span className="text-green-600 font-semibold bg-green-50 px-1.5 rounded">
-                          E:{stats.easy}
-                        </span>
-                        <span className="text-yellow-600 font-semibold bg-yellow-50 px-1.5 rounded">
-                          M:{stats.medium}
-                        </span>
-                        <span className="text-red-600 font-semibold bg-red-50 px-1.5 rounded">
-                          H:{stats.hard}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
+                        <div className="flex gap-1 text-[10px] w-full justify-between opacity-80">
+                          <span className="text-green-600 font-semibold bg-green-50 px-1.5 rounded">
+                            E:{stats.easy}
+                          </span>
+                          <span className="text-yellow-600 font-semibold bg-yellow-50 px-1.5 rounded">
+                            M:{stats.medium}
+                          </span>
+                          <span className="text-red-600 font-semibold bg-red-50 px-1.5 rounded">
+                            H:{stats.hard}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
               </div>
             </div>
 
@@ -285,7 +285,9 @@ const SortQuestionsPage2 = () => {
               <div className="flex justify-between items-center mb-6 border-b pb-4">
                 <div>
                   <h4 className="text-xl font-bold flex items-center gap-2">
-                    {selectedCategory === "All Categories" ? "All Questions" : selectedCategory}
+                    {selectedCategory === "All Categories"
+                      ? "All Questions"
+                      : selectedCategory}
                     <Badge variant="outline" className="ml-2">
                       {filteredQuestions.length}
                     </Badge>
@@ -320,18 +322,28 @@ const SortQuestionsPage2 = () => {
                         <h5 className="font-semibold text-gray-900 text-lg leading-snug">
                           {item.question_text}
                         </h5>
-                        <Badge variant={
-                          item.difficulty === 'easy' ? 'default' :
-                            item.difficulty === 'medium' ? 'secondary' : 'destructive'
-                        } className="capitalize shrink-0">
+                        <Badge
+                          variant={
+                            item.difficulty === "easy"
+                              ? "default"
+                              : item.difficulty === "medium"
+                                ? "secondary"
+                                : "destructive"
+                          }
+                          className="capitalize shrink-0"
+                        >
                           {item.difficulty}
                         </Badge>
                       </div>
 
                       <div className="bg-gray-50 p-3 rounded-lg border-l-4 border-primary/50">
                         <p className="text-gray-700 font-medium">
-                          <span className="text-primary font-bold mr-2">A:</span>
-                          {item.short_answer?.correct_answer || item.short_answer?.alternative_answers?.[0] || "Answer not available"}
+                          <span className="text-primary font-bold mr-2">
+                            A:
+                          </span>
+                          {item.short_answer?.correct_answer ||
+                            item.short_answer?.alternative_answers?.[0] ||
+                            "Answer not available"}
                         </p>
                       </div>
 
@@ -349,7 +361,9 @@ const SortQuestionsPage2 = () => {
               {!loading && filteredQuestions.length > 0 && (
                 <div className="flex justify-center items-center gap-2 mt-8 pt-6 border-t">
                   <button
-                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
                     disabled={currentPage === 1}
                     className="px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
                   >
@@ -359,15 +373,21 @@ const SortQuestionsPage2 = () => {
                   <div className="flex gap-1">
                     {getPageNumbers().map((page, index) =>
                       page === "..." ? (
-                        <span key={`ellipsis-${index}`} className="px-3 py-2 text-gray-400">...</span>
+                        <span
+                          key={`ellipsis-${index}`}
+                          className="px-3 py-2 text-gray-400"
+                        >
+                          ...
+                        </span>
                       ) : (
                         <button
                           key={page}
                           onClick={() => setCurrentPage(page as number)}
-                          className={`w-10 h-10 rounded-lg font-bold transition-all ${currentPage === page
-                            ? "bg-primary text-white shadow-md scale-105"
-                            : "bg-white border hover:bg-gray-50 text-gray-600"
-                            }`}
+                          className={`w-10 h-10 rounded-lg font-bold transition-all ${
+                            currentPage === page
+                              ? "bg-primary text-white shadow-md scale-105"
+                              : "bg-white border hover:bg-gray-50 text-gray-600"
+                          }`}
                         >
                           {page}
                         </button>
@@ -376,7 +396,9 @@ const SortQuestionsPage2 = () => {
                   </div>
 
                   <button
-                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
                     disabled={currentPage === totalPages}
                     className="px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100"
                   >
@@ -385,23 +407,13 @@ const SortQuestionsPage2 = () => {
                 </div>
               )}
 
-              {/* Quiz CTA */}
+              {/* Footer Actions */}
               <div className="mt-8 pt-6 border-t flex flex-col sm:flex-row justify-center items-center gap-4">
                 <button
                   onClick={() => navigate("/resources")}
                   className="px-6 py-2.5 text-gray-600 hover:text-gray-900 font-medium transition-colors"
                 >
                   ← Back to Resources
-                </button>
-
-                <button
-                  onClick={handleQuizClick}
-                  className="px-8 py-3 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl font-bold shadow-lg hover:from-green-700 hover:to-green-600 hover:shadow-green-500/25 hover:scale-105 transition-all duration-200 flex items-center gap-2"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  Take a Quiz
                 </button>
               </div>
             </div>

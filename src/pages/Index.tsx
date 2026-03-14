@@ -3,16 +3,35 @@ import HeroSection from "@/components/HeroSection";
 import ServicesOverview from "@/components/ServicesOverview";
 import FeaturedProjects from "@/components/FeaturedProjects";
 import AboutSnippet from "@/components/AboutSnippet";
+import CustomerReviewsCarousel from "@/components/CustomerReviewsCarousel";
 import LatestBlogPosts from "@/components/LatestBlogPosts";
 import ContactCTA from "@/components/ContactCTA";
 import Footer from "@/components/Footer";
 import StickyContactBar from "@/components/StickyContactBar";
 import FloatingIconsHome from "@/components/FloatingIconsHome";
+import { SEO } from "@/components/SEO";
 import backgroundImage from "@/assets/bg3.jpg";
 
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col relative">
+      <SEO
+        title="Home"
+        description="Circuit Crafters - Your premier IoT and embedded systems resource center. Explore tutorials, projects, sensor datasheets, and comprehensive learning materials for electronics enthusiasts and professionals."
+        keywords={[
+          "Circuit Crafters",
+          "IoT portfolio",
+          "Embedded systems",
+          "Electronics projects",
+          "Arduino tutorials",
+          "ESP32 projects",
+          "Sensor datasheets",
+          "IoT learning platform",
+          "Circuit design",
+          "Electronic components",
+          "Microcontroller projects",
+        ]}
+      />
       {/* Floating icons across the home page with increased density */}
       <div className="pointer-events-none z-10">
         <FloatingIconsHome isHomePage={true} />
@@ -41,6 +60,7 @@ const Index = () => {
             <ServicesOverview />
             <FeaturedProjects />
             <AboutSnippet />
+            <CustomerReviewsCarousel />
             <LatestBlogPosts />
             <ContactCTA />
           </div>

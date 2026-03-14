@@ -22,10 +22,11 @@ const Services = lazy(() => import("./pages/Services"));
 const Projects = lazy(() => import("./pages/Projects"));
 const Blog = lazy(() => import("./pages/Blog"));
 const Contact = lazy(() => import("./pages/Contact"));
+const Careers = lazy(() => import("./pages/Careers"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const CompletedProjects = lazy(() => import("./pages/CompletedProjects"));
 const Resources = lazy(() => import("./pages/Resources"));
-const SortQuestionsPage2 = lazy(() => import("./pages/SortQuestionsPage2"));
+const TermsAndCondition = lazy(() => import("./pages/TermsAndCondition"));
 // Compressed blog version with all 10 articles (80% smaller than original)
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const BlogPostPage = lazy(() => import("./pages/BlogPostPage"));
@@ -36,15 +37,12 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AdminPanel = lazy(() => import("./pages/AdminPanel"));
+const AdminCareers = lazy(() => import("./pages/AdminCareers"));
 const PriceManager = lazy(() => import("./components/PriceManager"));
 const BlogManager = lazy(() => import("./components/BlogManager"));
 const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const TestSupabase = lazy(() => import("./pages/TestSupabase"));
 const DebugAuth = lazy(() => import("./pages/DebugAuth"));
-const Quiz = lazy(() => import("./pages/Quiz"));
-const AdminQuestions = lazy(() => import("./pages/AdminQuestions"));
-const AdminMCQQuestions = lazy(() => import("./pages/AdminMCQQuestions"));
-const TestHistory = lazy(() => import("./components/TestHistory"));
 
 // Optimized QueryClient configuration
 const queryClient = new QueryClient({
@@ -84,6 +82,7 @@ const App = () => (
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/careers" element={<Careers />} />
               <Route
                 path="/completed-projects"
                 element={<CompletedProjects />}
@@ -91,19 +90,10 @@ const App = () => (
               <Route path="/resources" element={<Resources />} />
               <Route path="/resources/ece" element={<ECEResources />} />
               <Route
-                path="/resources/questions/2"
-                element={<SortQuestionsPage2 />}
+                path="/terms-and-condition"
+                element={<TermsAndCondition />}
               />
               <Route path="/cost-estimator" element={<CostEstimator />} />
-              <Route path="/quiz" element={<Quiz />} />
-              <Route
-                path="/test-history"
-                element={
-                  <ProtectedRoute>
-                    <TestHistory />
-                  </ProtectedRoute>
-                }
-              />
 
               {/* Public Authentication routes - redirect to dashboard if already logged in */}
               <Route
@@ -154,26 +144,18 @@ const App = () => (
                 }
               />
               <Route
-                path="/admin/questions"
-                element={
-                  <ProtectedRoute requireAdmin={true}>
-                    <AdminQuestions />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/admin/mcq-questions"
-                element={
-                  <ProtectedRoute requireAdmin={true}>
-                    <AdminMCQQuestions />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
                 path="/admin/blog-manager"
                 element={
                   <ProtectedRoute requireAdmin={true}>
                     <BlogManager />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/careers"
+                element={
+                  <ProtectedRoute requireAdmin={true}>
+                    <AdminCareers />
                   </ProtectedRoute>
                 }
               />

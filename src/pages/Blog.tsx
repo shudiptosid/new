@@ -14,9 +14,10 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { useToast } from "@/hooks/use-toast";
+import { SEO } from "@/components/SEO";
 
 interface BlogPost {
   id: string;
@@ -29,6 +30,9 @@ interface BlogPost {
   view_count: number;
   created_at: string;
   comment_count?: number;
+  keywords?: string[];
+  tags?: string[];
+  meta_description?: string;
 }
 
 const Blog = () => {
@@ -71,6 +75,9 @@ const Blog = () => {
         view_count: blog.view_count,
         created_at: blog.created_at,
         comment_count: blog.blog_comments[0]?.count || 0,
+        keywords: blog.keywords || [],
+        tags: blog.tags || [],
+        meta_description: blog.meta_description || "",
       }));
 
       setPosts(blogsWithComments || []);
@@ -95,23 +102,37 @@ const Blog = () => {
     return () => clearTimeout(timer);
   }, [searchInput]);
 
-  const categories = [
-    "All",
-    "Power Management",
-    "Protocols",
-    "Security",
-    "Connectivity",
-    "Networking",
-    "Visualization",
-    "RTOS",
-    "Development",
-    "AI/ML",
-    "Tutorials",
-    "Projects",
-    "Sensors",
-    "Hardware",
-    "Troubleshooting",
-  ];
+  const categories = useMemo(() => {
+    const categorySet = new Set<string>();
+    posts.forEach((post) => {
+      if (post.category) categorySet.add(post.category);
+    });
+    return [
+      "All",
+      ...Array.from(categorySet).sort((a, b) => a.localeCompare(b)),
+    ];
+  }, [posts]);
+
+  const topKeywords = useMemo(() => {
+    const keywordFrequency = new Map<string, number>();
+
+    posts.forEach((post) => {
+      const combinedKeywords = [...(post.keywords || []), ...(post.tags || [])];
+      combinedKeywords.forEach((keyword) => {
+        const normalized = keyword.trim().toLowerCase();
+        if (!normalized) return;
+        keywordFrequency.set(
+          normalized,
+          (keywordFrequency.get(normalized) || 0) + 1,
+        );
+      });
+    });
+
+    return Array.from(keywordFrequency.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 16)
+      .map(([keyword]) => keyword);
+  }, [posts]);
 
   // Filter posts based on selected category and search query
   const filteredPosts = posts.filter((post) => {
@@ -121,12 +142,40 @@ const Blog = () => {
       searchQuery === "" ||
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.category.toLowerCase().includes(searchQuery.toLowerCase());
+      post.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (post.meta_description || "")
+        .toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      (post.keywords || []).some((keyword) =>
+        keyword.toLowerCase().includes(searchQuery.toLowerCase()),
+      ) ||
+      (post.tags || []).some((tag) =>
+        tag.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
     return matchesCategory && matchesSearch;
   });
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 to-white">
+      <SEO
+        title="IoT & Embedded Systems Blog"
+        description="Comprehensive articles on embedded systems, IoT protocols, RTOS, sensors, and cutting-edge electronics technologies. Technical knowledge base for students, educators, and professionals."
+        keywords={[
+          "IoT blog",
+          "Embedded systems tutorials",
+          "Arduino projects",
+          "ESP32 tutorials",
+          "IoT protocols",
+          "RTOS",
+          "Electronics articles",
+          "Sensor interfacing",
+          "Circuit design",
+          "IoT security",
+          "Power management",
+          "Wireless connectivity",
+        ]}
+        type="website"
+      />
       <Navigation />
 
       {/* Hero Section - Academic & Professional with Circuit Animation */}
@@ -351,6 +400,25 @@ const Blog = () => {
                 </button>
               ))}
             </div>
+
+            {topKeywords.length > 0 && (
+              <div className="mt-6">
+                <h2 className="text-sm font-semibold text-gray-700 mb-2">
+                  Popular Topic Keywords
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {topKeywords.map((keyword) => (
+                    <button
+                      key={keyword}
+                      onClick={() => setSearchInput(keyword)}
+                      className="px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                    >
+                      #{keyword.replace(/\s+/g, "-")}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>

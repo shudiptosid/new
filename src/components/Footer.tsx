@@ -137,10 +137,26 @@ const Footer = () => {
               </li>
               <li>
                 <a
+                  href="/careers"
+                  className="text-muted-foreground hover:text-accent transition-colors"
+                >
+                  Careers
+                </a>
+              </li>
+              <li>
+                <a
                   href="/contact"
                   className="text-muted-foreground hover:text-accent transition-colors"
                 >
                   Contact
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/terms-and-condition"
+                  className="text-muted-foreground hover:text-accent transition-colors"
+                >
+                  Terms and Condition
                 </a>
               </li>
             </ul>

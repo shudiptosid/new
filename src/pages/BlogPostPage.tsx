@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Link } from "react-router-dom";
 import {
   ArrowLeft,
   Calendar,
@@ -18,6 +19,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { useAuth } from "@/contexts/AuthContext";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 
 interface Blog {
   id: string;
@@ -30,6 +32,19 @@ interface Blog {
   view_count: number;
   created_at: string;
   updated_at: string;
+  keywords?: string[];
+  tags?: string[];
+  meta_description?: string;
+  og_image?: string;
+  author_name?: string;
+}
+
+interface RelatedPost {
+  id: string;
+  slug: string;
+  title: string;
+  category: string;
+  read_time: string;
 }
 
 interface Comment {
@@ -56,6 +71,7 @@ const BlogPostPage = () => {
   const [commentText, setCommentText] = useState("");
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
+  const [relatedPosts, setRelatedPosts] = useState<RelatedPost[]>([]);
 
   useEffect(() => {
     if (slug) {
@@ -76,6 +92,7 @@ const BlogPostPage = () => {
 
       if (error) throw error;
       setBlog(data);
+      fetchRelatedPosts(data.id, data.category);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -85,6 +102,24 @@ const BlogPostPage = () => {
       navigate("/blog");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchRelatedPosts = async (currentBlogId: string, category: string) => {
+    try {
+      const { data, error } = await supabase
+        .from("blogs")
+        .select("id, slug, title, category, read_time")
+        .eq("is_active", true)
+        .eq("category", category)
+        .neq("id", currentBlogId)
+        .order("created_at", { ascending: false })
+        .limit(4);
+
+      if (error) throw error;
+      setRelatedPosts((data as RelatedPost[]) || []);
+    } catch (error) {
+      setRelatedPosts([]);
     }
   };
 
@@ -358,12 +393,38 @@ const BlogPostPage = () => {
     return null;
   }
 
+  const articleKeywords = Array.from(
+    new Set([
+      ...(blog.keywords || []),
+      ...(blog.tags || []),
+      blog.category,
+      "IoT",
+      "Embedded Systems",
+    ]),
+  );
+
+  const seoDescription =
+    blog.meta_description ||
+    blog.excerpt ||
+    "Read this technical article on IoT, embedded systems, and practical engineering workflows.";
+
   const commentCount = comments.reduce((acc, comment) => {
     return acc + 1 + (comment.replies?.length || 0);
   }, 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <SEO
+        title={blog.title}
+        description={seoDescription}
+        keywords={articleKeywords}
+        type="article"
+        author={blog.author_name || "Circuit Crafters Team"}
+        image={blog.og_image || "/opengraph-image.png"}
+        publishedTime={blog.created_at}
+        modifiedTime={blog.updated_at}
+        category={blog.category}
+      />
       <Navigation />
 
       <div className="container mx-auto px-4 py-12 max-w-4xl">
@@ -407,13 +468,36 @@ const BlogPostPage = () => {
 
         {/* Blog Content */}
         <Card className="p-8 mb-8">
-          <div className="prose max-w-none text-gray-700 leading-relaxed">
+          <article className="prose max-w-none text-gray-700 leading-relaxed">
             {renderContent(blog.content)}
-          </div>
+          </article>
         </Card>
 
+        {relatedPosts.length > 0 && (
+          <Card className="p-8 mb-8">
+            <h2 className="text-2xl font-bold mb-4">Related Articles</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {relatedPosts.map((post) => (
+                <Link
+                  key={post.id}
+                  to={`/blog/${post.slug}`}
+                  className="block rounded-lg border p-4 hover:border-emerald-400 hover:bg-emerald-50"
+                >
+                  <p className="text-xs text-emerald-700 font-semibold mb-1">
+                    {post.category}
+                  </p>
+                  <h3 className="font-semibold text-gray-900 mb-1">
+                    {post.title}
+                  </h3>
+                  <p className="text-xs text-gray-500">{post.read_time}</p>
+                </Link>
+              ))}
+            </div>
+          </Card>
+        )}
+
         {/* Comments Section */}
-        <Card className="p-8">
+        <Card className="p-8" id="comments">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-2">
             <MessageSquare className="w-6 h-6" />
             Comments ({commentCount})

@@ -9,6 +9,8 @@ import {
   Settings,
   Layers,
   Zap,
+  Cuboid,
+  Brain,
   CheckCircle,
 } from "lucide-react";
 import ServiceDialog from "@/components/ServiceDialog";
@@ -67,6 +69,32 @@ const Services = () => {
       ],
       href: "/services/firmware-development",
     },
+    {
+      icon: <Cuboid className="w-12 h-12" />,
+      title: "3D Modeling and Printing",
+      description:
+        "Professional 3D CAD modeling and prototype printing for enclosures, mechanical parts, and product concepts.",
+      features: [
+        "3D CAD modeling",
+        "Design for printability",
+        "Rapid 3D prototype printing",
+        "Mechanical fit validation",
+      ],
+      href: "/services/3d-modeling-and-printing",
+    },
+    {
+      icon: <Brain className="w-12 h-12" />,
+      title: "AI&ML",
+      description:
+        "Applied AI and machine learning solutions for embedded intelligence, automation, and data-driven decision systems.",
+      features: [
+        "Model integration for edge devices",
+        "Computer vision pipelines",
+        "Data preprocessing and training support",
+        "Inference optimization",
+      ],
+      href: "/services/ai-ml",
+    },
   ];
 
   return (
@@ -114,9 +142,14 @@ const Services = () => {
 
                 <ul className="space-y-2 sm:space-y-3 mb-6 sm:mb-8">
                   {service.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start gap-2 sm:gap-3">
+                    <li
+                      key={featureIndex}
+                      className="flex items-start gap-2 sm:gap-3"
+                    >
                       <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-accent flex-shrink-0 mt-0.5" />
-                      <span className="text-foreground text-sm sm:text-base">{feature}</span>
+                      <span className="text-foreground text-sm sm:text-base">
+                        {feature}
+                      </span>
                     </li>
                   ))}
                 </ul>

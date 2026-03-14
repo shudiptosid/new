@@ -20,8 +20,6 @@ import {
   MapPin,
   Send,
   Phone,
-  Sparkles,
-  BarChart3,
 } from "lucide-react";
 
 // Service categories with questionnaires
@@ -477,31 +475,6 @@ const Dashboard = () => {
                   className="w-full mt-6 border-accent text-accent hover:bg-accent/10"
                 >
                   Edit Profile
-                </Button>
-
-                {/* Take Quiz Button */}
-                <button
-                  onClick={() => navigate("/quiz")}
-                  className="relative w-full mt-4 px-4 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-orange-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 group overflow-hidden"
-                >
-                  {/* Animated background shine effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
-
-                  <div className="relative flex items-center justify-center gap-2">
-                    <Sparkles className="w-5 h-5 animate-pulse" />
-                    <span>Take Quiz</span>
-                    <Sparkles className="w-5 h-5 animate-pulse" />
-                  </div>
-                </button>
-
-                {/* Test History Button */}
-                <Button
-                  onClick={() => navigate("/test-history")}
-                  variant="outline"
-                  className="w-full mt-3 border-[#DCDCDC] hover:border-[#000000] hover:bg-[#F5F5F5] transition-all"
-                >
-                  <BarChart3 className="w-5 h-5 mr-2" />
-                  My Test History
                 </Button>
               </Card>
             </div>
