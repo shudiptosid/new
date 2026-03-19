@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import SEO from "@/components/SEO";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -111,9 +112,8 @@ const VideoCard = () => {
 
       {/* YouTube-style controls overlay */}
       <div
-        className={`absolute left-0 right-0 bottom-0 transition-opacity duration-150 ${
-          isHovering ? "opacity-100" : "opacity-0"
-        }`}
+        className={`absolute left-0 right-0 bottom-0 transition-opacity duration-150 ${isHovering ? "opacity-100" : "opacity-0"
+          }`}
       >
         {/* Progress bar background */}
         <div className="w-full h-1 bg-white/30">
@@ -143,6 +143,7 @@ const HeartRateCard = () => {
         <img
           src={industrialImage}
           alt="Remote Heart Rate and SPO2 monitor"
+          loading="lazy"
           className="w-full h-full object-cover object-center"
         />
       </div>
@@ -263,6 +264,7 @@ const CropShadeCard = () => {
         <img
           src={iotSensorImage}
           alt="Smart Crop Shade Automation System"
+          loading="lazy"
           className="w-full h-full object-cover object-center"
         />
       </div>
@@ -376,6 +378,7 @@ const HomeAutomationCard = () => {
         <img
           src={homeAutomationImage}
           alt="Smart Home Automation & Appliance Control System"
+          loading="lazy"
           className="max-h-56 object-contain p-1"
           style={{
             maxWidth: "100%",
@@ -527,6 +530,7 @@ const GreenHouseCard = () => {
         <img
           src={smartHomeImage}
           alt="Automatic Green House Ambience Control"
+          loading="lazy"
           className="w-full h-full object-cover object-center"
         />
       </div>
@@ -675,6 +679,11 @@ const GreenHouseCard = () => {
 const Projects = () => {
   return (
     <div className="min-h-screen flex flex-col relative">
+      <SEO
+        title="Featured Projects Portfolio"
+        description="Explore the innovative embedded systems and IoT solutions developed by Circuit Crafters, from healthcare wearables to smart agriculture."
+        keywords={["IoT projects", "embedded systems portfolio", "smart home automation", "industrial IoT engineering"]}
+      />
       {/* Floating icons across the projects page */}
       <div className="fixed inset-0 pointer-events-none z-10">
         <FloatingIconsFix />

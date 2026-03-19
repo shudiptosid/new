@@ -64,6 +64,9 @@ const RichTextEditor = ({
         heading: {
           levels: [1, 2, 3],
         },
+        // Disable built-in link & underline since we add them separately with custom config
+        link: false,
+        underline: false,
       }),
       Link.configure({
         openOnClick: false,

@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import SEO from "@/components/SEO";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
@@ -66,6 +67,11 @@ const completedProjects = [
 const CompletedProjects = () => {
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Completed Projects"
+        description="A list of successfully delivered embedded systems and IoT products spanning healthcare, agriculture, and industrial automation."
+        keywords={["past IoT projects", "completed embedded systems", "Circuit Crafters case studies"]}
+      />
       <Navigation />
       <main className="flex-grow">
         <section className="pt-24 pb-20 bg-gradient-hero">
@@ -92,6 +98,7 @@ const CompletedProjects = () => {
                     <img
                       src={project.image}
                       alt={project.title}
+                      loading="lazy"
                       className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-150"
                     />
                     <div className="absolute inset-0 bg-gradient-hero opacity-0 group-hover:opacity-80 transition-opacity duration-150 flex items-center justify-center">

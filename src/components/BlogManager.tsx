@@ -149,7 +149,7 @@ const BlogManager = () => {
       setLoading(true);
       const slug = generateSlug(title);
       const readTime = calculateReadTime(content);
-      
+
       // Process SEO fields
       const keywordsArray = keywords
         .split(",")
@@ -176,7 +176,6 @@ const BlogManager = () => {
         meta_description: finalMetaDesc,
         og_image: finalOgImage,
         og_image_alt: `${title} - Circuit Crafters Blog`,
-        author_name: "Circuit Crafters Team",
         tags: tagsArray,
       };
 
@@ -354,7 +353,7 @@ const BlogManager = () => {
             {/* SEO Section */}
             <div className="border-t pt-6 space-y-4">
               <h3 className="text-lg font-bold text-emerald-600">SEO Optimization</h3>
-              
+
               {/* Meta Description */}
               <div>
                 <label className="block text-sm font-semibold mb-2">
@@ -429,9 +428,8 @@ const BlogManager = () => {
                   Content <span className="text-red-500">*</span>
                 </label>
                 <span
-                  className={`text-sm font-medium ${
-                    wordCount > 1500 ? "text-red-500" : "text-gray-600"
-                  }`}
+                  className={`text-sm font-medium ${wordCount > 1500 ? "text-red-500" : "text-gray-600"
+                    }`}
                 >
                   {wordCount}/1500 words
                 </span>

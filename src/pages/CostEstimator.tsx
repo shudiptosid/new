@@ -27,10 +27,14 @@ import {
   RotateCcw,
   ChevronDown,
   Settings2,
+  Package,
+  Headphones,
+  Wrench,
   AlertCircle,
   Loader2,
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
+import SEO from "@/components/SEO";
 import Footer from "@/components/Footer";
 import StickyContactBar from "@/components/StickyContactBar";
 
@@ -298,84 +302,394 @@ export default function CostEstimator() {
     loadData();
   }, []);
 
+  const normalizeValue = (value: string) => value.trim().toLowerCase();
+
+  const resolveProductGroup = (product: any) => {
+    const category = normalizeValue(product.category || "");
+    const id = normalizeValue(product.id || "");
+
+    if (category.includes("sensor") || id.startsWith("sen-")) {
+      return "sensor";
+    }
+
+    if (
+      category === "mcu" ||
+      category.includes("microcontroller") ||
+      category.includes("micrcontroller") ||
+      category.includes("development board") ||
+      id.startsWith("mcu-")
+    ) {
+      return "mcu";
+    }
+
+    if (
+      category.includes("display") ||
+      category.includes("lcd") ||
+      category.includes("oled") ||
+      category.includes("tft") ||
+      id.startsWith("disp-") ||
+      id.startsWith("dsp-")
+    ) {
+      return "display";
+    }
+
+    if (
+      category.includes("actuator") ||
+      category.includes("motor") ||
+      category.includes("servo") ||
+      category.includes("pump") ||
+      id.startsWith("act-")
+    ) {
+      return "actuator";
+    }
+
+    return "component";
+  };
+
+  const getComponentSubCategory = (product: any) => {
+    const category = normalizeValue(product.category || "");
+    const name = normalizeValue(product.name || "");
+    const id = normalizeValue(product.id || "");
+
+    if (
+      id.startsWith("pwr-") ||
+      category === "power" ||
+      category.includes("power supply") ||
+      category.includes("battery") ||
+      name.includes("battery") ||
+      name.includes("holder") ||
+      name.includes("adapter") ||
+      name.includes("supply") ||
+      name.includes("charger")
+    ) {
+      return "Power";
+    }
+
+    if (
+      category.includes("cable") ||
+      name.includes("cable") ||
+      name.includes("wire") ||
+      name.includes("jumper")
+    ) {
+      return "Cable";
+    }
+
+    if (
+      category.includes("audio") ||
+      name.includes("buzzer") ||
+      name.includes("microphone") ||
+      name.includes("speaker")
+    ) {
+      return "Audio";
+    }
+
+    if (
+      category.includes("tester") ||
+      name.includes("tester") ||
+      name.includes("multimeter")
+    ) {
+      return "Tester";
+    }
+
+    if (
+      category.includes("component") ||
+      category.includes("module") ||
+      category.includes("accessory")
+    ) {
+      return "Component";
+    }
+
+    return "Component";
+  };
+
+  const mergeById = (baseItems: any[], dynamicItems: any[]) => {
+    const merged = new Map<string, any>();
+    baseItems.forEach((item) => merged.set(item.id, item));
+    dynamicItems.forEach((item) => merged.set(item.id, item));
+    return Array.from(merged.values());
+  };
+
+  const dynamicProducts = useMemo(() => {
+    return productsData.map((item) => ({
+      id: item.id,
+      name: item.name,
+      price: Number(item.price) || 0,
+      category: item.category || "Component",
+      description: item.description || "",
+    }));
+  }, [productsData]);
+
+  const dynamicMcuOptions = useMemo(
+    () => dynamicProducts.filter((item) => resolveProductGroup(item) === "mcu"),
+    [dynamicProducts],
+  );
+
+  const sensorOptions = useMemo(
+    () =>
+      dynamicProducts.filter((item) => resolveProductGroup(item) === "sensor"),
+    [dynamicProducts],
+  );
+
+  const dynamicComponentOptions = useMemo(
+    () =>
+      dynamicProducts.filter(
+        (item) => resolveProductGroup(item) === "component",
+      ),
+    [dynamicProducts],
+  );
+
+  const dynamicActuatorOptions = useMemo(
+    () =>
+      dynamicProducts.filter(
+        (item) => resolveProductGroup(item) === "actuator",
+      ),
+    [dynamicProducts],
+  );
+
+  const dynamicDisplayOptions = useMemo(
+    () =>
+      dynamicProducts.filter((item) => resolveProductGroup(item) === "display"),
+    [dynamicProducts],
+  );
+
+  const mcuItems = useMemo(
+    () => mergeById(mcuOptions, dynamicMcuOptions),
+    [dynamicMcuOptions],
+  );
+
+  const componentItems = useMemo(
+    () => mergeById(powerComponents, dynamicComponentOptions),
+    [dynamicComponentOptions],
+  );
+
+  const powerItems = useMemo(
+    () =>
+      componentItems.filter(
+        (item) => getComponentSubCategory(item) === "Power",
+      ),
+    [componentItems],
+  );
+
+  const nonPowerComponentItems = useMemo(
+    () =>
+      componentItems.filter(
+        (item) => getComponentSubCategory(item) !== "Power",
+      ),
+    [componentItems],
+  );
+
+  const audioItems = useMemo(
+    () =>
+      nonPowerComponentItems.filter(
+        (item) => getComponentSubCategory(item) === "Audio",
+      ),
+    [nonPowerComponentItems],
+  );
+
+  const testerItems = useMemo(
+    () =>
+      nonPowerComponentItems.filter(
+        (item) => getComponentSubCategory(item) === "Tester",
+      ),
+    [nonPowerComponentItems],
+  );
+
+  const coreComponentItems = useMemo(
+    () =>
+      nonPowerComponentItems.filter((item) => {
+        const subCategory = getComponentSubCategory(item);
+        return subCategory !== "Audio" && subCategory !== "Tester";
+      }),
+    [nonPowerComponentItems],
+  );
+
+  const actuatorItems = useMemo(
+    () => mergeById(actuatorOptions, dynamicActuatorOptions),
+    [dynamicActuatorOptions],
+  );
+
+  const displayItems = useMemo(
+    () => mergeById(displayOptions, dynamicDisplayOptions),
+    [dynamicDisplayOptions],
+  );
+
+  const displayItemsWithNone = useMemo(() => {
+    const hasNone = displayItems.some(
+      (item) => item.price === 0 || normalizeValue(item.name) === "none",
+    );
+
+    if (hasNone) {
+      return displayItems;
+    }
+
+    return [
+      ...displayItems,
+      { id: "DISPLAY-NONE", name: "None", price: 0, category: "Display" },
+    ];
+  }, [displayItems]);
+
   // Calculate totals - MUST be before early return
   const mcuCost = useMemo(() => {
-    const mcu = mcuOptions.find((m) => m.id === selectedMCU);
+    const mcu = mcuItems.find((m) => m.id === selectedMCU);
     return mcu ? mcu.price : 0;
-  }, [selectedMCU]);
+  }, [selectedMCU, mcuItems]);
 
   const sensorsCost = useMemo(() => {
     return selectedSensors.reduce((total, sensorId) => {
-      const sensor = productsData.find((s) => s.id === sensorId);
+      const sensor = sensorOptions.find((s) => s.id === sensorId);
       const quantity = sensorQuantities[sensorId] || 1;
       return total + (sensor ? sensor.price * quantity : 0);
     }, 0);
-  }, [selectedSensors, sensorQuantities, productsData, dataLoaded]);
+  }, [selectedSensors, sensorQuantities, sensorOptions]);
 
-  const componentsCost = useMemo(() => {
-    return selectedComponents.reduce((total, compId) => {
-      const component = powerComponents.find((c) => c.id === compId);
+  const selectedPowerIds = useMemo(
+    () =>
+      selectedComponents.filter((compId) =>
+        powerItems.some((item) => item.id === compId),
+      ),
+    [selectedComponents, powerItems],
+  );
+
+  const selectedAudioIds = useMemo(
+    () =>
+      selectedComponents.filter((compId) =>
+        audioItems.some((item) => item.id === compId),
+      ),
+    [selectedComponents, audioItems],
+  );
+
+  const selectedTesterIds = useMemo(
+    () =>
+      selectedComponents.filter((compId) =>
+        testerItems.some((item) => item.id === compId),
+      ),
+    [selectedComponents, testerItems],
+  );
+
+  const selectedCoreComponentIds = useMemo(
+    () =>
+      selectedComponents.filter((compId) =>
+        coreComponentItems.some((item) => item.id === compId),
+      ),
+    [selectedComponents, coreComponentItems],
+  );
+
+  const powerCost = useMemo(() => {
+    return selectedPowerIds.reduce((total, compId) => {
+      const component = componentItems.find((c) => c.id === compId);
       const quantity = componentQuantities[compId] || 1;
       return total + (component ? component.price * quantity : 0);
     }, 0);
-  }, [selectedComponents, componentQuantities]);
+  }, [selectedPowerIds, componentQuantities, componentItems]);
+
+  const coreComponentsCost = useMemo(() => {
+    return selectedCoreComponentIds.reduce((total, compId) => {
+      const component = componentItems.find((c) => c.id === compId);
+      const quantity = componentQuantities[compId] || 1;
+      return total + (component ? component.price * quantity : 0);
+    }, 0);
+  }, [selectedCoreComponentIds, componentQuantities, componentItems]);
 
   const actuatorsCost = useMemo(() => {
     return selectedActuators.reduce((total, actId) => {
-      const actuator = actuatorOptions.find((a) => a.id === actId);
+      const actuator = actuatorItems.find((a) => a.id === actId);
       const quantity = actuatorQuantities[actId] || 1;
       return total + (actuator ? actuator.price * quantity : 0);
     }, 0);
-  }, [selectedActuators, actuatorQuantities]);
+  }, [selectedActuators, actuatorQuantities, actuatorItems]);
 
   const displayCost = useMemo(() => {
-    const display = displayOptions.find((d) => d.id === selectedDisplay);
+    const display = displayItemsWithNone.find((d) => d.id === selectedDisplay);
     return display ? display.price : 0;
-  }, [selectedDisplay]);
+  }, [selectedDisplay, displayItemsWithNone]);
 
   const totalCost =
-    mcuCost + sensorsCost + componentsCost + actuatorsCost + displayCost;
+    mcuCost +
+    sensorsCost +
+    powerCost +
+    coreComponentsCost +
+    actuatorsCost +
+    displayCost;
 
   // Group sensors by category - MUST be before early return
   const sensorsByCategory = useMemo(() => {
     const grouped: Record<string, typeof productsData> = {};
-    productsData.forEach((sensor) => {
+    sensorOptions.forEach((sensor) => {
       if (!grouped[sensor.category]) {
         grouped[sensor.category] = [];
       }
       grouped[sensor.category].push(sensor);
     });
     return grouped;
-  }, [productsData, dataLoaded]);
+  }, [sensorOptions]);
 
   // Group components by category - MUST be before early return
   const componentsByCategory = useMemo(() => {
-    const grouped: Record<string, typeof powerComponents> = {};
-    powerComponents.forEach((comp) => {
-      if (!grouped[comp.category]) {
-        grouped[comp.category] = [];
+    const grouped: Record<string, typeof coreComponentItems> = {};
+
+    coreComponentItems.forEach((comp) => {
+      const normalizedCategory = getComponentSubCategory(comp);
+
+      if (!grouped[normalizedCategory]) {
+        grouped[normalizedCategory] = [];
       }
-      grouped[comp.category].push(comp);
+
+      grouped[normalizedCategory].push(comp);
     });
+
+    const preferredOrder = ["Cable", "Component"];
+    const orderedEntries = Object.entries(grouped).sort(([a], [b]) => {
+      const ai = preferredOrder.indexOf(a);
+      const bi = preferredOrder.indexOf(b);
+      const aIndex = ai === -1 ? Number.MAX_SAFE_INTEGER : ai;
+      const bIndex = bi === -1 ? Number.MAX_SAFE_INTEGER : bi;
+
+      if (aIndex !== bIndex) return aIndex - bIndex;
+      return a.localeCompare(b);
+    });
+
+    return Object.fromEntries(orderedEntries);
+  }, [coreComponentItems]);
+
+  const powerByCategory = useMemo(() => {
+    const grouped: Record<string, typeof powerItems> = { Power: [] };
+    powerItems.forEach((item) => grouped.Power.push(item));
     return grouped;
-  }, [dataLoaded]);
+  }, [powerItems]);
+
+  const audioByCategory = useMemo(() => {
+    const grouped: Record<string, typeof audioItems> = { Audio: [] };
+    audioItems.forEach((item) => grouped.Audio.push(item));
+    return grouped;
+  }, [audioItems]);
+
+  const testerByCategory = useMemo(() => {
+    const grouped: Record<string, typeof testerItems> = { Tester: [] };
+    testerItems.forEach((item) => grouped.Tester.push(item));
+    return grouped;
+  }, [testerItems]);
 
   // Group actuators by category - MUST be before early return
   const actuatorsByCategory = useMemo(() => {
-    const grouped: Record<string, typeof actuatorOptions> = {};
-    actuatorOptions.forEach((act) => {
+    const grouped: Record<string, typeof actuatorItems> = {};
+    actuatorItems.forEach((act) => {
       if (!grouped[act.category]) {
         grouped[act.category] = [];
       }
       grouped[act.category].push(act);
     });
     return grouped;
-  }, [dataLoaded]);
+  }, [actuatorItems]);
 
   // Show loading spinner while data loads - AFTER all hooks
   if (!dataLoaded) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <SEO
+          title="Loading Cost Estimator..."
+          description="Loading project cost estimator..."
+          keywords={["cost estimator"]}
+        />
         <Navigation />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
@@ -467,8 +781,8 @@ export default function CostEstimator() {
 
   // Export estimate
   const exportEstimate = () => {
-    const mcu = mcuOptions.find((m) => m.id === selectedMCU);
-    const display = displayOptions.find((d) => d.id === selectedDisplay);
+    const mcu = mcuItems.find((m) => m.id === selectedMCU);
+    const display = displayItemsWithNone.find((d) => d.id === selectedDisplay);
 
     let estimate = `PROJECT COST ESTIMATE - Circuit Crafters\nDate: ${new Date().toLocaleDateString()}\n${"=".repeat(
       50,
@@ -481,7 +795,7 @@ export default function CostEstimator() {
     if (selectedSensors.length > 0) {
       estimate += `2. SENSORS (${selectedSensors.length})\n`;
       selectedSensors.forEach((sensorId) => {
-        const sensor = productsData.find((s) => s.id === sensorId);
+        const sensor = sensorOptions.find((s) => s.id === sensorId);
         const qty = sensorQuantities[sensorId] || 1;
         if (sensor) {
           estimate += `   ${sensor.name} x${qty} - ₹${sensor.price * qty}\n`;
@@ -490,10 +804,10 @@ export default function CostEstimator() {
       estimate += `\n`;
     }
 
-    if (selectedComponents.length > 0) {
-      estimate += `3. COMPONENTS & POWER (${selectedComponents.length})\n`;
-      selectedComponents.forEach((compId) => {
-        const comp = powerComponents.find((c) => c.id === compId);
+    if (selectedPowerIds.length > 0) {
+      estimate += `3. POWER (${selectedPowerIds.length})\n`;
+      selectedPowerIds.forEach((compId) => {
+        const comp = componentItems.find((c) => c.id === compId);
         const qty = componentQuantities[compId] || 1;
         if (comp) {
           estimate += `   ${comp.name} x${qty} - ₹${comp.price * qty}\n`;
@@ -502,10 +816,46 @@ export default function CostEstimator() {
       estimate += `\n`;
     }
 
+    if (selectedCoreComponentIds.length > 0) {
+      estimate += `4. COMPONENTS (${selectedCoreComponentIds.length})\n`;
+      selectedCoreComponentIds.forEach((compId) => {
+        const comp = componentItems.find((c) => c.id === compId);
+        const qty = componentQuantities[compId] || 1;
+        if (comp) {
+          estimate += `   ${comp.name} x${qty} - ₹${comp.price * qty}\n`;
+        }
+      });
+      estimate += `\n`;
+    }
+
+    if (selectedAudioIds.length > 0) {
+      estimate += `5. AUDIO (FREE) (${selectedAudioIds.length})\n`;
+      selectedAudioIds.forEach((compId) => {
+        const comp = componentItems.find((c) => c.id === compId);
+        const qty = componentQuantities[compId] || 1;
+        if (comp) {
+          estimate += `   ${comp.name} x${qty} - FREE\n`;
+        }
+      });
+      estimate += `\n`;
+    }
+
+    if (selectedTesterIds.length > 0) {
+      estimate += `6. TESTER (FREE) (${selectedTesterIds.length})\n`;
+      selectedTesterIds.forEach((compId) => {
+        const comp = componentItems.find((c) => c.id === compId);
+        const qty = componentQuantities[compId] || 1;
+        if (comp) {
+          estimate += `   ${comp.name} x${qty} - FREE\n`;
+        }
+      });
+      estimate += `\n`;
+    }
+
     if (selectedActuators.length > 0) {
-      estimate += `4. ACTUATORS (${selectedActuators.length})\n`;
+      estimate += `7. ACTUATORS (${selectedActuators.length})\n`;
       selectedActuators.forEach((actId) => {
-        const act = actuatorOptions.find((a) => a.id === actId);
+        const act = actuatorItems.find((a) => a.id === actId);
         const qty = actuatorQuantities[actId] || 1;
         if (act) {
           estimate += `   ${act.name} x${qty} - ₹${act.price * qty}\n`;
@@ -515,7 +865,7 @@ export default function CostEstimator() {
     }
 
     if (display) {
-      estimate += `5. DISPLAY\n   ${display.name} - ₹${display.price}\n\n`;
+      estimate += `8. DISPLAY\n   ${display.name} - ₹${display.price}\n\n`;
     }
 
     estimate += `${"=".repeat(
@@ -537,6 +887,11 @@ export default function CostEstimator() {
 
   return (
     <>
+      <SEO
+        title="IoT Project Cost Estimator"
+        description="Calculate the estimated hardware and component cost for your next IoT or embedded systems project instantly."
+        keywords={["IoT cost calculator", "embedded systems price estimator", "hardware component pricing"]}
+      />
       <Navigation />
       <div className="min-h-screen bg-gradient-to-b from-background to-muted/20 pt-24 sm:pt-32 md:pt-40 pb-8 px-3 sm:px-4 md:px-6">
         <div className="container mx-auto max-w-7xl">
@@ -570,7 +925,7 @@ export default function CostEstimator() {
                       <SelectValue placeholder="Select a microcontroller..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {mcuOptions.map((mcu) => (
+                      {mcuItems.map((mcu) => (
                         <SelectItem key={mcu.id} value={mcu.id}>
                           <div className="flex items-center justify-between w-full">
                             <span>{mcu.name}</span>
@@ -609,11 +964,10 @@ export default function CostEstimator() {
                           {sensors.map((sensor) => (
                             <div
                               key={sensor.id}
-                              className={`p-2 sm:p-3 rounded-lg border transition-colors ${
-                                selectedSensors.includes(sensor.id)
+                              className={`p-2 sm:p-3 rounded-lg border transition-colors ${selectedSensors.includes(sensor.id)
                                   ? "border-accent bg-accent/5"
                                   : "border-border hover:border-accent/50"
-                              }`}
+                                }`}
                             >
                               {/* Top row: Checkbox, Name, and Price */}
                               <div className="flex items-start gap-2 sm:gap-3 w-full">
@@ -680,20 +1034,20 @@ export default function CostEstimator() {
                 </CardContent>
               </Card>
 
-              {/* Card 3: Components & Power */}
+              {/* Card 3: Choose Power */}
               <Card className="border-2 border-accent/20 shadow-sm">
                 <CardHeader className="pb-3 sm:pb-4">
                   <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
                     <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
-                    3. Components & Power
+                    3. Choose Power
                   </CardTitle>
                   <CardDescription className="text-xs sm:text-sm">
-                    Add power supplies and other components (
-                    {selectedComponents.length} selected)
+                    Battery, holder, and power supply items only (
+                    {selectedPowerIds.length} selected)
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3 sm:space-y-4">
-                  {Object.entries(componentsByCategory).map(
+                  {Object.entries(powerByCategory).map(
                     ([category, components]) => (
                       <div key={category} className="space-y-2">
                         <h4 className="font-semibold text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
@@ -704,11 +1058,10 @@ export default function CostEstimator() {
                           {components.map((component) => (
                             <div
                               key={component.id}
-                              className={`p-2 sm:p-3 rounded-lg border transition-colors ${
-                                selectedComponents.includes(component.id)
+                              className={`p-2 sm:p-3 rounded-lg border transition-colors ${selectedComponents.includes(component.id)
                                   ? "border-accent bg-accent/5"
                                   : "border-border hover:border-accent/50"
-                              }`}
+                                }`}
                             >
                               {/* Top row: Checkbox, Name, and Price */}
                               <div className="flex items-start gap-2 sm:gap-3 w-full">
@@ -782,12 +1135,229 @@ export default function CostEstimator() {
                 </CardContent>
               </Card>
 
+              {/* Card 4: Choose Components */}
+              <Card className="border-2 border-accent/20 shadow-sm">
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
+                    <Package className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
+                    4. Choose Components
+                  </CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">
+                    Cable and Component only ({selectedCoreComponentIds.length}{" "}
+                    selected)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3 sm:space-y-4">
+                  {Object.entries(componentsByCategory).map(
+                    ([category, components]) => (
+                      <div key={category} className="space-y-2">
+                        <h4 className="font-semibold text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+                          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                          {category}
+                        </h4>
+                        <div className="grid gap-2 pl-3 sm:pl-6">
+                          {components.map((component) => (
+                            <div
+                              key={component.id}
+                              className={`p-2 sm:p-3 rounded-lg border transition-colors ${selectedComponents.includes(component.id)
+                                  ? "border-accent bg-accent/5"
+                                  : "border-border hover:border-accent/50"
+                                }`}
+                            >
+                              <div className="flex items-start gap-2 sm:gap-3 w-full">
+                                <Checkbox
+                                  checked={selectedComponents.includes(
+                                    component.id,
+                                  )}
+                                  onCheckedChange={() =>
+                                    toggleComponent(component.id)
+                                  }
+                                  className="shrink-0 mt-0.5"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs sm:text-sm font-medium leading-tight">
+                                    {component.name}
+                                  </p>
+                                </div>
+                                <Badge
+                                  variant="outline"
+                                  className="shrink-0 text-xs font-semibold"
+                                >
+                                  ₹{component.price}
+                                </Badge>
+                              </div>
+
+                              {selectedComponents.includes(component.id) && (
+                                <div className="flex items-center gap-1.5 sm:gap-2 mt-2 ml-6 sm:ml-8">
+                                  <span className="text-[10px] sm:text-xs text-muted-foreground mr-1">
+                                    Qty:
+                                  </span>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-6 w-6 sm:h-7 sm:w-7"
+                                    onClick={() =>
+                                      updateQuantity(
+                                        component.id,
+                                        -1,
+                                        "component",
+                                      )
+                                    }
+                                  >
+                                    -
+                                  </Button>
+                                  <span className="w-6 sm:w-8 text-center text-xs sm:text-sm font-medium">
+                                    {componentQuantities[component.id] || 1}
+                                  </span>
+                                  <Button
+                                    variant="outline"
+                                    size="icon"
+                                    className="h-6 w-6 sm:h-7 sm:w-7"
+                                    onClick={() =>
+                                      updateQuantity(
+                                        component.id,
+                                        1,
+                                        "component",
+                                      )
+                                    }
+                                  >
+                                    +
+                                  </Button>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Card 5: Choose Audio (Free) */}
+              <Card className="border-2 border-accent/20 shadow-sm">
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
+                    <Headphones className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
+                    5. Choose Audio (Free)
+                  </CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">
+                    Audio items are free ({selectedAudioIds.length} selected)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3 sm:space-y-4">
+                  {Object.entries(audioByCategory).map(
+                    ([category, components]) => (
+                      <div key={category} className="space-y-2">
+                        <h4 className="font-semibold text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+                          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                          {category}
+                        </h4>
+                        <div className="grid gap-2 pl-3 sm:pl-6">
+                          {components.map((component) => (
+                            <div
+                              key={component.id}
+                              className={`p-2 sm:p-3 rounded-lg border transition-colors ${selectedComponents.includes(component.id)
+                                  ? "border-accent bg-accent/5"
+                                  : "border-border hover:border-accent/50"
+                                }`}
+                            >
+                              <div className="flex items-start gap-2 sm:gap-3 w-full">
+                                <Checkbox
+                                  checked={selectedComponents.includes(
+                                    component.id,
+                                  )}
+                                  onCheckedChange={() =>
+                                    toggleComponent(component.id)
+                                  }
+                                  className="shrink-0 mt-0.5"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs sm:text-sm font-medium leading-tight">
+                                    {component.name}
+                                  </p>
+                                </div>
+                                <Badge
+                                  variant="outline"
+                                  className="shrink-0 text-xs font-semibold"
+                                >
+                                  Free
+                                </Badge>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Card 6: Choose Tester (Free) */}
+              <Card className="border-2 border-accent/20 shadow-sm">
+                <CardHeader className="pb-3 sm:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
+                    <Wrench className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
+                    6. Choose Tester (Free)
+                  </CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">
+                    Tester items are free ({selectedTesterIds.length} selected)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3 sm:space-y-4">
+                  {Object.entries(testerByCategory).map(
+                    ([category, components]) => (
+                      <div key={category} className="space-y-2">
+                        <h4 className="font-semibold text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+                          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                          {category}
+                        </h4>
+                        <div className="grid gap-2 pl-3 sm:pl-6">
+                          {components.map((component) => (
+                            <div
+                              key={component.id}
+                              className={`p-2 sm:p-3 rounded-lg border transition-colors ${selectedComponents.includes(component.id)
+                                  ? "border-accent bg-accent/5"
+                                  : "border-border hover:border-accent/50"
+                                }`}
+                            >
+                              <div className="flex items-start gap-2 sm:gap-3 w-full">
+                                <Checkbox
+                                  checked={selectedComponents.includes(
+                                    component.id,
+                                  )}
+                                  onCheckedChange={() =>
+                                    toggleComponent(component.id)
+                                  }
+                                  className="shrink-0 mt-0.5"
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-xs sm:text-sm font-medium leading-tight">
+                                    {component.name}
+                                  </p>
+                                </div>
+                                <Badge
+                                  variant="outline"
+                                  className="shrink-0 text-xs font-semibold"
+                                >
+                                  Free
+                                </Badge>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ),
+                  )}
+                </CardContent>
+              </Card>
+
               {/* Card 4: Choose Actuators */}
               <Card className="border-2 border-accent/20 shadow-sm">
                 <CardHeader className="pb-3 sm:pb-4">
                   <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
                     <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
-                    4. Choose Actuators
+                    7. Choose Actuators
                   </CardTitle>
                   <CardDescription className="text-xs sm:text-sm">
                     Add motors, servos, and pumps ({selectedActuators.length}{" "}
@@ -806,11 +1376,10 @@ export default function CostEstimator() {
                           {actuators.map((actuator) => (
                             <div
                               key={actuator.id}
-                              className={`p-2 sm:p-3 rounded-lg border transition-colors ${
-                                selectedActuators.includes(actuator.id)
+                              className={`p-2 sm:p-3 rounded-lg border transition-colors ${selectedActuators.includes(actuator.id)
                                   ? "border-accent bg-accent/5"
                                   : "border-border hover:border-accent/50"
-                              }`}
+                                }`}
                             >
                               {/* Top row: Checkbox, Name, and Price */}
                               <div className="flex items-start gap-2 sm:gap-3 w-full">
@@ -885,7 +1454,7 @@ export default function CostEstimator() {
                 <CardHeader className="pb-3 sm:pb-4">
                   <CardTitle className="flex items-center gap-2 text-base sm:text-lg md:text-xl">
                     <Monitor className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
-                    5. Choose Display
+                    8. Choose Display
                   </CardTitle>
                   <CardDescription className="text-xs sm:text-sm">
                     Select a display for your project (optional)
@@ -900,7 +1469,7 @@ export default function CostEstimator() {
                       <SelectValue placeholder="Select a display (optional)..." />
                     </SelectTrigger>
                     <SelectContent>
-                      {displayOptions.map((display) => (
+                      {displayItemsWithNone.map((display) => (
                         <SelectItem key={display.id} value={display.id}>
                           <div className="flex items-center justify-between w-full">
                             <span>{display.name}</span>
@@ -946,7 +1515,7 @@ export default function CostEstimator() {
                         <span className="font-medium">₹{mcuCost}</span>
                       </div>
                       <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
-                        {mcuOptions.find((m) => m.id === selectedMCU)?.name}
+                        {mcuItems.find((m) => m.id === selectedMCU)?.name}
                       </p>
                     </div>
                   )}
@@ -962,7 +1531,7 @@ export default function CostEstimator() {
                       </div>
                       <div className="text-[10px] sm:text-xs text-muted-foreground space-y-1">
                         {selectedSensors.slice(0, 3).map((sensorId) => {
-                          const sensor = productsData.find(
+                          const sensor = sensorOptions.find(
                             (s) => s.id === sensorId,
                           );
                           const qty = sensorQuantities[sensorId] || 1;
@@ -988,17 +1557,17 @@ export default function CostEstimator() {
                   )}
 
                   {/* Components Cost */}
-                  {selectedComponents.length > 0 && (
+                  {selectedPowerIds.length > 0 && (
                     <div className="pb-2 border-b">
                       <div className="flex justify-between text-sm mb-1">
                         <span className="text-muted-foreground">
-                          Components ({selectedComponents.length}):
+                          Power ({selectedPowerIds.length}):
                         </span>
-                        <span className="font-medium">₹{componentsCost}</span>
+                        <span className="font-medium">₹{powerCost}</span>
                       </div>
                       <div className="text-xs text-muted-foreground space-y-1">
-                        {selectedComponents.slice(0, 3).map((compId) => {
-                          const comp = powerComponents.find(
+                        {selectedPowerIds.slice(0, 3).map((compId) => {
+                          const comp = componentItems.find(
                             (c) => c.id === compId,
                           );
                           const qty = componentQuantities[compId] || 1;
@@ -1011,11 +1580,67 @@ export default function CostEstimator() {
                             </div>
                           );
                         })}
-                        {selectedComponents.length > 3 && (
+                        {selectedPowerIds.length > 3 && (
                           <p className="text-xs italic">
-                            +{selectedComponents.length - 3} more...
+                            +{selectedPowerIds.length - 3} more...
                           </p>
                         )}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedCoreComponentIds.length > 0 && (
+                    <div className="pb-2 border-b">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">
+                          Components ({selectedCoreComponentIds.length}):
+                        </span>
+                        <span className="font-medium">
+                          ₹{coreComponentsCost}
+                        </span>
+                      </div>
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        {selectedCoreComponentIds.slice(0, 3).map((compId) => {
+                          const comp = componentItems.find(
+                            (c) => c.id === compId,
+                          );
+                          const qty = componentQuantities[compId] || 1;
+                          return (
+                            <div key={compId} className="flex justify-between">
+                              <span className="truncate mr-2">
+                                {comp?.name} x{qty}
+                              </span>
+                              <span>₹{comp ? comp.price * qty : 0}</span>
+                            </div>
+                          );
+                        })}
+                        {selectedCoreComponentIds.length > 3 && (
+                          <p className="text-xs italic">
+                            +{selectedCoreComponentIds.length - 3} more...
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedAudioIds.length > 0 && (
+                    <div className="pb-2 border-b">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">
+                          Audio ({selectedAudioIds.length}):
+                        </span>
+                        <span className="font-medium">Free</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedTesterIds.length > 0 && (
+                    <div className="pb-2 border-b">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-muted-foreground">
+                          Tester ({selectedTesterIds.length}):
+                        </span>
+                        <span className="font-medium">Free</span>
                       </div>
                     </div>
                   )}
@@ -1031,9 +1656,7 @@ export default function CostEstimator() {
                       </div>
                       <div className="text-xs text-muted-foreground space-y-1">
                         {selectedActuators.slice(0, 3).map((actId) => {
-                          const act = actuatorOptions.find(
-                            (a) => a.id === actId,
-                          );
+                          const act = actuatorItems.find((a) => a.id === actId);
                           const qty = actuatorQuantities[actId] || 1;
                           return (
                             <div key={actId} className="flex justify-between">
@@ -1062,8 +1685,9 @@ export default function CostEstimator() {
                       </div>
                       <p className="text-xs text-muted-foreground">
                         {
-                          displayOptions.find((d) => d.id === selectedDisplay)
-                            ?.name
+                          displayItemsWithNone.find(
+                            (d) => d.id === selectedDisplay,
+                          )?.name
                         }
                       </p>
                     </div>

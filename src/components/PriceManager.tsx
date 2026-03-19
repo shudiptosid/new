@@ -72,6 +72,19 @@ const CATEGORIES = [
   "Audio",
 ];
 
+const CATEGORY_PREFIX_MAP: Record<string, string> = {
+  power: "PWRR",
+  sensor: "SEN",
+  mcu: "MCU",
+  microcontroller: "MCU",
+  micrcontroller: "MCU",
+  display: "DSP",
+  actuator: "ACT",
+  component: "CMP",
+  cable: "CBL",
+  audio: "AUD",
+};
+
 const PriceManager = () => {
   const { toast } = useToast();
   const [products, setProducts] = useState<Product[]>([]);
@@ -79,6 +92,7 @@ const PriceManager = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [categories, setCategories] = useState<string[]>(CATEGORIES);
 
   // Edit mode
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -91,6 +105,7 @@ const PriceManager = () => {
     price: 0,
     is_active: true,
   });
+  const [newCategory, setNewCategory] = useState("");
 
   // Delete confirmation
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -116,6 +131,11 @@ const PriceManager = () => {
       }
 
       console.log(`✅ Loaded ${data?.length || 0} products`);
+      const fetchedCategories = (data || [])
+        .map((p) => p.category)
+        .filter((cat): cat is string => Boolean(cat));
+
+      setCategories(Array.from(new Set([...CATEGORIES, ...fetchedCategories])));
       setProducts(data || []);
       setFilteredProducts(data || []);
     } catch (error: any) {
@@ -230,6 +250,90 @@ const PriceManager = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const getCategoryPrefix = (category: string) => {
+    const normalized = category.trim().toLowerCase();
+    const mappedPrefix = CATEGORY_PREFIX_MAP[normalized];
+
+    if (mappedPrefix) {
+      return mappedPrefix;
+    }
+
+    const fallback = category.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+    return (fallback.slice(0, 4) || "PROD").padEnd(3, "X");
+  };
+
+  const generateNextProductId = async (category: string) => {
+    const trimmedCategory = category.trim();
+    const prefix = getCategoryPrefix(trimmedCategory);
+
+    // Serial-wise generation: count active products in selected category, then +1
+    const categoryCount = products.filter(
+      (product) =>
+        product.category.trim().toLowerCase() === trimmedCategory.toLowerCase(),
+    ).length;
+
+    const nextSerial = categoryCount + 1;
+    const minDigits = Math.max(2, String(nextSerial).length);
+
+    return `${prefix}-${String(nextSerial).padStart(minDigits, "0")}`;
+  };
+
+  const autoGenerateProductId = async (category: string) => {
+    try {
+      const generatedId = await generateNextProductId(category);
+      setAddForm((prev) => ({ ...prev, category, product_id: generatedId }));
+    } catch (error: any) {
+      toast({
+        title: "Unable to generate Product ID",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleAddCategory = async () => {
+    const trimmed = newCategory.trim();
+    if (!trimmed) return;
+
+    const exists = categories.some(
+      (cat) => cat.toLowerCase() === trimmed.toLowerCase(),
+    );
+
+    if (exists) {
+      toast({
+        title: "Category already exists",
+        description: `${trimmed} is already available in the list.`,
+      });
+      return;
+    }
+
+    const updated = [...categories, trimmed].sort((a, b) => a.localeCompare(b));
+    setCategories(updated);
+    setNewCategory("");
+
+    await autoGenerateProductId(trimmed);
+
+    toast({
+      title: "Category added",
+      description: `${trimmed} added to category list.`,
+    });
+  };
+
+  const openAddProductDialog = async () => {
+    setShowAddDialog(true);
+    setNewCategory("");
+
+    const defaultCategory = addForm.category || "Sensor";
+    setAddForm((prev) => ({
+      ...prev,
+      category: defaultCategory,
+      price: prev.price ?? 0,
+      is_active: true,
+    }));
+
+    await autoGenerateProductId(defaultCategory);
   };
 
   // Add new product
@@ -420,14 +524,14 @@ const PriceManager = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                {CATEGORIES.map((cat) => (
+                {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>
                     {cat}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Button onClick={() => setShowAddDialog(true)}>
+            <Button onClick={openAddProductDialog}>
               <Plus className="h-4 w-4 mr-2" />
               Add Product
             </Button>
@@ -514,7 +618,7 @@ const PriceManager = () => {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              {CATEGORIES.map((cat) => (
+                              {categories.map((cat) => (
                                 <SelectItem key={cat} value={cat}>
                                   {cat}
                                 </SelectItem>
@@ -654,21 +758,33 @@ const PriceManager = () => {
                 <label className="text-sm font-medium">Category *</label>
                 <Select
                   value={addForm.category}
-                  onValueChange={(value) =>
-                    setAddForm({ ...addForm, category: value })
-                  }
+                  onValueChange={(value) => autoGenerateProductId(value)}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {CATEGORIES.map((cat) => (
+                    {categories.map((cat) => (
                       <SelectItem key={cat} value={cat}>
                         {cat}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                <div className="flex items-center gap-2 pt-2">
+                  <Input
+                    placeholder="Add new category"
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleAddCategory}
+                  >
+                    Add
+                  </Button>
+                </div>
               </div>
             </div>
             <div className="space-y-2">

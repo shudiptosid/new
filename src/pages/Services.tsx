@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import SEO from "@/components/SEO";
 import Footer from "@/components/Footer";
 import StickyContactBar from "@/components/StickyContactBar";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import {
   Cuboid,
   Brain,
   CheckCircle,
+  Globe,
 } from "lucide-react";
 import ServiceDialog from "@/components/ServiceDialog";
 
@@ -95,10 +97,28 @@ const Services = () => {
       ],
       href: "/services/ai-ml",
     },
+    {
+      icon: <Globe className="w-12 h-12" />,
+      title: "Full Stack Web Development",
+      description:
+        "End-to-end web applications with modern frontend frameworks, scalable backends, and robust databases.",
+      features: [
+        "Frontend & backend development",
+        "API design & integration",
+        "Database architecture",
+        "Cloud deployment",
+      ],
+      href: "/services/full-stack-web-development",
+    },
   ];
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Services & Consulting"
+        description="Professional embedded systems and IoT development services including firmware, prototyping, 3D modeling, and full stack web development."
+        keywords={["embedded systems consulting", "IoT services", "firmware development", "prototype design"]}
+      />
       <Navigation />
       <StickyContactBar />
 

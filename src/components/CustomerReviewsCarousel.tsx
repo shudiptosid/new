@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import { Star, StarHalf, Quote, ChevronLeft, ChevronRight } from "lucide-react";
 
 type Review = {
   name: string;
@@ -14,68 +14,108 @@ type Review = {
 
 const reviews: Review[] = [
   {
-    name: "Siam Rahman",
+    name: "Inkyin",
     role: "Founder",
     company: "Nexa AgroTech",
-    rating: 5,
+    rating: 4.6,
     review:
-      "Circuit Crafters delivered our remote sensor prototype ahead of schedule. The hardware quality and documentation were excellent.",
+      "Circuit Crafters delivered our remote sensor prototype ahead of schedule and handled every integration challenge with confidence. The firmware was stable, the hardware quality was excellent, and the documentation made handover easy for our internal team.",
   },
   {
-    name: "Mim Akter",
+    name: "Vinakyak Thakur",
     role: "Product Manager",
     company: "UrbanGrid Labs",
-    rating: 5,
+    rating: 4.7,
     review:
-      "Their team simplified a complex IoT pipeline for us. We moved from unstable tests to production-ready builds in weeks.",
+      "Their team simplified a complex IoT pipeline that had been blocking our release timeline for months. In a few weeks, we moved from unstable lab tests to a production-ready build with better reliability, cleaner architecture, and clearer milestones.",
   },
   {
-    name: "Tariq Hasan",
+    name: "Mohit Deoli",
     role: "Operations Lead",
     company: "BluePulse Manufacturing",
-    rating: 5,
+    rating: 4.5,
     review:
-      "Fast communication, practical engineering decisions, and a strong focus on reliability. Exactly what we needed for industrial deployment.",
+      "Fast communication, practical engineering decisions, and a strong reliability-first mindset. They understood industrial deployment constraints and designed around them from day one, which reduced rework and helped us launch with confidence.",
   },
   {
-    name: "Farzana Noor",
+    name: "Deepu Yadav",
     role: "STEM Instructor",
     company: "FutureMinds Academy",
-    rating: 5,
+    rating: 4.3,
     review:
-      "Our students loved the learning kits. The tutorials are clear, and support from the team has been consistently great.",
+      "Our students loved the learning kits and actually completed projects faster because the instructions were so clear. The tutorials are practical, beginner-friendly, and support from the team has been responsive and genuinely helpful throughout.",
   },
   {
-    name: "Rafid Chowdhury",
+    name: "Ashis Dhakad",
     role: "CTO",
     company: "AeroDock Systems",
-    rating: 5,
+    rating: 4.8,
     review:
-      "From firmware optimization to board-level advice, their input reduced our iteration cycles and improved performance significantly.",
+      "From firmware optimization to board-level design decisions, their input improved performance across the stack. We reduced iteration cycles, fixed long-standing edge-case bugs, and achieved a far more robust prototype than our previous versions.",
   },
   {
-    name: "Nusrat Jahan",
+    name: "Rohan Kumar",
     role: "Research Assistant",
     company: "Smart City Lab",
-    rating: 5,
+    rating: 4.4,
     review:
-      "The team helped us build an end-to-end monitoring stack with stable telemetry and clean dashboards. Highly recommended.",
+      "The team helped us build an end-to-end monitoring stack with stable telemetry, clean dashboards, and structured deployment steps. Their process was transparent and technical communication was excellent from planning to final delivery.",
   },
   {
-    name: "Arman Kabir",
+    name: "Harshit Sharma",
     role: "Project Coordinator",
     company: "GreenGrid Energy",
-    rating: 5,
+    rating: 4.6,
     review:
-      "Professional workflow, transparent updates, and robust prototypes. We now use their architecture as our baseline standard.",
+      "Professional workflow, transparent updates, and robust prototypes at every stage. They kept timelines realistic, gave clear progress reports, and delivered an architecture we now use as our baseline standard for future projects.",
   },
   {
-    name: "Lamia Islam",
-    role: "Hardware Engineer",
-    company: "VoltBridge R&D",
-    rating: 5,
+    name: "Shibbir Ahmed Shiblee",
+    role: "Systems Integrator",
+    company: "Delta Embedded Works",
+    rating: 4.5,
     review:
-      "Excellent practical insight on sensors and MCU selection. Their recommendations saved cost without sacrificing accuracy.",
+      "What stood out most was their ability to translate requirements into a practical implementation plan. They balanced speed and quality well, and the final system was cleaner, more maintainable, and easier for our team to extend.",
+  },
+  {
+    name: "Sukhman Kaur",
+    role: "Program Manager",
+    company: "Northbeam Automation",
+    rating: 4.7,
+    review:
+      "Circuit Crafters handled our multi-module delivery with discipline and technical depth. Their team proactively identified risks, proposed smarter alternatives, and delivered outputs that were reliable enough for direct field validation.",
+  },
+  {
+    name: "Manwinder Shing",
+    role: "Embedded Developer",
+    company: "Vertex Control Labs",
+    rating: 4.3,
+    review:
+      "The code quality and hardware-level debugging support were excellent. They helped us eliminate intermittent failures and optimize runtime behavior, which significantly improved our confidence in long-duration test deployments.",
+  },
+  {
+    name: "Amit Goyal",
+    role: "Engineering Lead",
+    company: "Kinetic IoT Systems",
+    rating: 4.6,
+    review:
+      "Their technical recommendations were practical and cost-aware. We received a solution that was not just functional, but scalable and production-oriented, with clear documentation that reduced onboarding time for new team members.",
+  },
+  {
+    name: "Naina Sharma",
+    role: "Product Strategist",
+    company: "SignalArc Technologies",
+    rating: 4.8,
+    review:
+      "Great collaboration from kickoff to delivery. They aligned engineering choices with product goals, improved user-facing reliability, and gave us a strong technical foundation that directly supported our roadmap decisions.",
+  },
+  {
+    name: "Amandeep Kaur",
+    role: "Research Engineer",
+    company: "Orion Mechatronics",
+    rating: 4.4,
+    review:
+      "Their team was responsive, detail-oriented, and strong in both firmware and integration. We appreciated their structured approach, quick iteration cycles, and consistent focus on delivering a stable and testable system.",
   },
 ];
 
@@ -90,6 +130,7 @@ const CustomerReviewsCarousel = () => {
     align: "start",
     skipSnaps: false,
     dragFree: false,
+    containScroll: "trimSnaps",
   });
 
   useEffect(() => {
@@ -113,6 +154,23 @@ const CustomerReviewsCarousel = () => {
       emblaApi.off("reInit", onInit);
     };
   }, [emblaApi]);
+
+  const renderRatingStars = (rating: number) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating - fullStars >= 0.5;
+
+    return Array.from({ length: 5 }).map((_, index) => {
+      if (index < fullStars) {
+        return <Star key={index} className="w-4 h-4 fill-current" />;
+      }
+
+      if (index === fullStars && hasHalfStar) {
+        return <StarHalf key={index} className="w-4 h-4 fill-current" />;
+      }
+
+      return <Star key={index} className="w-4 h-4 text-amber-200" />;
+    });
+  };
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -167,25 +225,23 @@ const CustomerReviewsCarousel = () => {
 
       <div className="container mx-auto px-4">
         <div className="overflow-hidden" ref={emblaRef}>
-          <div className="flex">
+          <div className="flex -mx-2">
             {reviews.map((item, index) => (
               <div
                 key={`${item.name}-${item.company}-${index}`}
-                className="flex-[0_0_100%] min-w-0 md:flex-[0_0_50%] px-2"
+                className="shrink-0 grow-0 basis-full md:basis-1/3 min-w-0 px-2"
               >
                 <Card className="p-6 flex flex-col text-left shadow-lg h-full bg-white/95 backdrop-blur-sm border-white/70 hover:shadow-xl transition-all duration-300">
                   <div className="flex items-start justify-between gap-3 mb-4">
                     <div className="flex gap-1 text-amber-500">
-                      {Array.from({ length: item.rating }).map(
-                        (_, starIndex) => (
-                          <Star
-                            key={starIndex}
-                            className="w-4 h-4 fill-current"
-                          />
-                        ),
-                      )}
+                      {renderRatingStars(item.rating)}
                     </div>
-                    <Quote className="w-5 h-5 text-accent/70" />
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-amber-600">
+                        {item.rating.toFixed(1)}/5
+                      </span>
+                      <Quote className="w-5 h-5 text-accent/70" />
+                    </div>
                   </div>
 
                   <p className="text-sm sm:text-base text-foreground/90 leading-relaxed mb-5">

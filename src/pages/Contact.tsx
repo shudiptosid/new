@@ -1,4 +1,5 @@
 import Navigation from "@/components/Navigation";
+import SEO from "@/components/SEO";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -104,6 +105,11 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="Contact Us"
+        description="Get in touch with Circuit Crafters for your next embedded systems or IoT project. We offer expert firmware development and consulting."
+        keywords={["contact circuit crafters", "hire IoT engineer", "embedded systems consultant contact"]}
+      />
       <Navigation />
 
       {/* Hero Section */}

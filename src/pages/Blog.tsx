@@ -390,11 +390,10 @@ const Blog = () => {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
-                    category === selectedCategory
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${category === selectedCategory
                       ? "bg-emerald-600 text-white shadow-md"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
+                    }`}
                 >
                   {category}
                 </button>
@@ -402,18 +401,27 @@ const Blog = () => {
             </div>
 
             {topKeywords.length > 0 && (
-              <div className="mt-6">
-                <h2 className="text-sm font-semibold text-gray-700 mb-2">
-                  Popular Topic Keywords
-                </h2>
+              <div className="mt-6 rounded-2xl bg-gradient-to-br from-emerald-50 via-teal-50 to-slate-50 border border-emerald-100 p-5 shadow-sm">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500 shadow-sm">
+                    <TrendingUp className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-sm font-bold text-gray-800 leading-none">
+                      Trending Topics
+                    </h2>
+                    <p className="text-xs text-gray-500 mt-0.5">Click to filter articles instantly</p>
+                  </div>
+                </div>
                 <div className="flex flex-wrap gap-2">
-                  {topKeywords.map((keyword) => (
+                  {topKeywords.map((keyword, idx) => (
                     <button
                       key={keyword}
                       onClick={() => setSearchInput(keyword)}
-                      className="px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+                      className="group relative px-3 py-1.5 rounded-full text-xs font-semibold bg-white border border-emerald-200 text-slate-700 hover:border-emerald-400 hover:bg-emerald-500 hover:text-white transition-all duration-200 shadow-sm hover:shadow-emerald-200 hover:shadow-md hover:-translate-y-0.5"
                     >
-                      #{keyword.replace(/\s+/g, "-")}
+                      <span className="text-emerald-500 group-hover:text-emerald-100 transition-colors">#</span>
+                      {keyword.replace(/\s+/g, "-")}
                     </button>
                   ))}
                 </div>

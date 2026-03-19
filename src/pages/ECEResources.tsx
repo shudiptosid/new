@@ -1,6 +1,7 @@
 // ECE Resources Page - Updated with NOC IoT folder and Reference Books
 import React, { useState } from "react";
 import Navigation from "@/components/Navigation";
+import SEO from "@/components/SEO";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -360,6 +361,11 @@ const ECEResources = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO
+        title="ECE Learning Resources"
+        description="Free learning materials, PDFs, and reference books for Electronics and Communication Engineering (ECE) students and professionals."
+        keywords={["ECE resources", "electronics engineering PDFs", "IoT study materials", "embedded systems books"]}
+      />
       <Navigation />
       <main className="flex-grow">
         <section className="relative py-16 min-h-screen bg-gradient-to-br from-blue-50 via-slate-100 to-blue-100 overflow-hidden">
@@ -417,16 +423,14 @@ const ECEResources = () => {
                           <div key={item.id} className="space-y-2">
                             {/* Folder or File Item */}
                             <div
-                              className={`group bg-gradient-to-r from-white to-accent/5 border-2 border-accent/20 rounded-xl p-4 hover:border-accent/60 hover:shadow-lg transition-all duration-150 ${
-                                !isFolder ? "hover:scale-[1.02]" : ""
-                              }`}
+                              className={`group bg-gradient-to-r from-white to-accent/5 border-2 border-accent/20 rounded-xl p-4 hover:border-accent/60 hover:shadow-lg transition-all duration-150 ${!isFolder ? "hover:scale-[1.02]" : ""
+                                }`}
                             >
                               <div className="flex items-start justify-between gap-4">
                                 <div className="flex items-start gap-3 flex-1 min-w-0">
                                   <div
-                                    className={`p-3 bg-accent/10 rounded-lg group-hover:bg-accent/20 transition-colors ${
-                                      isFolder ? "cursor-pointer" : ""
-                                    }`}
+                                    className={`p-3 bg-accent/10 rounded-lg group-hover:bg-accent/20 transition-colors ${isFolder ? "cursor-pointer" : ""
+                                      }`}
                                     onClick={
                                       isFolder
                                         ? () => toggleFolder(item.id)
@@ -454,9 +458,8 @@ const ECEResources = () => {
                                         </button>
                                       )}
                                       <p
-                                        className={`font-semibold text-gray-800 truncate group-hover:text-accent transition-colors ${
-                                          isFolder ? "cursor-pointer" : ""
-                                        }`}
+                                        className={`font-semibold text-gray-800 truncate group-hover:text-accent transition-colors ${isFolder ? "cursor-pointer" : ""
+                                          }`}
                                         onClick={
                                           isFolder
                                             ? () => toggleFolder(item.id)

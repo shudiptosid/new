@@ -6,6 +6,7 @@ import {
   getRequestDetails,
   submitAdminReply,
 } from "@/lib/supabaseService";
+import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -99,7 +100,12 @@ const AdminPanel = () => {
       name: "MCU",
       icon: Cpu,
       color: "from-slate-600 to-slate-700",
-      categories: ["Development Board"],
+      categories: [
+        "MCU",
+        "Microcontroller",
+        "Micrcontroller",
+        "Development Board",
+      ],
     },
     {
       id: "sensors",
@@ -107,6 +113,7 @@ const AdminPanel = () => {
       icon: Gauge,
       color: "from-slate-500 to-slate-600",
       categories: [
+        "Sensor",
         "Distance Sensor",
         "Environmental Sensor",
         "Motion Sensor",
@@ -130,28 +137,38 @@ const AdminPanel = () => {
       name: "Power",
       icon: Zap,
       color: "from-slate-600 to-slate-700",
-      categories: ["Power Supply", "Battery"],
+      categories: ["Power", "Power Supply", "Battery", "Cable"],
     },
     {
       id: "actuators",
       name: "Actuators",
       icon: Package,
       color: "from-slate-500 to-slate-600",
-      categories: ["Motor", "Servo", "Pump"],
+      categories: ["Actuator", "Motor", "Servo", "Pump"],
     },
     {
       id: "displays",
       name: "Displays",
       icon: Monitor,
       color: "from-slate-600 to-slate-700",
-      categories: ["LCD Display", "OLED Display", "TFT Display"],
+      categories: ["Display", "LCD Display", "OLED Display", "TFT Display"],
     },
   ];
+
+  const categoryMatches = (
+    productCategory: string,
+    allowedCategories: string[],
+  ) => {
+    const normalizedProduct = (productCategory || "").trim().toLowerCase();
+    return allowedCategories.some(
+      (category) => category.trim().toLowerCase() === normalizedProduct,
+    );
+  };
 
   // Calculate component counts
   const getCategoryCount = (categories: string[]) => {
     return productsData.filter((product: any) =>
-      categories.includes(product.category),
+      categoryMatches(product.category, categories),
     ).length;
   };
 
@@ -162,10 +179,31 @@ const AdminPanel = () => {
   useEffect(() => {
     const loadProducts = async () => {
       try {
-        const data = await import("@/data/productsData.json");
-        setProductsData(data.default);
+        const { data, error } = await supabase
+          .from("component_prices")
+          .select("product_id, name, price, category, description")
+          .eq("is_active", true)
+          .order("serial_no", { ascending: true });
+
+        if (error) throw error;
+
+        const mappedData = (data || []).map((item) => ({
+          id: item.product_id,
+          name: item.name,
+          price: Number(item.price) || 0,
+          category: item.category,
+          description: item.description || "",
+        }));
+
+        setProductsData(mappedData);
       } catch (error) {
-        console.error("Error loading products:", error);
+        console.error("Error loading products from Supabase:", error);
+        try {
+          const data = await import("@/data/productsData.json");
+          setProductsData(data.default);
+        } catch (jsonError) {
+          console.error("Error loading fallback products JSON:", jsonError);
+        }
       }
     };
     loadProducts();
@@ -315,7 +353,7 @@ const AdminPanel = () => {
 
   const handleCategoryClick = (category: any) => {
     const components = productsData.filter((product: any) =>
-      category.categories.includes(product.category),
+      categoryMatches(product.category, category.categories),
     );
     setCategoryComponents(components);
     setSelectedCategory(category.id);
