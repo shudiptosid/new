@@ -38,6 +38,23 @@ interface Blog {
   tags?: string[];
 }
 
+const DEFAULT_CATEGORIES = [
+  "Power Management",
+  "Protocols",
+  "Security",
+  "Connectivity",
+  "Networking",
+  "Visualization",
+  "RTOS",
+  "Development",
+  "AI/ML",
+  "Tutorials",
+  "Projects",
+  "Sensors",
+  "Hardware",
+  "Troubleshooting",
+];
+
 const BlogManager = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -56,23 +73,8 @@ const BlogManager = () => {
   const [metaDescription, setMetaDescription] = useState("");
   const [ogImage, setOgImage] = useState("");
   const [tags, setTags] = useState("");
-
-  const categories = [
-    "Power Management",
-    "Protocols",
-    "Security",
-    "Connectivity",
-    "Networking",
-    "Visualization",
-    "RTOS",
-    "Development",
-    "AI/ML",
-    "Tutorials",
-    "Projects",
-    "Sensors",
-    "Hardware",
-    "Troubleshooting",
-  ];
+  const [categories, setCategories] = useState<string[]>(DEFAULT_CATEGORIES);
+  const [newCategory, setNewCategory] = useState("");
 
   useEffect(() => {
     fetchBlogs();
@@ -98,7 +100,15 @@ const BlogManager = () => {
         comment_count: blog.blog_comments[0]?.count || 0,
       }));
 
+      const existingCategories = new Set(DEFAULT_CATEGORIES);
+      (data || []).forEach((blog: Blog) => {
+        if (blog.category?.trim()) {
+          existingCategories.add(blog.category.trim());
+        }
+      });
+
       setBlogs(blogsWithComments || []);
+      setCategories(Array.from(existingCategories));
     } catch (error: any) {
       toast({
         title: "Error",
@@ -149,7 +159,7 @@ const BlogManager = () => {
       setLoading(true);
       const slug = generateSlug(title);
       const readTime = calculateReadTime(content);
-
+      
       // Process SEO fields
       const keywordsArray = keywords
         .split(",")
@@ -176,6 +186,7 @@ const BlogManager = () => {
         meta_description: finalMetaDesc,
         og_image: finalOgImage,
         og_image_alt: `${title} - Circuit Crafters Blog`,
+        author_name: "Circuit Crafters Team",
         tags: tagsArray,
       };
 
@@ -218,6 +229,15 @@ const BlogManager = () => {
   };
 
   const handleEdit = (blog: Blog) => {
+    if (
+      blog.category?.trim() &&
+      !categories.some(
+        (cat) => cat.toLowerCase() === blog.category.trim().toLowerCase(),
+      )
+    ) {
+      setCategories((prev) => [...prev, blog.category.trim()]);
+    }
+
     setEditingBlog(blog);
     setTitle(blog.title);
     setExcerpt(blog.excerpt);
@@ -229,6 +249,41 @@ const BlogManager = () => {
     setOgImage(blog.og_image || "");
     setTags(blog.tags?.join(", ") || "");
     setShowEditor(true);
+  };
+
+  const handleAddCategory = () => {
+    const trimmed = newCategory.trim();
+    if (!trimmed) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter a category name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const alreadyExists = categories.some(
+      (cat) => cat.toLowerCase() === trimmed.toLowerCase(),
+    );
+
+    if (alreadyExists) {
+      toast({
+        title: "Already Exists",
+        description: `Category \"${trimmed}\" already exists`,
+      });
+      setCategory(trimmed);
+      setNewCategory("");
+      return;
+    }
+
+    setCategories((prev) => [...prev, trimmed]);
+    setCategory(trimmed);
+    setNewCategory("");
+
+    toast({
+      title: "Category Added",
+      description: `\"${trimmed}\" is now available in Blog Category`,
+    });
   };
 
   const handleDelete = async (id: string) => {
@@ -334,6 +389,22 @@ const BlogManager = () => {
                   ))}
                 </SelectContent>
               </Select>
+              <div className="mt-3 flex gap-2">
+                <Input
+                  value={newCategory}
+                  onChange={(e) => setNewCategory(e.target.value)}
+                  placeholder="Add new category"
+                  className="text-base"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleAddCategory}
+                  disabled={!newCategory.trim()}
+                >
+                  Add Category
+                </Button>
+              </div>
             </div>
 
             {/* Excerpt */}
@@ -353,7 +424,7 @@ const BlogManager = () => {
             {/* SEO Section */}
             <div className="border-t pt-6 space-y-4">
               <h3 className="text-lg font-bold text-emerald-600">SEO Optimization</h3>
-
+              
               {/* Meta Description */}
               <div>
                 <label className="block text-sm font-semibold mb-2">
@@ -428,8 +499,9 @@ const BlogManager = () => {
                   Content <span className="text-red-500">*</span>
                 </label>
                 <span
-                  className={`text-sm font-medium ${wordCount > 1500 ? "text-red-500" : "text-gray-600"
-                    }`}
+                  className={`text-sm font-medium ${
+                    wordCount > 1500 ? "text-red-500" : "text-gray-600"
+                  }`}
                 >
                   {wordCount}/1500 words
                 </span>

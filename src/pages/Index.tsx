@@ -1,16 +1,26 @@
+import React, { Suspense } from "react";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
-import ServicesOverview from "@/components/ServicesOverview";
-import FeaturedProjects from "@/components/FeaturedProjects";
-import AboutSnippet from "@/components/AboutSnippet";
-import CustomerReviewsCarousel from "@/components/CustomerReviewsCarousel";
-import LatestBlogPosts from "@/components/LatestBlogPosts";
-import ContactCTA from "@/components/ContactCTA";
-import Footer from "@/components/Footer";
 import StickyContactBar from "@/components/StickyContactBar";
 import FloatingIconsHome from "@/components/FloatingIconsHome";
 import { SEO } from "@/components/SEO";
 import backgroundImage from "@/assets/bg3.jpg";
+
+// Lazy load below-the-fold components
+const ServicesOverview = React.lazy(() => import("@/components/ServicesOverview"));
+const FeaturedProjects = React.lazy(() => import("@/components/FeaturedProjects"));
+const AboutSnippet = React.lazy(() => import("@/components/AboutSnippet"));
+const CustomerReviewsCarousel = React.lazy(() => import("@/components/CustomerReviewsCarousel"));
+const LatestBlogPosts = React.lazy(() => import("@/components/LatestBlogPosts"));
+const ContactCTA = React.lazy(() => import("@/components/ContactCTA"));
+const Footer = React.lazy(() => import("@/components/Footer"));
+
+// Loading fallback for lazy components
+const SectionLoader = () => (
+  <div className="w-full flex items-center justify-center py-24">
+    <div className="w-8 h-8 rounded-full bg-accent/30 animate-ping"></div>
+  </div>
+);
 
 const Index = () => {
   return (
@@ -57,16 +67,20 @@ const Index = () => {
 
           {/* Content */}
           <div className="relative z-20">
-            <ServicesOverview />
-            <FeaturedProjects />
-            <AboutSnippet />
-            <CustomerReviewsCarousel />
-            <LatestBlogPosts />
-            <ContactCTA />
+            <Suspense fallback={<SectionLoader />}>
+              <ServicesOverview />
+              <FeaturedProjects />
+              <AboutSnippet />
+              <CustomerReviewsCarousel />
+              <LatestBlogPosts />
+              <ContactCTA />
+            </Suspense>
           </div>
         </div>
       </main>
-      <Footer />
+      <Suspense fallback={<SectionLoader />}>
+        <Footer />
+      </Suspense>
     </div>
   );
 };

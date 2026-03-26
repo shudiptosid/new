@@ -120,6 +120,12 @@ const FloatingIconsHome: React.FC<FloatingIconsHomeProps> = ({
       { src: ultrasonicIcon, alt: "Ultrasonic Sensor" },
     ];
 
+    // Mobile Performance Optimization: Disable massive state update loop on small screens
+    if (window.innerWidth < 768) {
+      setIcons([]);
+      return;
+    }
+
     // Number of icons to create (reduced density as requested)
     const iconCount = isHomePage ? iconSources.length * 2 : iconSources.length;
 
