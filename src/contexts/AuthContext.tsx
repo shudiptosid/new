@@ -28,16 +28,16 @@ interface AuthContextType {
     fullName: string,
     phone?: string,
     location?: string,
-    age?: number
+    age?: number,
   ) => Promise<{ error: AuthError | null }>;
   signIn: (
     email: string,
-    password: string
+    password: string,
   ) => Promise<{ error: AuthError | null }>;
   signInWithGoogle: () => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   updateProfile: (
-    updates: Partial<UserProfile>
+    updates: Partial<UserProfile>,
   ) => Promise<{ error: Error | null }>;
 }
 
@@ -54,9 +54,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log("📋 Fetching profile for user:", userId);
 
-      // Create a timeout promise (5 seconds - increased for reliability)
+      // Create a timeout promise (longer timeout to avoid false failures on slow networks)
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error("Profile fetch timeout")), 5000);
+        setTimeout(() => reject(new Error("Profile fetch timeout")), 12000);
       });
 
       // Race between fetch and timeout
@@ -88,9 +88,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           } = await supabase.auth.getUser();
 
           if (user) {
-            // Determine role based on email
-            const isAdmin = user.email === "circuitcraftersiot@gmail.com";
-
             const { data: newProfile, error: insertError } = await supabase
               .from("user_profiles")
               .insert({
@@ -105,7 +102,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 age: user.user_metadata?.age
                   ? parseInt(user.user_metadata.age)
                   : null,
-                role: isAdmin ? "admin" : "customer",
+                role: "customer",
                 email_verified: user.email_confirmed_at ? true : false,
               })
               .select()
@@ -188,7 +185,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         "🔄 Auth state changed:",
         event,
         "| User:",
-        session?.user?.email || "No user"
+        session?.user?.email || "No user",
       );
 
       setSession(session);
@@ -197,13 +194,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Fetch profile on SIGNED_IN event or any event with session
       if (
         session?.user &&
-        (event === "SIGNED_IN" ||
-          event === "INITIAL_SESSION" ||
-          event === "TOKEN_REFRESHED")
+        (event === "SIGNED_IN" || event === "TOKEN_REFRESHED")
       ) {
         console.log(
           "👤 User authenticated, fetching profile for:",
-          session.user.email
+          session.user.email,
         );
         const profileData = await fetchProfile(session.user.id);
         if (profileData) {
@@ -211,7 +206,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             "✅ Profile loaded:",
             profileData.email,
             "Role:",
-            profileData.role
+            profileData.role,
           );
         } else {
           console.log("⚠️ Profile not found or failed to load");
@@ -235,7 +230,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     fullName: string,
     phone?: string,
     location?: string,
-    age?: number
+    age?: number,
   ) => {
     try {
       const metadata = {
@@ -265,7 +260,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log("User metadata:", data.user?.user_metadata);
       console.log(
         "User session:",
-        data.session ? "Created" : "Pending confirmation"
+        data.session ? "Created" : "Pending confirmation",
       );
 
       // Backup: Create profile manually if trigger might have failed

@@ -37,6 +37,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const AdminPanel = lazy(() => import("./pages/AdminPanel"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const AdminCareers = lazy(() => import("./pages/AdminCareers"));
 const PriceManager = lazy(() => import("./components/PriceManager"));
 const BlogManager = lazy(() => import("./components/BlogManager"));
@@ -115,6 +116,7 @@ const App = () => (
 
               {/* OAuth callback - no protection needed (handles own logic) */}
               <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/admin-login" element={<AdminLogin />} />
 
               {/* Protected routes - require authentication */}
               <Route

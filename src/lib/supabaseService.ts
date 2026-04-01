@@ -1,5 +1,32 @@
 import { supabase } from "@/lib/supabaseClient";
 
+export interface AdminAllowedEmail {
+  id: string;
+  email: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+}
+
+export interface AdminActivityLog {
+  id: string;
+  created_at: string;
+  table_name: string;
+  action: "INSERT" | "UPDATE" | "DELETE";
+  record_id: string | null;
+  actor_id: string | null;
+  actor_email: string | null;
+  details: any;
+}
+
+const normalizeEmail = (email: string) => email.trim().toLowerCase();
+
+export const isValidGmail = (email: string) =>
+  /^[a-zA-Z0-9._%+-]+@(gmail\.com|googlemail\.com)$/.test(
+    normalizeEmail(email),
+  );
+
 // Email validation function
 const isValidEmail = (email: string): boolean => {
   const emailRegex =
@@ -92,7 +119,7 @@ export const submitContactForm = async (formData: {
       console.error(
         "⚠️ Failed to send admin notification:",
         response.status,
-        result
+        result,
       );
       // Don't throw error - request is saved, email is optional
     }
@@ -138,7 +165,7 @@ export const getAllRequests = async (status?: string) => {
 // Get specific request details by type and ID
 export const getRequestDetails = async (
   requestType: string,
-  requestId: string
+  requestId: string,
 ) => {
   const tableMap: { [key: string]: string } = {
     consulting: "consulting_requests",
@@ -329,4 +356,172 @@ export const getUnreadMessageCount = async (userId: string) => {
   }
 
   return data || 0;
+};
+
+export const getAdminAllowedEmails = async (): Promise<AdminAllowedEmail[]> => {
+  const { data, error } = await supabase
+    .from("admin_allowed_emails")
+    .select("*")
+    .order("email", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching admin allowed emails:", error);
+    throw error;
+  }
+
+  return (data || []) as AdminAllowedEmail[];
+};
+
+export const addAdminAllowedEmail = async (email: string) => {
+  const normalizedEmail = normalizeEmail(email);
+
+  if (!isValidGmail(normalizedEmail)) {
+    throw new Error("Only Gmail addresses are allowed for admin access");
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user?.id) {
+    throw new Error("You must be signed in to manage admin allowlist");
+  }
+
+  const { data, error } = await supabase
+    .from("admin_allowed_emails")
+    .upsert(
+      {
+        email: normalizedEmail,
+        is_active: true,
+        created_by: user.id,
+      },
+      { onConflict: "email" },
+    )
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("Error adding admin allowed email:", error);
+    throw error;
+  }
+
+  return data as AdminAllowedEmail;
+};
+
+export const setAdminAllowedEmailStatus = async (
+  email: string,
+  isActive: boolean,
+) => {
+  const { data, error } = await supabase
+    .from("admin_allowed_emails")
+    .update({ is_active: isActive })
+    .eq("email", normalizeEmail(email))
+    .select("*")
+    .single();
+
+  if (error) {
+    console.error("Error updating admin allowed email status:", error);
+    throw error;
+  }
+
+  return data as AdminAllowedEmail;
+};
+
+export const deleteAdminAllowedEmail = async (email: string) => {
+  const { error } = await supabase
+    .from("admin_allowed_emails")
+    .delete()
+    .eq("email", normalizeEmail(email));
+
+  if (error) {
+    console.error("Error deleting admin allowed email:", error);
+    throw error;
+  }
+};
+
+export const isCurrentUserInAdminAllowlist = async () => {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user?.email) {
+    return false;
+  }
+
+  const email = normalizeEmail(user.email);
+
+  if (!isValidGmail(email)) {
+    return false;
+  }
+
+  const { data, error } = await supabase
+    .from("admin_allowed_emails")
+    .select("email")
+    .eq("email", email)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (error) {
+    console.error("Error checking admin allowlist:", error);
+    return false;
+  }
+
+  return Boolean(data);
+};
+
+export const verifyAdminPanelPassword = async (password: string) => {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session?.access_token) {
+    throw new Error("You must be signed in to verify admin password");
+  }
+
+  const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+  const response = await fetch(
+    `${SUPABASE_URL}/functions/v1/verify-admin-password`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ password }),
+    },
+  );
+
+  let result: any = null;
+  try {
+    result = await response.json();
+  } catch {
+    result = null;
+  }
+
+  if (!response.ok) {
+    const statusPrefix = `Admin verification failed (${response.status})`;
+    throw new Error(
+      result?.error ? `${statusPrefix}: ${result.error}` : statusPrefix,
+    );
+  }
+
+  return result as { success: boolean; expiresInMinutes: number };
+};
+
+export const getAdminActivityLogs = async (
+  limit = 120,
+): Promise<AdminActivityLog[]> => {
+  const { data, error } = await supabase
+    .from("admin_activity_logs")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Error fetching admin activity logs:", error);
+    throw error;
+  }
+
+  return (data || []) as AdminActivityLog[];
 };

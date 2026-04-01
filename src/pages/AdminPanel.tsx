@@ -5,7 +5,14 @@ import {
   getAllRequests,
   getRequestDetails,
   submitAdminReply,
+  getAdminActivityLogs,
+  getAdminAllowedEmails,
+  addAdminAllowedEmail,
+  setAdminAllowedEmailStatus,
+  deleteAdminAllowedEmail,
+  isValidGmail,
 } from "@/lib/supabaseService";
+import type { AdminActivityLog } from "@/lib/supabaseService";
 import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -51,6 +58,7 @@ import {
   RotateCcw,
   FileText,
   BookOpen,
+  Shield,
 } from "lucide-react";
 import EstimateBuilder from "@/components/EstimateBuilder";
 import StudyMaterialsManager from "@/components/StudyMaterialsManager";
@@ -92,6 +100,15 @@ const AdminPanel = () => {
   }>({});
   const [showCart, setShowCart] = useState(false);
   const [productsData, setProductsData] = useState<any[]>([]);
+  const [allowedEmails, setAllowedEmails] = useState<any[]>([]);
+  const [newAllowedEmail, setNewAllowedEmail] = useState("");
+  const [allowlistLoading, setAllowlistLoading] = useState(false);
+  const [activityLogs, setActivityLogs] = useState<AdminActivityLog[]>([]);
+  const [activityLoading, setActivityLoading] = useState(false);
+  const [activitySearchTerm, setActivitySearchTerm] = useState("");
+  const [activityActionFilter, setActivityActionFilter] = useState<
+    "all" | "INSERT" | "UPDATE" | "DELETE"
+  >("all");
 
   // Calculate component categories
   const componentCategories = [
@@ -214,6 +231,14 @@ const AdminPanel = () => {
     loadAllRequests();
   }, []);
 
+  useEffect(() => {
+    loadAllowedEmails();
+  }, []);
+
+  useEffect(() => {
+    loadActivityLogs();
+  }, []);
+
   // Filter requests when tab changes
   useEffect(() => {
     if (allRequests.length > 0) {
@@ -237,6 +262,83 @@ const AdminPanel = () => {
       console.error("Error loading requests:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadAllowedEmails = async () => {
+    try {
+      setAllowlistLoading(true);
+      const emails = await getAdminAllowedEmails();
+      setAllowedEmails(emails);
+    } catch (error) {
+      console.error("Error loading admin allowlist:", error);
+    } finally {
+      setAllowlistLoading(false);
+    }
+  };
+
+  const loadActivityLogs = async () => {
+    try {
+      setActivityLoading(true);
+      const logs = await getAdminActivityLogs(120);
+      setActivityLogs(logs);
+    } catch (error) {
+      console.error("Error loading admin activity logs:", error);
+    } finally {
+      setActivityLoading(false);
+    }
+  };
+
+  const handleAddAllowedEmail = async () => {
+    const email = newAllowedEmail.trim().toLowerCase();
+
+    if (!email) {
+      alert("Enter a Gmail address");
+      return;
+    }
+
+    if (!isValidGmail(email)) {
+      alert("Only Gmail addresses are allowed");
+      return;
+    }
+
+    try {
+      setAllowlistLoading(true);
+      await addAdminAllowedEmail(email);
+      setNewAllowedEmail("");
+      await loadAllowedEmails();
+    } catch (error: any) {
+      alert(error?.message || "Failed to add Gmail to allowlist");
+    } finally {
+      setAllowlistLoading(false);
+    }
+  };
+
+  const handleToggleAllowedEmail = async (email: string, isActive: boolean) => {
+    try {
+      setAllowlistLoading(true);
+      await setAdminAllowedEmailStatus(email, !isActive);
+      await loadAllowedEmails();
+    } catch (error: any) {
+      alert(error?.message || "Failed to update Gmail status");
+    } finally {
+      setAllowlistLoading(false);
+    }
+  };
+
+  const handleDeleteAllowedEmail = async (email: string) => {
+    if (!window.confirm(`Remove ${email} from allowlist?`)) {
+      return;
+    }
+
+    try {
+      setAllowlistLoading(true);
+      await deleteAdminAllowedEmail(email);
+      await loadAllowedEmails();
+    } catch (error: any) {
+      alert(error?.message || "Failed to delete Gmail");
+    } finally {
+      setAllowlistLoading(false);
     }
   };
 
@@ -327,6 +429,27 @@ const AdminPanel = () => {
       req.user_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       req.summary?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  const filteredActivityLogs = activityLogs.filter((log) => {
+    const matchesAction =
+      activityActionFilter === "all" || log.action === activityActionFilter;
+    const q = activitySearchTerm.trim().toLowerCase();
+
+    if (!q) return matchesAction;
+
+    return (
+      matchesAction &&
+      (log.table_name.toLowerCase().includes(q) ||
+        (log.actor_email || "").toLowerCase().includes(q) ||
+        (log.record_id || "").toLowerCase().includes(q))
+    );
+  });
+
+  const getActionBadgeClass = (action: "INSERT" | "UPDATE" | "DELETE") => {
+    if (action === "INSERT") return "bg-emerald-600 text-white";
+    if (action === "UPDATE") return "bg-blue-600 text-white";
+    return "bg-red-600 text-white";
+  };
 
   const getStatusBadge = (status: string) => {
     const variants: { [key: string]: string } = {
@@ -443,6 +566,11 @@ const AdminPanel = () => {
                   variant="ghost"
                   size="icon"
                   className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                  onClick={async () => {
+                    sessionStorage.removeItem("admin_unlock_until");
+                    await supabase.auth.signOut();
+                    navigate("/login");
+                  }}
                 >
                   <LogOut className="h-4 w-4" />
                 </Button>
@@ -453,525 +581,717 @@ const AdminPanel = () => {
       </nav>
 
       {/* Main Content with Sidebar Layout */}
-      <div className="flex gap-6 max-w-full mx-auto py-6 px-4 sm:px-6 lg:px-8">
-        {/* Main Content Area */}
-        <div className="flex-1 max-w-5xl">
-          {/* Component Categories */}
-          <Card className="mb-6 shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Package className="h-5 w-5 text-accent" />
-                Component Inventory
-              </CardTitle>
-              <CardDescription>
-                Click a category to view available components
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                {componentCategories.map((category) => (
-                  <Card
-                    key={category.id}
-                    className={`cursor-pointer transition-all duration-150 hover:scale-105 hover:shadow-xl ${
-                      selectedCategory === category.id
-                        ? "ring-2 ring-accent"
-                        : ""
-                    }`}
-                    onClick={() => handleCategoryClick(category)}
+      <div className="max-w-[1700px] mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_22rem] 2xl:grid-cols-[minmax(0,1fr)_24rem] gap-6 items-start">
+          {/* Main Content Area */}
+          <div className="min-w-0">
+            {/* Component Categories */}
+            <Card className="mb-6 shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="h-5 w-5 text-accent" />
+                  Admin Gmail Allowlist
+                </CardTitle>
+                <CardDescription>
+                  Only active Gmail accounts in this list can unlock and access
+                  admin panel.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <input
+                    type="email"
+                    value={newAllowedEmail}
+                    onChange={(e) => setNewAllowedEmail(e.target.value)}
+                    placeholder="allowed.admin@gmail.com"
+                    className="flex-1 px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+                  />
+                  <Button
+                    type="button"
+                    disabled={allowlistLoading}
+                    onClick={handleAddAllowedEmail}
                   >
-                    <CardContent className="p-4">
+                    Add Gmail
+                  </Button>
+                </div>
+
+                <div className="space-y-2">
+                  {allowlistLoading ? (
+                    <p className="text-sm text-muted-foreground">
+                      Loading allowlist...
+                    </p>
+                  ) : allowedEmails.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">
+                      No permitted Gmail addresses yet.
+                    </p>
+                  ) : (
+                    allowedEmails.map((entry) => (
                       <div
-                        className={`h-12 w-12 rounded-full bg-gradient-to-br ${category.color} flex items-center justify-center mx-auto mb-2`}
+                        key={entry.email}
+                        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-md border p-3"
                       >
-                        <category.icon className="h-6 w-6 text-white" />
+                        <div>
+                          <p className="font-medium">{entry.email}</p>
+                          <p className="text-xs text-muted-foreground">
+                            Status: {entry.is_active ? "Active" : "Disabled"}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              handleToggleAllowedEmail(
+                                entry.email,
+                                entry.is_active,
+                              )
+                            }
+                          >
+                            {entry.is_active ? "Disable" : "Enable"}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            onClick={() =>
+                              handleDeleteAllowedEmail(entry.email)
+                            }
+                          >
+                            Remove
+                          </Button>
+                        </div>
                       </div>
-                      <h3 className="text-sm font-semibold text-center mb-1">
-                        {category.name}
-                      </h3>
-                      <p className="text-2xl font-bold text-center text-accent">
-                        {getCategoryCount(category.categories)}
-                      </p>
-                      <p className="text-xs text-muted-foreground text-center">
-                        components
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Statistics Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-gradient-to-br from-slate-700 to-slate-800 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-slate-300 text-sm font-medium mb-1">
-                      Total Requests
-                    </p>
-                    <h3 className="text-3xl font-bold">{stats.total}</h3>
-                  </div>
-                  <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <MessageSquare className="h-6 w-6" />
-                  </div>
+                    ))
+                  )}
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-blue-600 to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-blue-100 text-sm font-medium mb-1">
-                      Pending
-                    </p>
-                    <h3 className="text-3xl font-bold">{stats.pending}</h3>
-                  </div>
-                  <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <Clock className="h-6 w-6" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-slate-600 to-slate-700 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-slate-300 text-sm font-medium mb-1">
-                      Under Review
-                    </p>
-                    <h3 className="text-3xl font-bold">{stats.underReview}</h3>
-                  </div>
-                  <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <Mail className="h-6 w-6" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-gradient-to-br from-teal-600 to-teal-700 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-teal-100 text-sm font-medium mb-1">
-                      Solved
-                    </p>
-                    <h3 className="text-3xl font-bold">{stats.solved}</h3>
-                  </div>
-                  <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
-                    <CheckCircle className="h-6 w-6" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Price Manager Quick Access */}
-          <Card
-            className="mb-8 bg-gradient-to-br from-blue-600 to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-all cursor-pointer"
-            onClick={() => navigate("/admin/price-manager")}
-          >
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-bold mb-1">💰 Price Manager</h3>
-                  <p className="text-blue-100 text-sm">
-                    Manage component prices and inventory
-                  </p>
-                </div>
-                <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
-                  <ChevronRight className="h-6 w-6" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Blog Manager Quick Access */}
-          <Card
-            className="mb-8 bg-gradient-to-br from-teal-600 to-teal-700 text-white border-0 shadow-lg hover:shadow-xl transition-all cursor-pointer"
-            onClick={() => navigate("/admin/blog-manager")}
-          >
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-bold mb-1">📝 Blog Manager</h3>
-                  <p className="text-teal-100 text-sm">
-                    Create, edit and manage blog posts with comments
-                  </p>
-                </div>
-                <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
-                  <ChevronRight className="h-6 w-6" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Careers Manager Quick Access */}
-          <Card
-            className="mb-8 bg-gradient-to-br from-indigo-600 to-indigo-700 text-white border-0 shadow-lg hover:shadow-xl transition-all cursor-pointer"
-            onClick={() => navigate("/admin/careers")}
-          >
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-xl font-bold mb-1">🧑‍💼 Careers Manager</h3>
-                  <p className="text-indigo-100 text-sm">
-                    Review submitted applications and download CVs
-                  </p>
-                </div>
-                <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
-                  <ChevronRight className="h-6 w-6" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Study Materials Management */}
-          <Card className="mb-6 shadow-lg">
-            <CardHeader className="border-b border-slate-200 dark:border-slate-700 pb-4">
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5 text-accent" />
-                Study Materials Management
-              </CardTitle>
-              <CardDescription>
-                Upload and manage study materials for different engineering
-                streams (CSE, ECE, Mechatronics, MEC, General)
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <StudyMaterialsManager />
-            </CardContent>
-          </Card>
-
-          {/* Search Bar */}
-          <Card className="mb-6 shadow-md">
-            <CardContent className="p-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
-                <input
-                  type="text"
-                  placeholder="Search by email, name, or summary..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-all"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Tabs */}
-          <Card className="shadow-lg">
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <div className="border-b border-slate-200 dark:border-slate-700">
-                <TabsList className="w-full grid grid-cols-3 bg-transparent p-0 h-auto rounded-none">
-                  <TabsTrigger
-                    value="pending"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/20 py-4 transition-all"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      <span className="font-medium">Pending</span>
-                      <Badge className="bg-blue-600 text-white hover:bg-blue-700 ml-2">
-                        {stats.pending}
-                      </Badge>
-                    </div>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="under_review"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-slate-600 data-[state=active]:bg-slate-50 dark:data-[state=active]:bg-slate-900/20 py-4 transition-all"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4" />
-                      <span className="font-medium">Under Review</span>
-                      <Badge className="bg-slate-600 text-white hover:bg-slate-700 ml-2">
-                        {stats.underReview}
-                      </Badge>
-                    </div>
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="solved"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-teal-600 data-[state=active]:bg-teal-50 dark:data-[state=active]:bg-teal-900/20 py-4 transition-all"
-                  >
-                    <div className="flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4" />
-                      <span className="font-medium">Solved</span>
-                      <Badge className="bg-teal-600 text-white hover:bg-teal-700 ml-2">
-                        {stats.solved}
-                      </Badge>
-                    </div>
-                  </TabsTrigger>
-                </TabsList>
-              </div>
-
-              {/* Tab Content */}
-              {["pending", "under_review", "solved"].map((status) => (
-                <TabsContent key={status} value={status}>
-                  {loading ? (
-                    <div className="flex justify-center py-12">
-                      <Loader2 className="h-8 w-8 animate-spin text-accent" />
-                    </div>
-                  ) : filteredRequests.length === 0 ? (
-                    <Card>
-                      <CardContent className="py-12 text-center">
-                        <p className="text-muted-foreground">
-                          No {status.replace("_", " ")} requests found
+            {/* Component Categories */}
+            <Card className="mb-6 shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="h-5 w-5 text-accent" />
+                  Component Inventory
+                </CardTitle>
+                <CardDescription>
+                  Click a category to view available components
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  {componentCategories.map((category) => (
+                    <Card
+                      key={category.id}
+                      className={`cursor-pointer transition-all duration-150 hover:scale-105 hover:shadow-xl ${
+                        selectedCategory === category.id
+                          ? "ring-2 ring-accent"
+                          : ""
+                      }`}
+                      onClick={() => handleCategoryClick(category)}
+                    >
+                      <CardContent className="p-4">
+                        <div
+                          className={`h-12 w-12 rounded-full bg-gradient-to-br ${category.color} flex items-center justify-center mx-auto mb-2`}
+                        >
+                          <category.icon className="h-6 w-6 text-white" />
+                        </div>
+                        <h3 className="text-sm font-semibold text-center mb-1">
+                          {category.name}
+                        </h3>
+                        <p className="text-2xl font-bold text-center text-accent">
+                          {getCategoryCount(category.categories)}
+                        </p>
+                        <p className="text-xs text-muted-foreground text-center">
+                          components
                         </p>
                       </CardContent>
                     </Card>
-                  ) : (
-                    <div className="grid gap-4 p-6">
-                      {filteredRequests.map((request) => (
-                        <Card
-                          key={request.id}
-                          className="cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all duration-150 border-l-4 border-l-accent bg-gradient-to-r from-white to-slate-50 dark:from-slate-800 dark:to-slate-800"
-                          onClick={() => handleRequestClick(request)}
-                        >
-                          <CardHeader className="pb-3">
-                            <div className="flex justify-between items-start">
-                              <div className="flex items-start gap-3">
-                                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center text-white font-bold">
-                                  {(request.user_name || "A")
-                                    .charAt(0)
-                                    .toUpperCase()}
-                                </div>
-                                <div>
-                                  <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">
-                                    {request.user_name || "Anonymous User"}
-                                  </CardTitle>
-                                  <CardDescription className="text-sm">
-                                    {request.user_email}
-                                  </CardDescription>
-                                </div>
-                              </div>
-                              <div className="flex gap-2 items-center">
-                                {getStatusBadge(request.status)}
-                                <Badge
-                                  variant="outline"
-                                  className="font-medium"
-                                >
-                                  {getRequestTypeLabel(request.request_type)}
-                                </Badge>
-                              </div>
-                            </div>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-2 mb-3">
-                              {request.summary || "No description available"}
-                            </p>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <Clock className="h-3 w-3" />
-                              <span>
-                                Submitted:{" "}
-                                {new Date(request.created_at).toLocaleString()}
-                              </span>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-                  )}
-                </TabsContent>
-              ))}
-            </Tabs>
-          </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
 
-          {/* Request Details Dialog */}
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-              <DialogHeader className="border-b pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center">
-                    <Users className="h-5 w-5 text-white" />
+            {/* Statistics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <Card className="bg-gradient-to-br from-slate-700 to-slate-800 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-slate-300 text-sm font-medium mb-1">
+                        Total Requests
+                      </p>
+                      <h3 className="text-3xl font-bold">{stats.total}</h3>
+                    </div>
+                    <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
+                      <MessageSquare className="h-6 w-6" />
+                    </div>
                   </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-blue-600 to-blue-700 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-blue-100 text-sm font-medium mb-1">
+                        Pending
+                      </p>
+                      <h3 className="text-3xl font-bold">{stats.pending}</h3>
+                    </div>
+                    <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
+                      <Clock className="h-6 w-6" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-slate-600 to-slate-700 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-slate-300 text-sm font-medium mb-1">
+                        Under Review
+                      </p>
+                      <h3 className="text-3xl font-bold">
+                        {stats.underReview}
+                      </h3>
+                    </div>
+                    <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
+                      <Mail className="h-6 w-6" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-teal-600 to-teal-700 text-white border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-teal-100 text-sm font-medium mb-1">
+                        Solved
+                      </p>
+                      <h3 className="text-3xl font-bold">{stats.solved}</h3>
+                    </div>
+                    <div className="h-12 w-12 bg-white/20 rounded-full flex items-center justify-center">
+                      <CheckCircle className="h-6 w-6" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Quick Access */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+              <Card
+                className="bg-gradient-to-br from-blue-600 to-blue-700 text-white border-0 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer"
+                onClick={() => navigate("/admin/price-manager")}
+              >
+                <CardContent className="p-5 h-full">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-bold">Price Manager</h3>
+                    <ChevronRight className="h-5 w-5" />
+                  </div>
+                  <p className="text-blue-100 text-sm">
+                    Manage component prices and inventory
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card
+                className="bg-gradient-to-br from-teal-600 to-teal-700 text-white border-0 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer"
+                onClick={() => navigate("/admin/blog-manager")}
+              >
+                <CardContent className="p-5 h-full">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-bold">Blog Manager</h3>
+                    <ChevronRight className="h-5 w-5" />
+                  </div>
+                  <p className="text-teal-100 text-sm">
+                    Create, edit and manage blog posts with comments
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card
+                className="bg-gradient-to-br from-indigo-600 to-indigo-700 text-white border-0 shadow-lg hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer"
+                onClick={() => navigate("/admin/careers")}
+              >
+                <CardContent className="p-5 h-full">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-bold">Careers Manager</h3>
+                    <ChevronRight className="h-5 w-5" />
+                  </div>
+                  <p className="text-indigo-100 text-sm">
+                    Review submitted applications and download CVs
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Admin Activity Logs */}
+            <Card className="mb-8 shadow-lg">
+              <CardHeader>
+                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                   <div>
-                    <DialogTitle className="text-xl">
-                      Request Details
-                    </DialogTitle>
-                    <DialogDescription>
-                      View and respond to customer request
-                    </DialogDescription>
+                    <CardTitle className="flex items-center gap-2">
+                      <FileText className="h-5 w-5 text-accent" />
+                      Admin Activity Log
+                    </CardTitle>
+                    <CardDescription>
+                      Track create, update, and delete operations across
+                      admin-managed modules.
+                    </CardDescription>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={loadActivityLogs}
+                    disabled={activityLoading}
+                    className="gap-2"
+                  >
+                    <RotateCcw
+                      className={`h-4 w-4 ${activityLoading ? "animate-spin" : ""}`}
+                    />
+                    Refresh
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-3">
+                  <input
+                    type="text"
+                    placeholder="Search by table, actor email, or record id..."
+                    value={activitySearchTerm}
+                    onChange={(e) => setActivitySearchTerm(e.target.value)}
+                    className="w-full px-3 py-2 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900"
+                  />
+                  <div className="flex items-center gap-2">
+                    {(["all", "INSERT", "UPDATE", "DELETE"] as const).map(
+                      (action) => (
+                        <Button
+                          key={action}
+                          type="button"
+                          size="sm"
+                          variant={
+                            activityActionFilter === action
+                              ? "default"
+                              : "outline"
+                          }
+                          onClick={() => setActivityActionFilter(action)}
+                        >
+                          {action}
+                        </Button>
+                      ),
+                    )}
                   </div>
                 </div>
-              </DialogHeader>
 
-              {detailsLoading ? (
-                <div className="flex justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-accent" />
-                </div>
-              ) : selectedRequest ? (
-                <div className="space-y-6">
-                  {/* Request Info */}
-                  <div className="grid grid-cols-2 gap-4 bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-800 p-5 rounded-lg border">
-                    <div>
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                        Customer
-                      </label>
-                      <p className="text-sm text-slate-900 dark:text-white font-medium mt-1">
-                        {selectedRequest.user_name || "Anonymous"}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                        Email
-                      </label>
-                      <p className="text-sm text-slate-900 dark:text-white font-medium mt-1">
-                        {selectedRequest.user_email}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                        Type
-                      </label>
-                      <p className="text-sm text-slate-900 dark:text-white font-medium mt-1">
-                        {getRequestTypeLabel(selectedRequest.request_type)}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                        Status
-                      </label>
-                      <div className="mt-1">
-                        {getStatusBadge(selectedRequest.status)}
-                      </div>
-                    </div>
-                    <div className="col-span-2">
-                      <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-                        Submitted
-                      </label>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Clock className="h-4 w-4 text-accent" />
-                        <p className="text-sm text-slate-900 dark:text-white font-medium">
-                          {new Date(
-                            selectedRequest.created_at,
-                          ).toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
+                {activityLoading ? (
+                  <div className="flex items-center justify-center py-10 text-muted-foreground">
+                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                    Loading activity logs...
                   </div>
-
-                  {/* Request Details */}
-                  <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3">Request Details</h3>
-                    <div className="space-y-3 bg-muted/30 p-4 rounded-lg max-h-60 overflow-y-auto">
-                      {Object.entries(selectedRequest)
-                        .filter(
-                          ([key]) =>
-                            ![
-                              "id",
-                              "user_id",
-                              "created_at",
-                              "updated_at",
-                              "status",
-                              "user_email",
-                              "user_name",
-                              "request_type",
-                              "admin_notes",
-                            ].includes(key),
-                        )
-                        .map(([key, value]) => (
-                          <div key={key}>
-                            <label className="text-sm font-medium capitalize">
-                              {key.replace(/_/g, " ")}:
-                            </label>
-                            <p className="text-sm text-muted-foreground">
-                              {String(value) || "N/A"}
-                            </p>
-                          </div>
+                ) : filteredActivityLogs.length === 0 ? (
+                  <div className="text-sm text-muted-foreground py-8 text-center border rounded-md">
+                    No activity logs found for current filter.
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto border rounded-md">
+                    <table className="w-full text-sm">
+                      <thead className="bg-slate-50 dark:bg-slate-800">
+                        <tr>
+                          <th className="text-left p-3 font-semibold">When</th>
+                          <th className="text-left p-3 font-semibold">
+                            Action
+                          </th>
+                          <th className="text-left p-3 font-semibold">Table</th>
+                          <th className="text-left p-3 font-semibold">
+                            Record
+                          </th>
+                          <th className="text-left p-3 font-semibold">Actor</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredActivityLogs.slice(0, 80).map((log) => (
+                          <tr
+                            key={log.id}
+                            className="border-t border-slate-200 dark:border-slate-700"
+                          >
+                            <td className="p-3 whitespace-nowrap text-xs text-muted-foreground">
+                              {new Date(log.created_at).toLocaleString()}
+                            </td>
+                            <td className="p-3">
+                              <Badge
+                                className={getActionBadgeClass(log.action)}
+                              >
+                                {log.action}
+                              </Badge>
+                            </td>
+                            <td className="p-3 font-medium">
+                              {log.table_name}
+                            </td>
+                            <td className="p-3 text-xs text-muted-foreground">
+                              {log.record_id || "-"}
+                            </td>
+                            <td className="p-3 text-xs">
+                              {log.actor_email || log.actor_id || "system"}
+                            </td>
+                          </tr>
                         ))}
-                    </div>
+                      </tbody>
+                    </table>
                   </div>
+                )}
+              </CardContent>
+            </Card>
 
-                  {/* Reply Section */}
-                  <div className="border-t pt-6">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+            {/* Study Materials Management */}
+            <Card className="mb-6 shadow-lg">
+              <CardHeader className="border-b border-slate-200 dark:border-slate-700 pb-4">
+                <CardTitle className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-accent" />
+                  Study Materials Management
+                </CardTitle>
+                <CardDescription>
+                  Upload and manage study materials for different engineering
+                  streams (CSE, ECE, Mechatronics, MEC, General)
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
+                <StudyMaterialsManager />
+              </CardContent>
+            </Card>
+
+            {/* Search Bar */}
+            <Card className="mb-6 shadow-md">
+              <CardContent className="p-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-5 w-5" />
+                  <input
+                    type="text"
+                    placeholder="Search by email, name, or summary..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent transition-all"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Tabs */}
+            <Card className="shadow-lg">
+              <Tabs value={activeTab} onValueChange={setActiveTab}>
+                <div className="border-b border-slate-200 dark:border-slate-700">
+                  <TabsList className="w-full grid grid-cols-3 bg-transparent p-0 h-auto rounded-none">
+                    <TabsTrigger
+                      value="pending"
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-blue-600 data-[state=active]:bg-blue-50 dark:data-[state=active]:bg-blue-900/20 py-4 transition-all"
+                    >
                       <div className="flex items-center gap-2">
-                        <Mail className="h-5 w-5 text-accent" />
-                        <h3 className="font-semibold text-lg">Admin Reply</h3>
+                        <Clock className="h-4 w-4" />
+                        <span className="font-medium">Pending</span>
+                        <Badge className="bg-blue-600 text-white hover:bg-blue-700 ml-2">
+                          {stats.pending}
+                        </Badge>
                       </div>
-                      <Button
-                        variant="default"
-                        size="sm"
-                        onClick={() => setEstimateBuilderOpen(true)}
-                        className="gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md"
-                      >
-                        <Calculator className="h-4 w-4" />
-                        Cost Estimator
-                      </Button>
-                    </div>
-                    {currentEstimateData && (
-                      <div className="mb-3 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
-                        <span className="text-sm text-green-700 font-medium">
-                          Estimate added to reply (₹
-                          {currentEstimateData.total.toFixed(2)})
-                        </span>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="under_review"
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-slate-600 data-[state=active]:bg-slate-50 dark:data-[state=active]:bg-slate-900/20 py-4 transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        <span className="font-medium">Under Review</span>
+                        <Badge className="bg-slate-600 text-white hover:bg-slate-700 ml-2">
+                          {stats.underReview}
+                        </Badge>
+                      </div>
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="solved"
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-teal-600 data-[state=active]:bg-teal-50 dark:data-[state=active]:bg-teal-900/20 py-4 transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <CheckCircle className="h-4 w-4" />
+                        <span className="font-medium">Solved</span>
+                        <Badge className="bg-teal-600 text-white hover:bg-teal-700 ml-2">
+                          {stats.solved}
+                        </Badge>
+                      </div>
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+
+                {/* Tab Content */}
+                {["pending", "under_review", "solved"].map((status) => (
+                  <TabsContent key={status} value={status}>
+                    {loading ? (
+                      <div className="flex justify-center py-12">
+                        <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                      </div>
+                    ) : filteredRequests.length === 0 ? (
+                      <Card>
+                        <CardContent className="py-12 text-center">
+                          <p className="text-muted-foreground">
+                            No {status.replace("_", " ")} requests found
+                          </p>
+                        </CardContent>
+                      </Card>
+                    ) : (
+                      <div className="grid gap-4 p-6">
+                        {filteredRequests.map((request) => (
+                          <Card
+                            key={request.id}
+                            className="cursor-pointer hover:shadow-xl hover:scale-[1.01] transition-all duration-150 border-l-4 border-l-accent bg-gradient-to-r from-white to-slate-50 dark:from-slate-800 dark:to-slate-800"
+                            onClick={() => handleRequestClick(request)}
+                          >
+                            <CardHeader className="pb-3">
+                              <div className="flex justify-between items-start">
+                                <div className="flex items-start gap-3">
+                                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center text-white font-bold">
+                                    {(request.user_name || "A")
+                                      .charAt(0)
+                                      .toUpperCase()}
+                                  </div>
+                                  <div>
+                                    <CardTitle className="text-lg font-bold text-slate-900 dark:text-white">
+                                      {request.user_name || "Anonymous User"}
+                                    </CardTitle>
+                                    <CardDescription className="text-sm">
+                                      {request.user_email}
+                                    </CardDescription>
+                                  </div>
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                  {getStatusBadge(request.status)}
+                                  <Badge
+                                    variant="outline"
+                                    className="font-medium"
+                                  >
+                                    {getRequestTypeLabel(request.request_type)}
+                                  </Badge>
+                                </div>
+                              </div>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="text-sm text-slate-700 dark:text-slate-300 line-clamp-2 mb-3">
+                                {request.summary || "No description available"}
+                              </p>
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <Clock className="h-3 w-3" />
+                                <span>
+                                  Submitted:{" "}
+                                  {new Date(
+                                    request.created_at,
+                                  ).toLocaleString()}
+                                </span>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
                       </div>
                     )}
-                    <Textarea
-                      placeholder="Type your reply to the customer..."
-                      value={replyMessage}
-                      onChange={(e) => setReplyMessage(e.target.value)}
-                      rows={6}
-                      className="w-full border-2 focus:border-accent transition-colors"
-                    />
-                  </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </Card>
 
-                  {/* Action Buttons */}
-                  <div className="flex gap-3 justify-end border-t pt-4">
-                    <Button
-                      variant="outline"
-                      onClick={() => setDialogOpen(false)}
-                      disabled={submitting}
-                      className="px-6"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      onClick={handleSubmitReply}
-                      disabled={!replyMessage.trim() || submitting}
-                      className="bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 px-6 shadow-lg"
-                    >
-                      {submitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <Mail className="mr-2 h-4 w-4" />
-                          Send Reply (Under Review)
-                        </>
-                      )}
-                    </Button>
-                    <Button
-                      onClick={handleMarkAsSolved}
-                      disabled={submitting}
-                      className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 px-6 shadow-lg"
-                    >
-                      {submitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Updating...
-                        </>
-                      ) : (
-                        <>
-                          <CheckCircle className="mr-2 h-4 w-4" />
-                          Mark as Solved
-                        </>
-                      )}
-                    </Button>
+            {/* Request Details Dialog */}
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader className="border-b pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-accent to-accent/70 flex items-center justify-center">
+                      <Users className="h-5 w-5 text-white" />
+                    </div>
+                    <div>
+                      <DialogTitle className="text-xl">
+                        Request Details
+                      </DialogTitle>
+                      <DialogDescription>
+                        View and respond to customer request
+                      </DialogDescription>
+                    </div>
                   </div>
-                </div>
-              ) : null}
-            </DialogContent>
-          </Dialog>
-        </div>
+                </DialogHeader>
 
-        {/* Right Sidebar - Cost Estimator */}
-        <div className="w-96 hidden lg:block">
-          <div className="sticky top-24">
+                {detailsLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-accent" />
+                  </div>
+                ) : selectedRequest ? (
+                  <div className="space-y-6">
+                    {/* Request Info */}
+                    <div className="grid grid-cols-2 gap-4 bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-800 p-5 rounded-lg border">
+                      <div>
+                        <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Customer
+                        </label>
+                        <p className="text-sm text-slate-900 dark:text-white font-medium mt-1">
+                          {selectedRequest.user_name || "Anonymous"}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Email
+                        </label>
+                        <p className="text-sm text-slate-900 dark:text-white font-medium mt-1">
+                          {selectedRequest.user_email}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Type
+                        </label>
+                        <p className="text-sm text-slate-900 dark:text-white font-medium mt-1">
+                          {getRequestTypeLabel(selectedRequest.request_type)}
+                        </p>
+                      </div>
+                      <div>
+                        <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Status
+                        </label>
+                        <div className="mt-1">
+                          {getStatusBadge(selectedRequest.status)}
+                        </div>
+                      </div>
+                      <div className="col-span-2">
+                        <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          Submitted
+                        </label>
+                        <div className="flex items-center gap-2 mt-1">
+                          <Clock className="h-4 w-4 text-accent" />
+                          <p className="text-sm text-slate-900 dark:text-white font-medium">
+                            {new Date(
+                              selectedRequest.created_at,
+                            ).toLocaleString()}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Request Details */}
+                    <div className="border-t pt-4">
+                      <h3 className="font-semibold mb-3">Request Details</h3>
+                      <div className="space-y-3 bg-muted/30 p-4 rounded-lg max-h-60 overflow-y-auto">
+                        {Object.entries(selectedRequest)
+                          .filter(
+                            ([key]) =>
+                              ![
+                                "id",
+                                "user_id",
+                                "created_at",
+                                "updated_at",
+                                "status",
+                                "user_email",
+                                "user_name",
+                                "request_type",
+                                "admin_notes",
+                              ].includes(key),
+                          )
+                          .map(([key, value]) => (
+                            <div key={key}>
+                              <label className="text-sm font-medium capitalize">
+                                {key.replace(/_/g, " ")}:
+                              </label>
+                              <p className="text-sm text-muted-foreground">
+                                {String(value) || "N/A"}
+                              </p>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+
+                    {/* Reply Section */}
+                    <div className="border-t pt-6">
+                      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-5 w-5 text-accent" />
+                          <h3 className="font-semibold text-lg">Admin Reply</h3>
+                        </div>
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={() => setEstimateBuilderOpen(true)}
+                          className="gap-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white shadow-md"
+                        >
+                          <Calculator className="h-4 w-4" />
+                          Cost Estimator
+                        </Button>
+                      </div>
+                      {currentEstimateData && (
+                        <div className="mb-3 p-3 bg-green-50 border border-green-200 rounded-lg flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-600" />
+                          <span className="text-sm text-green-700 font-medium">
+                            Estimate added to reply (₹
+                            {currentEstimateData.total.toFixed(2)})
+                          </span>
+                        </div>
+                      )}
+                      <Textarea
+                        placeholder="Type your reply to the customer..."
+                        value={replyMessage}
+                        onChange={(e) => setReplyMessage(e.target.value)}
+                        rows={6}
+                        className="w-full border-2 focus:border-accent transition-colors"
+                      />
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-3 justify-end border-t pt-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => setDialogOpen(false)}
+                        disabled={submitting}
+                        className="px-6"
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={handleSubmitReply}
+                        disabled={!replyMessage.trim() || submitting}
+                        className="bg-gradient-to-r from-accent to-accent/80 hover:from-accent/90 hover:to-accent/70 px-6 shadow-lg"
+                      >
+                        {submitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Mail className="mr-2 h-4 w-4" />
+                            Send Reply (Under Review)
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        onClick={handleMarkAsSolved}
+                        disabled={submitting}
+                        className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 px-6 shadow-lg"
+                      >
+                        {submitting ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Updating...
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="mr-2 h-4 w-4" />
+                            Mark as Solved
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
+              </DialogContent>
+            </Dialog>
+          </div>
+
+          {/* Right Sidebar - Cost Estimator */}
+          <div className="xl:sticky xl:top-24">
             <Card className="shadow-xl border-2 border-accent/20">
               <CardHeader className="bg-gradient-to-r from-accent to-accent/80 text-white">
                 <div className="flex items-center justify-between">

@@ -1,7 +1,11 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import {
+  isCurrentUserInAdminAllowlist,
+  isValidGmail,
+} from "@/lib/supabaseService";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -19,8 +23,13 @@ export const ProtectedRoute = ({
   children,
   requireAdmin = false,
 }: ProtectedRouteProps) => {
+  const location = useLocation();
   const { user, profile, loading } = useAuth();
   const [profileCheckComplete, setProfileCheckComplete] = useState(false);
+  const [adminGateLoading, setAdminGateLoading] = useState(requireAdmin);
+  const [adminGatePassed, setAdminGatePassed] = useState(false);
+
+  const ADMIN_UNLOCK_KEY = "admin_unlock_until";
 
   // Wait for profile to be loaded when admin access is required
   useEffect(() => {
@@ -35,6 +44,44 @@ export const ProtectedRoute = ({
       setProfileCheckComplete(true);
     }
   }, [loading, user, requireAdmin]);
+
+  useEffect(() => {
+    const checkAdminGate = async () => {
+      if (!requireAdmin) {
+        setAdminGateLoading(false);
+        setAdminGatePassed(true);
+        return;
+      }
+
+      if (loading || !user) {
+        return;
+      }
+
+      if (profile?.role !== "admin") {
+        setAdminGatePassed(false);
+        setAdminGateLoading(false);
+        return;
+      }
+
+      const email = user.email?.toLowerCase() || "";
+      const hasGmail = isValidGmail(email);
+      const inAllowlist = await isCurrentUserInAdminAllowlist();
+      const unlockedUntil = Number(
+        sessionStorage.getItem(ADMIN_UNLOCK_KEY) || 0,
+      );
+      const hasUnlockedAdmin =
+        Number.isFinite(unlockedUntil) && unlockedUntil > Date.now();
+
+      setAdminGatePassed(hasGmail && inAllowlist && hasUnlockedAdmin);
+      setAdminGateLoading(false);
+    };
+
+    checkAdminGate().catch((error) => {
+      console.error("ProtectedRoute: Admin gate check failed", error);
+      setAdminGatePassed(false);
+      setAdminGateLoading(false);
+    });
+  }, [requireAdmin, loading, user, profile?.role]);
 
   // Show loading spinner while checking authentication
   // This prevents flash of content and unnecessary page loads
@@ -72,7 +119,7 @@ export const ProtectedRoute = ({
     );
   }
 
-  // Admin required - check role only (any user with admin role can access)
+  // Admin required - first level check: user role
   if (requireAdmin) {
     const isAdminRole = profile?.role === "admin";
 
@@ -90,6 +137,24 @@ export const ProtectedRoute = ({
         role: profile?.role,
       });
       return <Navigate to="/" replace />;
+    }
+
+    if (adminGateLoading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-accent mx-auto mb-4" />
+            <p className="text-muted-foreground">
+              Verifying admin security checks...
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    if (!adminGatePassed) {
+      const next = encodeURIComponent(location.pathname + location.search);
+      return <Navigate to={`/admin-login?next=${next}`} replace />;
     }
   }
 
