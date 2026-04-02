@@ -21,7 +21,7 @@ self.addEventListener("install", (event) => {
     caches.open(CACHE_NAME).then((cache) => {
       console.log("Service Worker: Precaching assets");
       return cache.addAll(PRECACHE_ASSETS);
-    })
+    }),
   );
   self.skipWaiting();
 });
@@ -36,9 +36,9 @@ self.addEventListener("activate", (event) => {
             console.log("Service Worker: Deleting old cache:", cacheName);
             return caches.delete(cacheName);
           }
-        })
+        }),
       );
-    })
+    }),
   );
   self.clients.claim();
 });
@@ -71,7 +71,7 @@ self.addEventListener("fetch", (event) => {
         .catch(async () => {
           const cachedIndex = await caches.match("/index.html");
           return cachedIndex || Response.error();
-        })
+        }),
     );
     return;
   }
@@ -102,7 +102,7 @@ self.addEventListener("fetch", (event) => {
 
         return response;
       });
-    })
+    }),
   );
 });
 
@@ -128,7 +128,7 @@ self.addEventListener("push", (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification("Circuit Crafters", options)
+    self.registration.showNotification("Circuit Crafters", options),
   );
 });
 
