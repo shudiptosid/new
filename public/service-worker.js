@@ -3,8 +3,8 @@
  * Provides offline support and asset caching
  */
 
-const CACHE_NAME = "circuit-crafters-v1";
-const RUNTIME_CACHE = "runtime-cache-v1";
+const CACHE_NAME = "circuit-crafters-v2";
+const RUNTIME_CACHE = "runtime-cache-v2";
 
 // Assets to cache on install
 const PRECACHE_ASSETS = [
@@ -43,7 +43,7 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - use network-first for page navigations and cache-first for static assets
 self.addEventListener("fetch", (event) => {
   // Skip cross-origin requests
   if (!event.request.url.startsWith(self.location.origin)) {
@@ -64,7 +64,26 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Cache-first for static assets (GET requests only)
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => response)
+        .catch(async () => {
+          const cachedIndex = await caches.match("/index.html");
+          return cachedIndex || Response.error();
+        })
+    );
+    return;
+  }
+
+  const isStaticAsset = ["script", "style", "image", "font"].includes(
+    event.request.destination,
+  );
+
+  if (!isStaticAsset) {
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -72,18 +91,14 @@ self.addEventListener("fetch", (event) => {
       }
 
       return fetch(event.request).then((response) => {
-        // Don't cache non-successful responses
-        if (!response || response.status !== 200 || response.type === "error") {
+        if (!response || response.status !== 200 || response.type !== "basic") {
           return response;
         }
 
-        // Only cache GET requests
-        if (event.request.method === "GET") {
-          const responseToCache = response.clone();
-          caches.open(RUNTIME_CACHE).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
-        }
+        const responseToCache = response.clone();
+        caches.open(RUNTIME_CACHE).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
 
         return response;
       });
